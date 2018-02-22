@@ -37,5 +37,9 @@ class read_ECG(object):
         https://bitbucket.org/atpage/ishneholterlib
         """
         
+        #TO_DO
+        
+        #implement this from the MATLAB file I give to you and the code.
+        #There is a viewer that we can check how was built.
         
         
