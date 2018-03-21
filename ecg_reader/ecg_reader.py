@@ -10,6 +10,14 @@ Module with differente ECG read options
 import numpy as np
 import ishne_data
 
+from IPython.display import display
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import shutil
+
+import wfdb
+
         
 class read_ECG(object):
     """
@@ -29,7 +37,21 @@ class read_ECG(object):
         https://pypi.python.org/pypi/wfdb
         www.physionet.org
         """
-        print ("Ella se preparo, se puso linda");
+        print ("[INFO] Reading with WFDB Library from Physionet")
+        record2 = wfdb.rdrecord('sample-data/a103l')
+        print("[INFO] Record readed with wfdb: \n%s")
+        display(record2.__dict__)
+        
+        print("[INFO] Read Header from WFDB\n")
+        header = wfdb.rdheader('sample-data/drive02')
+        display(header.__dict__)
+        print("[INFO] fileName: %s" %header.file_name)
+        
+        if hasattr(header, 'magicNum'):
+            print("[INFO] El fichero es ISHNE")
+        else:
+            print("[INFO] El fichero es Physionet")
+        
         
     def read_ECG_ishne(self):
         myFileURL = "./matlab_ishne_code/ishne.ecg"
@@ -64,7 +86,7 @@ class read_ECG(object):
             holter.ecg = self.readEcg(fileIshne)
             
             fileIshne.close() #Close file 
-                           
+            
             return [holter, crc]
         
         return [];
@@ -160,6 +182,8 @@ class read_ECG(object):
         #implement this from the MATLAB file I give to you and the code.
         #There is a viewer that we can check how was built.
     
-
-mivariable = read_ECG();
-mivariable.read_ECG_ishne();                     
+if __name__ == "__main__":
+    print('Ejecutando como programa principal')
+    mivariable = read_ECG();
+    #mivariable.read_ECG_ishne();        
+    mivariable.read_ECG_physionet();             
