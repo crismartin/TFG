@@ -162,4 +162,4 @@ class read_ECG(object):
     
 
 mivariable = read_ECG();
-mivariable.read_ECG_ishne();                     
+[holter,crc] = mivariable.read_ECG_ishne();                     
