@@ -8,8 +8,9 @@ Created on Wed Feb 21 18:29:54 2018
 
 
 import abc
+import ecg_reader
 from abc import ABCMeta
-from IPython.display import display
+#from IPython.display import display
 
 
 class ECG(object):
@@ -18,8 +19,8 @@ class ECG(object):
     Function that implements an ECG object, which is goin to have basic ECG elements
     indepently of the original format
     """
-    def __init__(self, data):
-        self.data = data.getData()
+    def __init__(self, fileIn):
+        self.data = ecg_reader.read_ECG(fileIn)
 
     def __dict__(self):
         self.data.readDataFile()
@@ -80,7 +81,5 @@ class DataFilePhysionet(AbstractFileData):
 
 if __name__ == "__main__":
     print('** Ejecutando como programa principal **')
-    fcDataIshne = DataIshne()
-    ecg = ECG(fcDataIshne)
-    ecg.__dict__()
+    ecg = ECG("sample-data/a103l")
     
