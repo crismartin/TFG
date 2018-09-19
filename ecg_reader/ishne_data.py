@@ -21,7 +21,7 @@ class Holter():
         self.ecg = []
     
     def read_checksum(self, fdFile):
-        crcChecksum = np.fromfile(fdFile, dtype=np.uint16, count=LONG_CRC_ISHNE)
+        crcChecksum = np.fromfile(fdFile, dtype=np.uint16, count=LONG_CRC_ISHNE)[0]
         print("[INFO] CRC CHECKSUM: %s" %crcChecksum)
         return crcChecksum
     
@@ -33,30 +33,30 @@ class Holter():
     
 class Header():
     def __init__(self):
-        self.varLenBlockSize = []
+        self.varLenBlockSize = ''
         self.sampleSizeECG = np.dtype(np.int32)
-        self.offsetVarLengthBlock = []
-        self.offsetECGBlock = []
-        self.fileVersion = []
-        self.firstName = ""
-        self.secondName = ""
-        self.id = ""
-        self.sex = []
+        self.offsetVarLengthBlock = ''
+        self.offsetECGBlock = ''
+        self.fileVersion = ''
+        self.firstName = ''
+        self.secondName = ''
+        self.id = ''
+        self.sex = ''
         self.race = []
         self.birthDate = []
         self.recordDate = []
         self.fileDate = []            
         self.startDate = []
-        self.nLeads = []
+        self.nLeads = ''
         self.leadSpec = []
         self.leadQual = []
         self.resolution = []
-        self.paceMaker = []
-        self.recorder = ""
-        self.samplingRate = []
-        self.propierty = ""
-        self.copyright = ""
-        self.reserverd = ""
+        self.paceMaker = ''
+        self.recorder = ''
+        self.samplingRate = ''
+        self.propierty = ''
+        self.copyright = ''
+        self.reserverd = ''
     
     def printHeader(self):
         print("\n[INFO] ******* HEADER ********")                             
@@ -90,31 +90,31 @@ class Header():
     def readHeaderISHNE(self, fileFd):
         header = Header()
                                   
-        header.varLenBlockSize = np.fromfile(fileFd, dtype=np.int32, count=1)
-        header.sampleSizeECG = np.fromfile(fileFd, dtype=np.int32, count=1)
-        header.offsetVarLengthBlock = np.fromfile(fileFd, dtype=np.int32, count=1)
-        header.offsetECGBlock = np.fromfile(fileFd, dtype=np.int32, count=1)
-        header.fileVersion = np.fromfile(fileFd, dtype=np.int16, count=1)
-        header.firstName = fileFd.read(40)
-        header.secondName = fileFd.read(40)
-        header.id = fileFd.read(20)
-        header.sex = np.fromfile(fileFd, dtype=np.int16, count=1)
-        header.race = np.fromfile(fileFd, dtype=np.int16, count=1)
+        header.varLenBlockSize = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
+        header.sampleSizeECG = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
+        header.offsetVarLengthBlock = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
+        header.offsetECGBlock = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
+        header.fileVersion = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
+        header.firstName = fileFd.read(40).strip(' \x00')
+        header.secondName = fileFd.read(40).strip(' \x00')
+        header.id = fileFd.read(20).strip(' \x00')
+        header.sex = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
+        header.race = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
         header.birthDate = np.fromfile(fileFd, dtype=np.int16, count=3)
         header.recordDate = np.fromfile(fileFd, dtype=np.int16, count=3)
         header.fileDate = np.fromfile(fileFd, dtype=np.int16, count=3)                  
         header.startDate = np.fromfile(fileFd, dtype=np.int16, count=3)
-        header.nLeads = np.fromfile(fileFd, dtype=np.int16, count=1)
+        header.nLeads = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
         header.leadSpec = np.fromfile(fileFd, dtype=np.int16, count=12)
         header.leadQual = np.fromfile(fileFd, dtype=np.int16, count=12)
         header.resolution = np.fromfile(fileFd, dtype=np.int16, count=12)
         #
-        header.paceMaker = np.fromfile(fileFd, dtype=np.int16, count=1)
-        header.recorder = fileFd.read(40)
-        header.samplingRate = np.fromfile(fileFd, dtype=np.int16, count=1)
-        header.propierty = fileFd.read(80)
-        header.copyright = fileFd.read(80)
-        header.reserverd = fileFd.read(88)
+        header.paceMaker = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
+        header.recorder = fileFd.read(40).strip(' \x00')
+        header.samplingRate = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
+        header.propierty = fileFd.read(80).strip(' \x00')
+        header.copyright = fileFd.read(80).strip(' \x00')
+        header.reserverd = fileFd.read(88).strip(' \x00')
          
         return header
         
@@ -204,16 +204,16 @@ def read_ishne_file(fileName):
         crc.crcCabecera = crc.crc_cabecera(fdIshne)
         holter.header = holter.header.readHeaderISHNE(fdIshne)
         holter.header.printHeader()
-        holter.header.varBlock = holter.header.readVarBlock(fdIshne, holter.header.varLenBlockSize[0])
+        holter.header.varBlock = holter.header.readVarBlock(fdIshne, holter.header.varLenBlockSize)
         crc.joinCrc(holter.header.varBlock)
         crc.printCrc()
         holter.ecg = holter.read_ecg(fdIshne)
         
         fdIshne.close() #Close file 
         
-        return (holter, crc)
+        return {'header': holter.header, 'ecg' : holter.ecg}
     
-    return [];
+    return {};
 
 
 if __name__=="__main__":
