@@ -9,9 +9,9 @@ Created on Wed Feb 21 18:29:54 2018
 
 import abc
 import ecg_reader
+import matplotlib.pyplot as plt
 from abc import ABCMeta
 #from IPython.display import display
-
 
 class ECG(object):
 
@@ -20,12 +20,17 @@ class ECG(object):
     indepently of the original format
     """
     def __init__(self, fileIn):
-        self.data = ecg_reader.read_ECG(fileIn)
+        aux = ecg_reader.read_ECG(fileIn)
+        self.signal = aux.data['ecg']
+        self.header = aux.data['header']
 
     def __dict__(self):
         self.data.readDataFile()
         
-
+    def showECG(self):
+        plt.plot(self.signal[100:2000])
+        plt.ylabel('ECG signal ISHNE format')
+        plt.show()
 
 #Factoria Abstracta
 class Data(object):
@@ -81,5 +86,6 @@ class DataFilePhysionet(AbstractFileData):
 
 if __name__ == "__main__":
     print('** Ejecutando como programa principal **')
-    ecg = ECG("sample-data/a103l")
+    ##sample-data/a103l
+    ecg = ECG("./matlab_ishne_code/ishne.ecg")
     
