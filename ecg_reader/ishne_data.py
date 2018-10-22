@@ -98,7 +98,7 @@ class Header():
         header.firstName = fileFd.read(40).strip(' \x00')
         header.secondName = fileFd.read(40).strip(' \x00')
         header.id = fileFd.read(20).strip(' \x00')
-        header.sex = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
+        header.sex = np.fromfile(fileFd, dtype=np.int16, count=1)[0] ##0 Male, 1 Female
         header.race = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
         header.birthDate = np.fromfile(fileFd, dtype=np.int16, count=3)
         header.recordDate = np.fromfile(fileFd, dtype=np.int16, count=3)

@@ -30,6 +30,7 @@ class ECG(object):
     def showECG(self):
         plt.plot(self.signal[100:2000])
         plt.ylabel('ECG signal ISHNE format')
+        plt.grid(True)
         plt.show()
 
 #Factoria Abstracta
@@ -88,4 +89,6 @@ if __name__ == "__main__":
     print('** Ejecutando como programa principal **')
     ##sample-data/a103l
     ecg = ECG("./matlab_ishne_code/ishne.ecg")
+    
+    
     

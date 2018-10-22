@@ -8,27 +8,11 @@ Module with differente ECG read options
 @author: obarquero
 """
 
-from IPython.display import display
+
 
 import ishne_data
-import wfdb
+import physionet_data
 
-
-def is_Physionet_file(fileName):
-    header = None
-    
-    try:
-        header = wfdb.rdheader(fileName)
-    except IOError:
-        pass
-    
-    
-    if (header is None):
-        return False
-    else:
-        return True
-
-        
     
 class read_ECG(object):
     """
@@ -43,7 +27,7 @@ class read_ECG(object):
     def get_data_file(self):
         if(ishne_data.is_Ishne_file(self.fileIn)):
             return self.read_ECG_ishne()
-        elif(is_Physionet_file(self.fileIn)):
+        elif(physionet_data.is_Physionet_file(self.fileIn)):
             return self.read_ECG_physionet()
             
     
@@ -55,6 +39,7 @@ class read_ECG(object):
         References
         https://pypi.python.org/pypi/wfdb
         www.physionet.org
+        """
         """
         print ("[INFO] Reading with WFDB Library from Physionet")
         record2 = wfdb.rdrecord(self.fileIn)
@@ -70,7 +55,7 @@ class read_ECG(object):
             print("[INFO] El fichero es ISHNE")
         else:
             print("[INFO] El fichero es Physionet")
-        
+        """
         
     def read_ECG_ishne(self):
         return ishne_data.read_ishne_file(self.fileIn)
