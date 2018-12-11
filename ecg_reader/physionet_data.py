@@ -5,9 +5,13 @@ Created on Mon Oct 22 21:16:26 2018
 
 @author: cristian
 """
-from IPython.display import display
+
 #import numpy as np
 import wfdb
+from IPython.display import display
+
+
+
 
 def is_Physionet_file(fileName):
     header = None
@@ -25,12 +29,13 @@ def is_Physionet_file(fileName):
     
 def read_header(fileName):
     header = wfdb.rdheader(fileName)
-    display('[INFO] Leyendo cabecera fichero physionet %s' %header.__dict__)
+    display('[INFO] Leyendo cabecera fichero physionet %s' %header.__dict__)    
     return header
     
 def read_ecg_data(fileName):
-    signals = wfdb.rdsamp(fileName, 
-                          sampfrom=100, sampto=15000)
+    signals = wfdb.rdsamp(fileName, sampfrom=100, sampto=15000)
+    print('\n[INFO] Mostrando signal physionet')
+    print(signals)
     return signals
 
 def read_physionet_file(fileName):
@@ -45,7 +50,7 @@ def read_physionet_file(fileName):
     "Read file."
     #return [holter, crcCabecera];
    
-    return {'header': header, 'ecg' : ecg}
+    return {'header': header, 'ecg': ecg}
 
 
 if __name__=="__main__":

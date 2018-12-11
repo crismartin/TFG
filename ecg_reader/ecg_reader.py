@@ -28,10 +28,12 @@ class read_ECG(object):
         if(ishne_data.is_Ishne_file(self.fileIn)):
             return self.read_ECG_ishne()
         elif(physionet_data.is_Physionet_file(self.fileIn)):
+            print("[INFO][ecg-reader] Es un fichero Pyshionet")
             return self.read_ECG_physionet()
             
     
     def read_ECG_physionet(self):
+        return physionet_data.read_physionet_file(self.fileIn)
         """
         Function that allows to read ECG in physionet format
         Vamos a utilizar este modulo
@@ -56,6 +58,7 @@ class read_ECG(object):
         else:
             print("[INFO] El fichero es Physionet")
         """
+       
         
     def read_ECG_ishne(self):
         return ishne_data.read_ishne_file(self.fileIn)

@@ -154,7 +154,8 @@ def read_file(urlFile):
         myFile = open(urlFile, 'rb')
         return myFile
     except IOError:
-        print("[ERROR] File with url '%s' doesn't exist." %urlFile)
+        print("[ERROR][ISHNE] File with url '%s' doesn't exist or hasn't ISHNE format." 
+              %urlFile)
         return -1;
     
 """

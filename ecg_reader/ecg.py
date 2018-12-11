@@ -88,7 +88,8 @@ class DataFilePhysionet(AbstractFileData):
 if __name__ == "__main__":
     print('** Ejecutando como programa principal **')
     ##sample-data/a103l
-    ecg = ECG("./matlab_ishne_code/ishne.ecg")
+    #ecg = ECG("./matlab_ishne_code/ishne.ecg")
+    ecg = ECG("./sample-data/drive02")
     
     
     
