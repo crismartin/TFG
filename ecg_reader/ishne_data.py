@@ -5,6 +5,7 @@ Created on Wed Mar 14 20:13:59 2018
 
 @author: cristian
 """
+
 import numpy as np
 
 ISHNE_MAGIC_NUM = "ISHNE1.0"
@@ -32,6 +33,7 @@ class Holter():
         return ecg
     
 class Header():
+
     def __init__(self):
         self.varLenBlockSize = ''
         self.sampleSizeECG = np.dtype(np.int32)
@@ -57,6 +59,13 @@ class Header():
         self.propierty = ''
         self.copyright = ''
         self.reserverd = ''
+        
+    def _parseDateISHNE(self, date):
+        dia = str(date[0]) if (int(date[0]) > 9) else ( "0" + str(date[0]) )
+        mes = str(date[1]) if (int(date[1]) > 9) else ( "0" + str(date[1]) )
+        anio = str(date[2])
+        fecha = dia + "-" + mes + "-" + anio
+        return fecha
     
     def printHeader(self):
         print("\n[INFO] ******* HEADER ********")                             
@@ -71,7 +80,7 @@ class Header():
         print("[INFO] sex: %s" %self.sex)
              
         print("[INFO] race: %s" %self.race)
-        print("[INFO] birthDate: %s" %self.birthDate)
+        print("[INFO] birthDate: %s" %self.birthDate )
         print("[INFO] recordDate: %s" %self.recordDate)
         print("[INFO] fileDate: %s" %self.fileDate)
         print("[INFO] startDate: %s" %self.startDate)
@@ -86,6 +95,9 @@ class Header():
         print("[INFO] propierty: %s" %self.propierty)
         print("[INFO] selfCopyright: %s" %self.copyright)
         print("[INFO] reserverd: %s" %self.reserverd)
+        
+ 
+        
     
     def readHeaderISHNE(self, fileFd):
         header = Header()
@@ -101,8 +113,11 @@ class Header():
         header.sex = np.fromfile(fileFd, dtype=np.int16, count=1)[0] ##0 Male, 1 Female
         header.race = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
         header.birthDate = np.fromfile(fileFd, dtype=np.int16, count=3)
+        header.birthDate = self._parseDateISHNE(header.birthDate)
         header.recordDate = np.fromfile(fileFd, dtype=np.int16, count=3)
-        header.fileDate = np.fromfile(fileFd, dtype=np.int16, count=3)                  
+        header.recordDate = self._parseDateISHNE(header.recordDate)
+        header.fileDate = np.fromfile(fileFd, dtype=np.int16, count=3)    
+        header.fileDate = self._parseDateISHNE(header.fileDate)                  
         header.startDate = np.fromfile(fileFd, dtype=np.int16, count=3)
         header.nLeads = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
         header.leadSpec = np.fromfile(fileFd, dtype=np.int16, count=12)
