@@ -28,7 +28,7 @@ def is_Physionet_file(fileName):
         else:
             return True
 
-
+# Clase Principal ECGPhysionet
 class ECGPhysionet(ecg.ECG):
     typeECG = PHYSIONET_TYPE
     
@@ -85,10 +85,5 @@ if __name__=="__main__":
     #print(is_Ishne_file("./sample-data/a103l.hea"))
     physioECG = ECGPhysionet("./sample-data/drive02")
     physioECG.printTestECG()
-    
-    
-    
-    
-    
     
     

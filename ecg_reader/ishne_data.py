@@ -7,12 +7,14 @@ Created on Wed Mar 14 20:13:59 2018
 """
 import ecg
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
 
 ISHNE_MAGIC_NUM = "ISHNE1.0"
 LONG_MAGICNUM_ISHNE = 8
 LONG_CRC_ISHNE = 1
 LONG_FIJA_ISHNE = 512
-
+NUM_DERIVACIONES = 12
 
 """
 Function that return 0 if it has a ISHNE format
@@ -178,8 +180,15 @@ class ECGIshne(ecg.ECG):
             #print("[INFO] CRC CHECKSUM: %s" %crcChecksum)
             return crcChecksum
         
-        def read_ecg(self, fdFile):
-            self.ecg = np.fromfile(fdFile, dtype=np.int16, count=-1)
+        def read_ecg(self, fdFile, nLeads):
+            ecgArrayBytes = np.fromfile(fdFile, dtype=np.int16, count=-1) 
+            ecgArrayBytes = np.asarray(ecgArrayBytes)            
+            ecgArrayBytes = ecgArrayBytes.reshape(-1, nLeads)
+            
+            ecgChannels = np.hsplit(ecgArrayBytes, nLeads)
+            for nChannel in range(nLeads):
+                self.ecg.append( ecgChannels[nChannel].reshape(-1) )
+            
             return self.ecg       
                 
         def readVarBlock(self, fileFd, varLenBlockSize):
@@ -191,7 +200,9 @@ class ECGIshne(ecg.ECG):
             print("\n[INFO] ******* ECG_SIGNAL_Params ********") 
             print("[INFO] ecg: %s" %self.ecg)
             print("[INFO] ecg-len: %s" %len(self.ecg) )
-                 
+        
+        def getECGArray(self):
+            return self.ecg
         
     class Crc():
         def __init__(self):
@@ -240,17 +251,45 @@ class ECGIshne(ecg.ECG):
             header.readHeaderISHNE(fdIshne)
             header.varBlock = ecg.readVarBlock(fdIshne, header.varLenBlockSize)
             crc.joinCrc(header.varBlock)
-            ecg.read_ecg(fdIshne)
+            ecg.read_ecg(fdIshne, header.nLeads)
             
             fdIshne.close() #Close file 
             
             return {'header': header, 'ecg' : ecg}
         
         return {};
-
+        
+        
+        
+    def printECG(self, sampleFrom, sampleTo):
+        ecg = self.getSignal().getECGArray()
+        fs = self.getHeader().samplingRate
+        offset = 30 + sampleFrom
+        
+        plt.figure(1)        
+        for n in range(self.getHeader().nLeads):
+            #lastSample = (fs * (NUM_DERIVACIONES + 1)) + offset
+            #print("last sample es: " + str(lastSample))
+            channel = ecg[n][offset:sampleTo]
+            x = np.arange(0, len(channel), 1.0)/fs
+            
+            plt.figure()
+            #ax = fig.gca()
+            #ax.set_xticks(np.arange(0, len(channel), fs))
+            plt.title("Derivacion " + str(n+1))
+            plt.plot(x, channel)
+            plt.xlabel("tiempo [s]")
+            plt.ylabel("amplitud [nV]")
+            plt.grid(color='g', linestyle='--', linewidth=0.7)
+            plt.show()
+            
+            #print("size Channel: %d" %len(ecg[n]))            
+        
+      
 
 if __name__=="__main__":
     #print(is_Ishne_file("./sample-data/a103l.hea"))
     ishneECG = ECGIshne("./matlab_ishne_code/ishne.ecg")
     ishneECG.printTestECG()
+    ishneECG.printECG(sampleFrom=0, sampleTo=2500)
     
