@@ -30,6 +30,9 @@ class ECG(object):
     def getSignal(self):
         return self.signal
     
+    def printECG(self, sampleFrom, sampleTo):
+        return self.printECG(sampleFrom, sampleTo)
+    
     # Metodo de testing para ver si el objeto se ha creado correctamente
     def printTestECG(self):
         print("********************************************************\n")

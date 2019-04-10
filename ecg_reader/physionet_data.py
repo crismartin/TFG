@@ -9,6 +9,7 @@ Created on Mon Oct 22 21:16:26 2018
 #import numpy as np
 import ecg
 import wfdb
+import matplotlib.pyplot as plt
 from IPython.display import display
 
 
@@ -46,6 +47,11 @@ class ECGPhysionet(ecg.ECG):
     
     def getSignal(self):
         return self.signal
+    
+    def printECG(self, sampleFrom, sampleTo):        
+        wfdb.plot_wfdb(record=self.signal.signal, 
+                       title='Record a103l from Physionet Challenge 2015',
+                       time_units='seconds')
 
     
     class Header():
@@ -65,7 +71,7 @@ class ECGPhysionet(ecg.ECG):
             self.signal = self._read_ecg_data(fileName)
         
         def _read_ecg_data(self, fileName):
-            signal = wfdb.rdsamp(fileName, sampfrom=100, sampto=15000)
+            signal = wfdb.rdrecord(fileName, sampfrom=100, sampto=4000)
             return signal
         
         def printInfo(self):
@@ -83,7 +89,8 @@ class ECGPhysionet(ecg.ECG):
 
 if __name__=="__main__":
     #print(is_Ishne_file("./sample-data/a103l.hea"))
-    physioECG = ECGPhysionet("./sample-data/drive02")
+    physioECG = ECGPhysionet("./sample-data/100")
     physioECG.printTestECG()
+    physioECG.printECG(100, 15000)
     
     

@@ -266,7 +266,7 @@ class ECGIshne(ecg.ECG):
         fs = self.getHeader().samplingRate
         offset = 30 + sampleFrom
         
-        plt.figure(1)        
+        plt.figure(1)
         for n in range(self.getHeader().nLeads):
             #lastSample = (fs * (NUM_DERIVACIONES + 1)) + offset
             #print("last sample es: " + str(lastSample))
@@ -291,5 +291,5 @@ if __name__=="__main__":
     #print(is_Ishne_file("./sample-data/a103l.hea"))
     ishneECG = ECGIshne("./matlab_ishne_code/ishne.ecg")
     ishneECG.printTestECG()
-    ishneECG.printECG(sampleFrom=0, sampleTo=2500)
+    ishneECG.printECG(0, 2500)
     
