@@ -270,6 +270,7 @@ class ECGIshne(ecg.ECG):
         for n in range(self.getHeader().nLeads):
             #lastSample = (fs * (NUM_DERIVACIONES + 1)) + offset
             #print("last sample es: " + str(lastSample))
+            print(str(len(ecg[n])))
             channel = ecg[n][offset:sampleTo]
             x = np.arange(0, len(channel), 1.0)/fs
             
@@ -291,5 +292,8 @@ if __name__=="__main__":
     #print(is_Ishne_file("./sample-data/a103l.hea"))
     ishneECG = ECGIshne("./matlab_ishne_code/ishne.ecg")
     ishneECG.printTestECG()
-    ishneECG.printECG(0, 2500)
+    ishneECG.printECG(0, 12050)
     
+    
+    
+ 
