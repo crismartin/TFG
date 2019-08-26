@@ -8,7 +8,8 @@ Created on Wed Mar 14 20:13:59 2018
 import ecg
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator
+from IPython.display import display
+
 
 ISHNE_MAGIC_NUM = "ISHNE1.0"
 LONG_MAGICNUM_ISHNE = 8
@@ -55,21 +56,73 @@ def read_file(urlFile):
 # Clase principal ECG_ISHNE
 class ECGIshne(ecg.ECG):
     
+    typeECG = ISHNE_MAGIC_NUM
+    
     def __init__(self, fileName):
         self.fileName = fileName
-        self.typeECG = ISHNE_MAGIC_NUM
         data = self._read_ishne_file(fileName)
-        self.header = data['header'] if data != {} else []
-        self.signal = data['ecg'] if data != {} else []
+        self.header = data['header'] if data != {} else []    
+        self.__allSignal = data['ecg'] if data != {} else []
+        self.signal = self.__allSignal.ecg
+        self.lenEcg = self.__allSignal.lenEcg
         
+    ""
+    " Devuelve el formato de ECG "
+    ""
     def getTypeECG(self):
         return self.typeECG
     
+    ""
+    " Devuelve ls datos de cabecera de la señal "
+    ""
     def getHeader(self):
         return self.header
-    
+        
+    ""
+    " Devuelve los datos de la señal "
+    ""
     def getSignal(self):
         return self.signal
+    
+    ""
+    " Representa la señal ECG "
+    ""
+    def printECG(self, sampleFrom, sampleTo):
+        ecg = self.signal
+        
+        fs = self.getHeader().samplingRate
+        offset = 30 + sampleFrom
+        
+        plt.figure(1)        
+        numPlot = 211
+        for n in range(self.getHeader().nLeads):
+            #lastSample = (fs * (NUM_DERIVACIONES + 1)) + offset
+            #print("last sample es: " + str(lastSample))
+            #print(str(len(ecg[n])))
+            channel = ecg[n][offset:sampleTo]
+            x = np.arange(0, len(channel), 1.0)/fs
+            
+            plt.subplot(numPlot)
+            if(n == 0):
+                plt.title("Representacion ECG Formato ISHNE")
+            #ax = fig.gca()
+            #ax.set_xticks(np.arange(0, len(channel), fs))
+            
+            plt.plot(x, channel)
+            plt.xlabel("time/second")
+            plt.ylabel("/mV")
+            plt.grid(color='g', linestyle='--', linewidth=0.7)            
+            numPlot += 1
+            #print("size Channel: %d" %len(ecg[n]))
+        plt.show()
+    
+    ""
+    " Imprime la informacion de los datos de la señal "
+    ""
+    def printInfoECG(self):
+        display(self.__allSignal.__dict__)
+    
+    
     
     class Header():
         def __init__(self):
@@ -169,40 +222,7 @@ class ECGIshne(ecg.ECG):
             print("[INFO] reserverd: %s" %self.reserverd)
             
      
-    class ECG():    
-        def __init__(self):
-            self.crcChecksum = ""
-            self.ecg = []
-            self.lenEcg = 0
-        
-        def read_checksum(self, fdFile):
-            crcChecksum = np.fromfile(fdFile, dtype=np.uint16, count=LONG_CRC_ISHNE)[0]
-            #print("[INFO] CRC CHECKSUM: %s" %crcChecksum)
-            return crcChecksum
-        
-        def read_ecg(self, fdFile, nLeads):
-            ecgArrayBytes = np.fromfile(fdFile, dtype=np.int16, count=-1) 
-            ecgArrayBytes = np.asarray(ecgArrayBytes)            
-            ecgArrayBytes = ecgArrayBytes.reshape(-1, nLeads)
-            
-            ecgChannels = np.hsplit(ecgArrayBytes, nLeads)
-            for nChannel in range(nLeads):
-                self.ecg.append( ecgChannels[nChannel].reshape(-1) )
-            
-            return self.ecg       
-                
-        def readVarBlock(self, fileFd, varLenBlockSize):
-            varBlock = np.fromfile(fileFd, dtype=np.byte, count=varLenBlockSize)
-            """print("[INFO] varBlockLen: %s" %varBlock);"""
-            return varBlock
-        
-        def printInfo(self):
-            print("\n[INFO] ******* ECG_SIGNAL_Params ********") 
-            print("[INFO] ecg: %s" %self.ecg)
-            print("[INFO] ecg-len: %s" %len(self.ecg) )
-        
-        def getECGArray(self):
-            return self.ecg
+    
         
     class Crc():
         def __init__(self):
@@ -225,7 +245,45 @@ class ECGIshne(ecg.ECG):
         def printCrc(self):
             print("[INFO] crcCabecera: %s" %self.crcCabecera)
 
+
+
+    class ECG():    
+        def __init__(self):
+            self.crcChecksum = ""
+            self.ecg = []
+            self.lenEcg = 0
+        
+        def read_checksum(self, fdFile):
+            crcChecksum = np.fromfile(fdFile, dtype=np.uint16, count=LONG_CRC_ISHNE)[0]
+            #print("[INFO] CRC CHECKSUM: %s" %crcChecksum)
+            return crcChecksum
+        
+        def read_ecg(self, fdFile, nLeads):
+            ecgArrayBytes = np.fromfile(fdFile, dtype=np.int16, count=-1) 
+            ecgArrayBytes = np.asarray(ecgArrayBytes)            
+            ecgArrayBytes = ecgArrayBytes.reshape(-1, nLeads)
             
+            ecgChannels = np.hsplit(ecgArrayBytes, nLeads)
+            for nChannel in range(nLeads):
+                aux = ecgChannels[nChannel].reshape(-1)
+                self.ecg.append( aux[30:2500] ) #Esto hay que cambiar
+            
+            return self.ecg       
+                
+        def readVarBlock(self, fileFd, varLenBlockSize):
+            varBlock = np.fromfile(fileFd, dtype=np.byte, count=varLenBlockSize)
+            """print("[INFO] varBlockLen: %s" %varBlock);"""
+            return varBlock
+        
+        def printInfo(self):
+            print("\n[INFO] ******* ECG_SIGNAL_Params ********") 
+            print("[INFO] ecg: %s" %self.ecg)
+            print("[INFO] ecg-len: %s" %len(self.ecg) )
+        
+        def getECGArray(self):
+            return self.ecg
+        
+        
                 
     def _read_ishne_file(self, fileName):
         header = self.Header()
@@ -259,41 +317,11 @@ class ECGIshne(ecg.ECG):
         
         return {};
         
-        
-        
-    def printECG(self, sampleFrom, sampleTo):
-        ecg = self.getSignal().getECGArray()
-        fs = self.getHeader().samplingRate
-        offset = 30 + sampleFrom
-        
-        plt.figure(1)
-        for n in range(self.getHeader().nLeads):
-            #lastSample = (fs * (NUM_DERIVACIONES + 1)) + offset
-            #print("last sample es: " + str(lastSample))
-            print(str(len(ecg[n])))
-            channel = ecg[n][offset:sampleTo]
-            x = np.arange(0, len(channel), 1.0)/fs
-            
-            plt.figure()
-            #ax = fig.gca()
-            #ax.set_xticks(np.arange(0, len(channel), fs))
-            plt.title("Derivacion " + str(n+1))
-            plt.plot(x, channel)
-            plt.xlabel("tiempo [s]")
-            plt.ylabel("amplitud [nV]")
-            plt.grid(color='g', linestyle='--', linewidth=0.7)
-            plt.show()
-            
-            #print("size Channel: %d" %len(ecg[n]))            
-        
-      
 
 if __name__=="__main__":
     #print(is_Ishne_file("./sample-data/a103l.hea"))
-    ishneECG = ECGIshne("./matlab_ishne_code/ishne.ecg")
-    ishneECG.printTestECG()
-    ishneECG.printECG(0, 12050)
+    ishneECG = ECGIshne("./matlab_ishne_code/ishne.ecg")    
+    ishneECG.printInfoECG()
+    ishneECG.printECG(0, 2600)
+    display(ishneECG.signal[0])
     
-    
-    
- 

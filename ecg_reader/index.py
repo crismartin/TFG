@@ -15,10 +15,14 @@ import numpy as np
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 
+# Factoria de ECG
+ecgFactory = ecgf.ECGFactory()
 
 # leemos el ECG que queremos representar
-# leemos el ECG que queremos representar
-ecgFactory = ecgf.ECGFactory()
+# FORMATO ISHNE
+
+"""
+
 ecg = ecgFactory.create_ECG("./matlab_ishne_code/ishne.ecg")
 
 ecgFirstChannel = ecg.getSignal().getECGArray()[0]
@@ -27,8 +31,18 @@ offset = 30
 
 channel = ecgFirstChannel[offset:12000] ## ¿De donde salia lo del 12k??
 x = np.arange(0, len(channel), 1.0)/fs
+"""
              
-             
+#FORMATO PHYSIONET: ./sample-data/100
+#FORMATO ISHNE:     ./matlab_ishne_code/ishne.ecg
+ecg = ecgFactory.create_ECG("./sample-data/100")
+signals = ecg.signal
+nLeads = ecg.header.nLeads
+fs = ecg.header.samplingRate
+
+
+ejeY = signals[0]
+ejeX = np.arange(0, len(ejeY), 1.0)/fs
 
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -44,11 +58,11 @@ app.layout = html.Div(children=[
         id='example-graph',
         figure={
             'data': [
-                {'x': x, 'y': channel, 'type': 'lines', 'name': 'SF'},
+                {'x': ejeX, 'y': ejeY, 'type': 'lines', 'name': 'SF'},
                 
             ],
             'layout': {
-                'title': 'Representación de ECG'
+                'title': 'Representación de ECG con formato ' + ecg.typeECG
             }
         }
     ),

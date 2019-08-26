@@ -33,6 +33,12 @@ class ECG(object):
     def printECG(self, sampleFrom, sampleTo):
         return self.printECG(sampleFrom, sampleTo)
     
+    ""
+    " Imprime la informacion de los datos de la señal "
+    ""
+    def printInfoECG(self):
+        return self.printInfoECG()
+    
     # Metodo de testing para ver si el objeto se ha creado correctamente
     def printTestECG(self):
         print("********************************************************\n")
@@ -44,7 +50,7 @@ class ECG(object):
         self.header.printInfo()
         print("\n[TEST][ECG] - header - printInfo method ended\n")
         print("\n[TEST][ECG] - signal - printInfo method called\n")
-        self.signal.printInfo()
+        self.printInfoECG()
         print("\n[TEST][ECG] - header - printInfo method ended\n")
         print("********************************************************\n")
         print("************** T E S T - E C G - E N D *****************\n")

@@ -33,6 +33,7 @@ class ECGFactory():
 if __name__ == "__main__":
     print('Ejecutando como programa principal')
     # ishne file: ./matlab_ishne_code/ishne.ecg
-    # physionet file: ./sample-data/drive02
+    # physionet file: ./sample-data/drive02             #Con 5 leads
+    #                  ./sample-data/100
     miECG = ECGFactory().create_ECG("./matlab_ishne_code/ishne.ecg")
     miECG.printTestECG()
