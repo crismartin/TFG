@@ -12,27 +12,16 @@ import dash_html_components as html
 import ecg_factory as ecgf
 import numpy as np
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+from dash.dependencies import Input, Output
 
+import plotly.graph_objs as go
+
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 # Factoria de ECG
 ecgFactory = ecgf.ECGFactory()
-
-# leemos el ECG que queremos representar
-# FORMATO ISHNE
-
-"""
-
-ecg = ecgFactory.create_ECG("./matlab_ishne_code/ishne.ecg")
-
-ecgFirstChannel = ecg.getSignal().getECGArray()[0]
-fs = ecg.getHeader().samplingRate
-offset = 30
-
-channel = ecgFirstChannel[offset:12000] ## ¿De donde salia lo del 12k??
-x = np.arange(0, len(channel), 1.0)/fs
-"""
-             
+        
 #FORMATO PHYSIONET: ./sample-data/100
 #FORMATO ISHNE:     ./matlab_ishne_code/ishne.ecg
 ecg = ecgFactory.create_ECG("./sample-data/100")
@@ -40,38 +29,63 @@ signals = ecg.signal
 nLeads = ecg.header.nLeads
 fs = ecg.header.samplingRate
 
-
+#Datos de la señal (Y(x))
 ejeY = signals[0]
 ejeX = np.arange(0, len(ejeY), 1.0)/fs
 
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+                
+#Dropdown para elegir los leads del ECG
+optsLeads = [ {'value': i+1, 'label': 'Derivacion '+ str(i+1)} for i in range(nLeads)]
+print(optsLeads)
+
+#Objeto grafica
+ecg_trace = go.Scatter(x = ejeX, y = ejeY,
+                    name = 'SF', mode='lines')
+
+layout = go.Layout(title = 'Representacion de ECG con formato ' + ecg.typeECG,
+                   hovermode = 'closest')
+
+
+fig = go.Figure(data = [ecg_trace], layout = layout)
+
+print("esto se hace!")
+
+#Creamos el Dash Layout
 
 app.layout = html.Div(children=[
-    html.H1(children='Hello Dash App'),
+    html.H1(children='ECG App'),
 
-    html.Div(children='''
-        Dash: A web application framework for Python.
-    '''),
-
-    dcc.Graph(
-        id='example-graph',
-        figure={
-            'data': [
-                {'x': ejeX, 'y': ejeY, 'type': 'lines', 'name': 'SF'},
-                
-            ],
-            'layout': {
-                'title': 'Representación de ECG con formato ' + ecg.typeECG
-            }
-        }
-    ),
-
-
-    html.Div(children=[html.A(html.Button('Reload Page!', className='three columns'), 
-                                                    href='http://localhost:8050/')])
+             
+    #Agregamos la figura
+    dcc.Graph(id='plot', figure=fig),
+    
+    # Agregamos el dropdown
+    html.P([
+        html.Label("Elije una derivacion"),
+        dcc.Dropdown(id = 'opt', 
+                     options = optsLeads,
+                     value = optsLeads[0]['value'])
+            ], style = {'width': '400px',
+                        'fontSize' : '20px',
+                        'padding-left' : '100px',
+                        'display': 'inline-block'})
+    
 ])
-
+    
+# Agregamos el callback para actualizar el dropdown
+@app.callback(Output('plot', 'figure'),
+             [Input('opt', 'value')])
+def update_figure(lead):
+    # Actualizamos la derivacion de acuerdo a lo seleccionado en el dropdown
+    print(lead)
+    ejeY = signals[lead-1]
+    ejeX = np.arange(0, len(ejeY), 1.0)/fs
+                    
+    ecg_trace = go.Scatter(x = ejeX, y = ejeY,
+                    name = 'SF', mode='lines')
+    fig = go.Figure(data = [ecg_trace], layout = layout)
+    return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)

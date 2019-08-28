@@ -324,4 +324,7 @@ if __name__=="__main__":
     ishneECG.printInfoECG()
     ishneECG.printECG(0, 2600)
     display(ishneECG.signal[0])
+    x = [{'value': 1, 'label': 'Derivacion 1'}, {'value': 2, 'label': 'Derivacion 2'}]
+
+    
     
