@@ -78,16 +78,18 @@ navbar = dbc.NavbarSimple(
 formulario = dbc.Form([
         
     dbc.FormGroup([
-        dbc.Label("Url remota", html_for="url-rem-file"),
-        dbc.Input(type="url", id="url-rem-file", placeholder="Url del fichero en remoto"),
+        dbc.Label("Desde url remota: ", html_for="url-rem-file"),
+        dbc.Input(type="url", id="url-rem-file", placeholder="http:// ..."),
     ]),
+        
     html.P([
-        html.Label("o")
-    ]),
+        html.Label("ó")
+    ], style={'text-align': 'center'} ),
+        
     dbc.FormGroup([
         dcc.Upload([
-            'Drag and Drop or ',
-            html.A('Select a File')
+            'Arrastra y suelta o ',
+            html.A('selecciona un archivo')
         ], style={
             'width': '100%',
             'height': '60px',
@@ -96,7 +98,7 @@ formulario = dbc.Form([
             'borderStyle': 'dashed',
             'borderRadius': '5px',
             'textAlign': 'center'
-        })         
+        }, multiple=False)         
     ])
 ])
 
@@ -113,9 +115,11 @@ body = dbc.Container([
                 dbc.ModalBody([
                     formulario
                 ]),
-                dbc.ModalFooter(
-                    dbc.Button("Close", id="close", className="ml-auto")
-                ),
+                dbc.ModalFooter([
+                    dbc.Button("Cerrar", id="close", className="mr-1"),
+                    dbc.Button("Procesar", id="save", color="primary", 
+                               className="col-md-2"),
+                ]),
             ],
             id="modal",
             size="lg"
@@ -177,11 +181,11 @@ def update_figure(lead):
 
 @app.callback(
     Output("modal", "is_open"),
-    [Input("open", "n_clicks"), Input("close", "n_clicks")],
+    [Input("open", "n_clicks"), Input("close", "n_clicks"), Input("save", "n_clicks")],
     [State("modal", "is_open")],
 )
-def toggle_modal(n1, n2, is_open):
-    if n1 or n2:
+def toggle_modal(n1, n2, n3, is_open):
+    if n1 or n2 or n3:
         return not is_open
     return is_open
 
