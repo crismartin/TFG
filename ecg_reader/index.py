@@ -106,7 +106,11 @@ formulario = dbc.Form([
             },
             multiple=False
         ),
-        html.Div(id='out-upload-file'),        
+        html.Div(id='container-upfile',
+                 children=html.Div(
+                             id="msg-upfile"
+                         )
+                 ),        
     ])
 ])
 
@@ -116,7 +120,7 @@ body = dbc.Container([
     
     
     html.Div([
-        dbc.Button("Subir fichero", id="open", color="primary"),
+        dbc.Button("Subir fichero", id="open-upfile", color="primary"),
         dbc.Modal(
             [
                 dbc.ModalHeader("Cargar Fichero"),
@@ -124,8 +128,8 @@ body = dbc.Container([
                     formulario
                 ]),
                 dbc.ModalFooter([
-                    dbc.Button("Cerrar", id="close", className="mr-1"),
-                    dbc.Button("Procesar", id="save", color="success", 
+                    dbc.Button("Cerrar", id="close-upfile", className="mr-1"),
+                    dbc.Button("Procesar", id="proc-upfile", color="success", 
                                className="col-md-2"),
                 ]),
             ],
@@ -201,7 +205,7 @@ def parse_contents(contents, filename, date):
              [Input('opt', 'value')])
 def update_figure(lead):
     # Actualizamos la derivacion de acuerdo a lo seleccionado en el dropdown
-    app.logger.info("@callback: Inicio 'update_figure'")
+    app.logger.info("@callback: Inicio 'update_figure()'")
     
     ejeY = signals[lead-1]
     ejeX = np.arange(0, len(ejeY), 1.0)/fs
@@ -215,9 +219,13 @@ def update_figure(lead):
 
 
 
+
 @app.callback(
     Output("modal", "is_open"),
-    [Input("open", "n_clicks"), Input("close", "n_clicks"), Input("save", "n_clicks")],
+    [Input("open-upfile", "n_clicks"), 
+     Input("close-upfile", "n_clicks"), 
+     Input("proc-upfile", "n_clicks")
+    ],
     [State("modal", "is_open")],
 )
 def toggle_modal(n1, n2, n3, is_open):
@@ -227,20 +235,40 @@ def toggle_modal(n1, n2, n3, is_open):
 
 
 
-@app.callback(Output('out-upload-file', 'children'),
+
+@app.callback(
+    Output("container-upfile", "children"),
+    [Input("modal", "is_open")],
+)
+def set_msg_uploadFile(is_open):
+    app.logger.info("@callback: Inicio 'set_msg_uploadFile()'")
+    return html.Div([],
+                id="msg-upfile",
+                style= {'display': 'block'},
+            )
+        
+    
+
+
+@app.callback(
+    Output("upload-file", "filename"),
+    [Input("close-upfile", "n_clicks")],
+)
+def reset_updloadFile(nclose):
+    if nclose > 0:
+        return None
+    
+
+
+
+@app.callback(Output('msg-upfile', 'children'),
               [Input('upload-file', 'contents')],
               [State('upload-file', 'filename'),
                State('upload-file', 'last_modified')])
 def update_file(list_contenidos, list_nombres, list_fechas):
     
-    app.logger.info("@callback: Inicio 'update_file'")
+    app.logger.info("@callback: Inicio 'update_file()'")
     
-    """if list_contenidos is not None:
-        children = [
-            parse_contents(c, n, d) for c, n, d in
-            zip(list_contenidos, list_nombres, list_fechas)
-        ]"""
-        
     if list_nombres is not None:
         app.logger.info("el nombre del fichero es: " + list_nombres)
         app.logger.info("longitud del fichero?: " + str(len(list_contenidos)))
@@ -249,7 +277,7 @@ def update_file(list_contenidos, list_nombres, list_fechas):
                     dbc.Badge(list_nombres, color="info", className="mr-1")
                     ],                
                 )
-    
+  
 
         
 ###############################################################################

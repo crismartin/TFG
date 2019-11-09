@@ -257,3 +257,911 @@ IOError: [Errno 32] Broken pipe
 2019-11-09 20:01:00,895 INFO __main__ Thread-22 : @callback: Inicio 'update_file'
 2019-11-09 20:01:00,895 INFO __main__ Thread-22 : el nombre del fichero es: 3_2.pdf
 2019-11-09 20:01:00,895 INFO __main__ Thread-22 : longitud del fichero?: 416548
+2019-11-09 20:10:05,419 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:10:05,419 INFO __main__ MainThread : Debugger PIN: 661-222-705
+2019-11-09 20:10:06,017 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 20:10:06,018 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 20:10:10,960 INFO __main__ Thread-12 : @callback: Inicio 'update_file'
+2019-11-09 20:10:10,961 INFO __main__ Thread-12 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:10:10,961 INFO __main__ Thread-12 : longitud del fichero?: 416548
+2019-11-09 20:10:26,155 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:10:26,156 INFO __main__ MainThread : Debugger PIN: 954-531-495
+2019-11-09 20:10:26,851 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 20:10:26,854 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 20:18:25,964 INFO __main__ Thread-184 : @callback: Inicio 'update_file'
+2019-11-09 20:18:25,965 INFO __main__ Thread-185 : @callback: Inicio 'update_figure'
+2019-11-09 20:18:35,579 INFO __main__ Thread-202 : @callback: Inicio 'update_file'
+2019-11-09 20:18:35,581 INFO __main__ Thread-203 : @callback: Inicio 'update_figure'
+2019-11-09 20:26:03,890 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:26:03,894 INFO __main__ MainThread : Debugger PIN: 185-988-588
+2019-11-09 20:26:06,828 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:26:06,828 INFO __main__ MainThread : Debugger PIN: 440-774-409
+2019-11-09 20:26:09,178 INFO __main__ Thread-18 : @callback: Inicio 'update_file'
+2019-11-09 20:26:09,181 INFO __main__ Thread-19 : @callback: Inicio 'update_figure'
+2019-11-09 20:26:39,176 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:26:39,176 INFO __main__ MainThread : Debugger PIN: 346-056-845
+2019-11-09 20:26:39,233 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 269, in write
+    self.send_header("Server", self.version_string())
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 20:26:41,533 INFO __main__ Thread-18 : @callback: Inicio 'update_file'
+2019-11-09 20:26:41,534 INFO __main__ Thread-20 : @callback: Inicio 'update_figure'
+2019-11-09 20:26:51,837 INFO __main__ Thread-34 : @callback: Inicio 'update_file'
+2019-11-09 20:26:51,837 INFO __main__ Thread-34 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:26:51,837 INFO __main__ Thread-34 : longitud del fichero?: 416548
+2019-11-09 20:28:44,350 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:28:44,350 INFO __main__ MainThread : Debugger PIN: 856-415-167
+2019-11-09 20:28:44,410 ERROR werkzeug Thread-5 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 20:28:44,412 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 20:28:44,414 ERROR werkzeug Thread-4 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 20:28:46,754 INFO __main__ Thread-21 : @callback: Inicio 'update_file'
+2019-11-09 20:28:46,757 INFO __main__ Thread-22 : @callback: Inicio 'update_figure'
+2019-11-09 20:29:08,917 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:29:08,918 INFO __main__ MainThread : Debugger PIN: 103-220-513
+2019-11-09 20:29:11,694 INFO __main__ Thread-21 : @callback: Inicio 'update_figure'
+2019-11-09 20:29:11,696 INFO __main__ Thread-22 : @callback: Inicio 'update_file'
+2019-11-09 20:29:16,119 INFO __main__ Thread-26 : @callback: Inicio 'update_file'
+2019-11-09 20:29:16,119 INFO __main__ Thread-26 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:29:16,119 INFO __main__ Thread-26 : longitud del fichero?: 416548
+2019-11-09 20:29:39,051 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:29:39,052 INFO __main__ MainThread : Debugger PIN: 087-735-143
+2019-11-09 20:29:39,650 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 20:29:39,652 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 20:29:43,585 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:29:43,585 INFO __main__ MainThread : Debugger PIN: 623-049-629
+2019-11-09 20:29:44,145 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 20:29:44,144 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 20:29:57,342 INFO __main__ Thread-25 : @callback: Inicio 'update_file'
+2019-11-09 20:29:57,342 INFO __main__ Thread-25 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:29:57,342 INFO __main__ Thread-25 : longitud del fichero?: 416548
+2019-11-09 20:30:11,463 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:30:11,463 INFO __main__ MainThread : Debugger PIN: 214-091-619
+2019-11-09 20:30:11,518 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 20:30:13,902 INFO __main__ Thread-19 : @callback: Inicio 'update_file'
+2019-11-09 20:30:13,904 INFO __main__ Thread-20 : @callback: Inicio 'update_figure'
+2019-11-09 20:30:19,452 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 20:30:19,454 INFO __main__ Thread-24 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:30:19,454 INFO __main__ Thread-24 : longitud del fichero?: 416548
+2019-11-09 20:31:58,769 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:31:58,769 INFO __main__ MainThread : Debugger PIN: 342-865-048
+2019-11-09 20:31:58,825 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 20:32:01,115 INFO __main__ Thread-19 : @callback: Inicio 'update_file'
+2019-11-09 20:32:01,119 INFO __main__ Thread-20 : @callback: Inicio 'update_figure'
+2019-11-09 20:32:07,129 INFO __main__ Thread-25 : @callback: Inicio 'update_file'
+2019-11-09 20:32:07,130 INFO __main__ Thread-25 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:32:07,130 INFO __main__ Thread-25 : longitud del fichero?: 416548
+2019-11-09 20:32:15,936 INFO __main__ Thread-33 : @callback: Inicio 'update_file'
+2019-11-09 20:32:15,937 INFO __main__ Thread-33 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:32:15,937 INFO __main__ Thread-33 : longitud del fichero?: 416548
+2019-11-09 20:32:22,777 INFO __main__ Thread-36 : @callback: Inicio 'update_file'
+2019-11-09 20:32:22,777 INFO __main__ Thread-36 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:32:22,778 INFO __main__ Thread-36 : longitud del fichero?: 416548
+2019-11-09 20:32:46,517 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:32:46,517 INFO __main__ MainThread : Debugger PIN: 718-644-919
+2019-11-09 20:32:47,083 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 20:32:47,084 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 20:34:44,072 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:34:44,073 INFO __main__ MainThread : Debugger PIN: 016-719-020
+2019-11-09 20:34:44,136 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 20:34:46,496 INFO __main__ Thread-17 : @callback: Inicio 'update_file'
+2019-11-09 20:34:46,501 INFO __main__ Thread-20 : @callback: Inicio 'update_figure'
+2019-11-09 20:34:51,309 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 20:34:51,309 INFO __main__ Thread-24 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:34:51,309 INFO __main__ Thread-24 : longitud del fichero?: 416548
+2019-11-09 20:34:56,457 INFO __main__ Thread-31 : @callback: Inicio 'update_file'
+2019-11-09 20:34:56,457 INFO __main__ Thread-31 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:34:56,457 INFO __main__ Thread-31 : longitud del fichero?: 416548
+2019-11-09 20:36:37,223 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 20:36:37,223 INFO __main__ MainThread : Debugger PIN: 780-804-917
+2019-11-09 20:36:38,052 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 20:36:38,061 INFO __main__ Thread-9 : @callback: Inicio 'update_file'
+2019-11-09 20:36:44,767 INFO __main__ Thread-16 : @callback: Inicio 'update_file'
+2019-11-09 20:36:44,767 INFO __main__ Thread-16 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:36:44,767 INFO __main__ Thread-16 : longitud del fichero?: 416548
+2019-11-09 20:36:49,960 INFO __main__ Thread-23 : @callback: Inicio 'update_file'
+2019-11-09 20:36:49,960 INFO __main__ Thread-23 : el nombre del fichero es: 3_2.pdf
+2019-11-09 20:36:49,960 INFO __main__ Thread-23 : longitud del fichero?: 416548
+2019-11-09 21:03:57,456 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 21:03:57,456 INFO __main__ MainThread : Debugger PIN: 394-550-766
+2019-11-09 21:04:00,255 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 21:04:00,255 INFO __main__ MainThread : Debugger PIN: 290-984-479
+2019-11-09 21:04:05,962 INFO __main__ Thread-19 : @callback: Inicio 'update_file'
+2019-11-09 21:04:05,965 INFO __main__ Thread-20 : @callback: Inicio 'update_figure'
+2019-11-09 21:04:07,721 INFO __main__ Thread-22 : @callback: Inicio 'update_file'
+2019-11-09 21:04:09,216 INFO __main__ Thread-25 : @callback: Inicio 'update_file'
+2019-11-09 21:04:43,849 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 21:04:43,849 INFO __main__ MainThread : Debugger PIN: 296-715-918
+2019-11-09 21:04:44,505 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 21:04:44,510 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 21:04:48,903 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 21:04:48,904 INFO __main__ MainThread : Debugger PIN: 344-843-270
+2019-11-09 21:04:48,957 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 21:04:51,854 INFO __main__ Thread-18 : @callback: Inicio 'update_file'
+2019-11-09 21:04:51,922 INFO __main__ Thread-19 : @callback: Inicio 'update_figure'
+2019-11-09 21:04:53,704 INFO __main__ Thread-21 : @callback: Inicio 'update_file'
+2019-11-09 21:04:55,281 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 21:05:45,662 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 21:05:45,662 INFO __main__ MainThread : Debugger PIN: 057-957-094
+2019-11-09 21:05:48,787 INFO __main__ Thread-20 : @callback: Inicio 'update_file'
+2019-11-09 21:05:48,787 INFO __main__ Thread-20 : @callback: Entre estos dos'
+2019-11-09 21:05:48,792 INFO __main__ Thread-21 : @callback: Inicio 'update_figure'
+2019-11-09 21:05:50,678 INFO __main__ Thread-23 : @callback: Inicio 'update_file'
+2019-11-09 21:05:50,678 INFO __main__ Thread-23 : @callback: Entre estos dos'
+2019-11-09 21:07:33,673 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 21:07:33,674 INFO __main__ MainThread : Debugger PIN: 575-053-154
+2019-11-09 21:07:34,240 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 21:07:34,242 INFO __main__ Thread-7 : @callback: Entre estos dos'
+2019-11-09 21:07:34,242 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 21:07:53,215 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 21:07:53,216 INFO __main__ MainThread : Debugger PIN: 212-801-340
+2019-11-09 21:07:53,758 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 21:07:53,759 INFO __main__ Thread-7 : @callback: Entre estos dos'
+2019-11-09 21:07:53,760 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 21:07:55,177 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 21:07:55,177 INFO __main__ Thread-11 : @callback: Entre estos dos'
+2019-11-09 21:08:58,882 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 21:08:58,883 INFO __main__ MainThread : Debugger PIN: 454-988-815
+2019-11-09 21:08:58,927 INFO __main__ Thread-5 : @callback: Inicio 'update_file'
+2019-11-09 21:08:58,928 INFO __main__ Thread-5 : @callback: Clicados'
+2019-11-09 21:08:59,539 INFO __main__ Thread-9 : @callback: Inicio 'update_file'
+2019-11-09 21:08:59,539 INFO __main__ Thread-9 : @callback: Entre estos dos'
+2019-11-09 21:08:59,542 INFO __main__ Thread-10 : @callback: Inicio 'update_figure'
+2019-11-09 21:09:02,083 INFO __main__ Thread-13 : @callback: Inicio 'update_file'
+2019-11-09 21:09:02,084 INFO __main__ Thread-13 : @callback: Clicados'
+2019-11-09 21:09:09,690 INFO __main__ Thread-17 : @callback: Inicio 'update_file'
+2019-11-09 21:09:09,690 INFO __main__ Thread-17 : @callback: Clicados'
+2019-11-09 21:09:52,455 INFO __main__ Thread-32 : @callback: Inicio 'update_file'
+2019-11-09 21:09:52,455 INFO __main__ Thread-32 : @callback: Clicados'
+2019-11-09 21:49:48,592 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 21:49:48,595 INFO __main__ MainThread : Debugger PIN: 192-826-639
+2019-11-09 21:49:49,281 INFO __main__ Thread-6 : @callback: Inicio 'update_figure'
+2019-11-09 21:49:49,300 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 21:49:49,303 INFO __main__ Thread-7 : @callback: Entre estos dos'
+2019-11-09 21:49:57,161 INFO __main__ Thread-13 : @callback: Inicio 'update_file'
+2019-11-09 21:49:57,161 INFO __main__ Thread-13 : @callback: btnOp': 1
+2019-11-09 21:49:57,162 INFO __main__ Thread-13 : @callback: btnClo': None
+2019-11-09 21:49:57,162 INFO __main__ Thread-13 : @callback: btnPro': None
+2019-11-09 21:49:57,162 INFO __main__ Thread-13 : @callback: Clicados'
+2019-11-09 21:50:04,576 INFO __main__ Thread-16 : @callback: Inicio 'update_file'
+2019-11-09 21:50:04,576 INFO __main__ Thread-16 : @callback: btnOp': 1
+2019-11-09 21:50:04,576 INFO __main__ Thread-16 : @callback: btnClo': None
+2019-11-09 21:50:04,576 INFO __main__ Thread-16 : @callback: btnPro': None
+2019-11-09 21:50:04,576 INFO __main__ Thread-16 : @callback: Clicados'
+2019-11-09 21:50:28,768 INFO __main__ Thread-26 : @callback: Inicio 'update_file'
+2019-11-09 21:50:28,769 INFO __main__ Thread-26 : @callback: btnOp': 1
+2019-11-09 21:50:28,770 INFO __main__ Thread-26 : @callback: btnClo': 1
+2019-11-09 21:50:28,770 INFO __main__ Thread-26 : @callback: btnPro': None
+2019-11-09 21:50:28,770 INFO __main__ Thread-26 : @callback: Clicados'
+2019-11-09 21:50:32,114 INFO __main__ Thread-29 : @callback: Inicio 'update_file'
+2019-11-09 21:50:32,114 INFO __main__ Thread-29 : @callback: btnOp': 2
+2019-11-09 21:50:32,115 INFO __main__ Thread-29 : @callback: btnClo': 1
+2019-11-09 21:50:32,115 INFO __main__ Thread-29 : @callback: btnPro': None
+2019-11-09 21:50:32,115 INFO __main__ Thread-29 : @callback: Clicados'
+2019-11-09 21:50:44,812 INFO __main__ Thread-36 : @callback: Inicio 'update_file'
+2019-11-09 21:50:44,812 INFO __main__ Thread-36 : @callback: btnOp': 2
+2019-11-09 21:50:44,812 INFO __main__ Thread-36 : @callback: btnClo': 2
+2019-11-09 21:50:44,812 INFO __main__ Thread-36 : @callback: btnPro': None
+2019-11-09 21:50:44,812 INFO __main__ Thread-36 : @callback: Clicados'
+2019-11-09 22:05:31,050 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:05:31,051 INFO __main__ MainThread : Debugger PIN: 180-848-556
+2019-11-09 22:05:33,821 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:05:33,821 INFO __main__ MainThread : Debugger PIN: 273-030-188
+2019-11-09 22:05:43,662 INFO __main__ Thread-17 : @callback: Inicio 'update_file'
+2019-11-09 22:05:43,665 INFO __main__ Thread-18 : @callback: Inicio 'update_figure'
+2019-11-09 22:05:49,587 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 22:05:49,587 INFO __main__ Thread-24 : el nombre del fichero es: 3_2.pdf
+2019-11-09 22:05:49,588 INFO __main__ Thread-24 : longitud del fichero?: 416548
+2019-11-09 22:07:23,363 INFO __main__ Thread-74 : @callback: Inicio 'update_file'
+2019-11-09 22:07:23,368 INFO __main__ Thread-76 : @callback: Inicio 'update_figure'
+2019-11-09 22:07:36,728 INFO __main__ Thread-84 : @callback: Inicio 'update_file'
+2019-11-09 22:07:36,729 INFO __main__ Thread-84 : el nombre del fichero es: 3_2.pdf
+2019-11-09 22:07:36,729 INFO __main__ Thread-84 : longitud del fichero?: 416548
+2019-11-09 22:08:21,222 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:08:21,223 INFO __main__ MainThread : Debugger PIN: 116-239-347
+2019-11-09 22:08:21,894 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 22:08:21,897 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 22:08:22,614 ERROR werkzeug Thread-8 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 22:08:25,427 INFO __main__ Thread-22 : @callback: Inicio 'update_file'
+2019-11-09 22:08:25,431 INFO __main__ Thread-24 : @callback: Inicio 'update_figure'
+2019-11-09 22:08:25,787 INFO __main__ Thread-25 : @callback: modal is open'
+2019-11-09 22:11:07,697 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:11:07,697 INFO __main__ MainThread : Debugger PIN: 543-151-226
+2019-11-09 22:11:07,769 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 22:11:10,349 INFO __main__ Thread-17 : @callback: Inicio 'update_file'
+2019-11-09 22:11:10,355 INFO __main__ Thread-19 : @callback: Inicio 'update_figure'
+2019-11-09 22:11:10,935 INFO __main__ Thread-20 : @callback: modal is close'
+2019-11-09 22:11:31,156 INFO __main__ Thread-29 : @callback: modal is open'
+2019-11-09 22:14:49,668 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:14:49,669 INFO __main__ MainThread : Debugger PIN: 710-252-378
+2019-11-09 22:14:52,318 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:14:52,318 INFO __main__ MainThread : Debugger PIN: 138-703-250
+2019-11-09 22:15:00,679 INFO __main__ Thread-17 : @callback: Inicio 'update_file'
+2019-11-09 22:15:00,681 INFO __main__ Thread-18 : @callback: Inicio 'update_figure'
+2019-11-09 22:15:01,116 INFO __main__ Thread-19 : @callback: modal is close'
+2019-11-09 22:15:02,763 INFO __main__ Thread-21 : @callback: modal is open'
+2019-11-09 22:15:06,569 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 22:15:06,569 INFO __main__ Thread-24 : el nombre del fichero es: 3_2.pdf
+2019-11-09 22:15:06,569 INFO __main__ Thread-24 : longitud del fichero?: 416548
+2019-11-09 22:15:07,793 INFO __main__ Thread-26 : @callback: modal is close'
+2019-11-09 22:15:11,517 INFO __main__ Thread-29 : @callback: modal is open'
+2019-11-09 22:41:42,043 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:41:42,048 INFO __main__ MainThread : Debugger PIN: 422-652-249
+2019-11-09 22:41:44,860 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:41:44,861 INFO __main__ MainThread : Debugger PIN: 245-955-390
+2019-11-09 22:41:50,639 INFO __main__ Thread-18 : @callback: Inicio 'update_figure'
+2019-11-09 22:41:50,640 INFO __main__ Thread-17 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,189 INFO __main__ Thread-19 : @callback: modal is close'
+2019-11-09 22:41:51,279 INFO __main__ Thread-20 : @callback: modal is close'
+2019-11-09 22:41:51,281 INFO __main__ Thread-21 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,306 INFO __main__ Thread-22 : @callback: modal is close'
+2019-11-09 22:41:51,318 INFO __main__ Thread-23 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,352 INFO __main__ Thread-24 : @callback: modal is close'
+2019-11-09 22:41:51,361 INFO __main__ Thread-25 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,389 INFO __main__ Thread-26 : @callback: modal is close'
+2019-11-09 22:41:51,396 INFO __main__ Thread-27 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,419 INFO __main__ Thread-28 : @callback: modal is close'
+2019-11-09 22:41:51,428 INFO __main__ Thread-29 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,462 INFO __main__ Thread-30 : @callback: modal is close'
+2019-11-09 22:41:51,465 INFO __main__ Thread-31 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,487 INFO __main__ Thread-32 : @callback: modal is close'
+2019-11-09 22:41:51,498 INFO __main__ Thread-33 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,516 INFO __main__ Thread-34 : @callback: modal is close'
+2019-11-09 22:41:51,525 INFO __main__ Thread-35 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,555 INFO __main__ Thread-36 : @callback: modal is close'
+2019-11-09 22:41:51,567 INFO __main__ Thread-37 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,588 INFO __main__ Thread-38 : @callback: modal is close'
+2019-11-09 22:41:51,599 INFO __main__ Thread-39 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,648 INFO __main__ Thread-40 : @callback: Inicio 'update_file'
+2019-11-09 22:41:51,650 INFO __main__ Thread-41 : @callback: modal is close'
+2019-11-09 22:42:52,007 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:42:52,007 INFO __main__ MainThread : Debugger PIN: 730-233-921
+2019-11-09 22:42:53,874 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 22:42:53,878 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 22:42:54,335 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 22:42:54,372 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 22:43:42,492 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:43:42,492 INFO __main__ MainThread : Debugger PIN: 485-337-201
+2019-11-09 22:43:43,052 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 22:43:43,058 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 22:43:52,441 INFO __main__ Thread-13 : @callback: Inicio 'update_file'
+2019-11-09 22:43:52,442 INFO __main__ Thread-13 : el nombre del fichero es: 3_2.pdf
+2019-11-09 22:43:52,442 INFO __main__ Thread-13 : longitud del fichero?: 416548
+2019-11-09 22:44:12,859 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:44:12,860 INFO __main__ MainThread : Debugger PIN: 485-939-788
+2019-11-09 22:44:13,465 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 22:44:13,468 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 22:44:17,924 INFO __main__ Thread-12 : @callback: Inicio 'update_file'
+2019-11-09 22:44:17,924 INFO __main__ Thread-12 : el nombre del fichero es: 3_2.pdf
+2019-11-09 22:44:17,924 INFO __main__ Thread-12 : longitud del fichero?: 416548
+2019-11-09 22:44:31,046 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:44:31,046 INFO __main__ MainThread : Debugger PIN: 938-849-226
+2019-11-09 22:44:31,602 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 22:44:31,607 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 22:44:31,802 INFO __main__ Thread-9 : @callback: modal is close'
+2019-11-09 22:44:31,859 INFO __main__ Thread-10 : @callback: Inicio 'update_file'
+2019-11-09 22:46:20,286 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:46:20,286 INFO __main__ MainThread : Debugger PIN: 166-975-856
+2019-11-09 22:46:20,893 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 22:46:20,896 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 22:46:21,396 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 22:46:21,424 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 22:46:49,284 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:46:49,284 INFO __main__ MainThread : Debugger PIN: 216-044-458
+2019-11-09 22:46:49,878 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 22:46:49,880 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 22:46:50,085 INFO __main__ Thread-9 : @callback: modal is close'
+2019-11-09 22:46:50,315 INFO __main__ Thread-10 : @callback: Inicio 'update_file'
+2019-11-09 22:50:41,859 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:50:41,859 INFO __main__ MainThread : Debugger PIN: 913-070-055
+2019-11-09 22:50:44,746 INFO __main__ Thread-20 : @callback: Inicio 'update_file'
+2019-11-09 22:50:44,748 INFO __main__ Thread-21 : @callback: Inicio 'update_figure'
+2019-11-09 22:50:49,885 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 22:50:49,887 INFO __main__ Thread-24 : el nombre del fichero es: 3_2.pdf
+2019-11-09 22:50:49,887 INFO __main__ Thread-24 : longitud del fichero?: 416548
+2019-11-09 22:51:58,727 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:51:58,728 INFO __main__ MainThread : Debugger PIN: 665-657-138
+2019-11-09 22:51:58,776 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 269, in write
+    self.send_header("Server", self.version_string())
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 22:52:01,534 INFO __main__ Thread-18 : @callback: Inicio 'update_file'
+2019-11-09 22:52:01,537 INFO __main__ Thread-19 : @callback: Inicio 'update_figure'
+2019-11-09 22:52:02,131 INFO __main__ Thread-20 : @callback: modal is close'
+2019-11-09 22:52:02,165 INFO __main__ Thread-21 : @callback: Inicio 'update_file'
+2019-11-09 22:53:28,666 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:53:28,667 INFO __main__ MainThread : Debugger PIN: 329-019-397
+2019-11-09 22:53:31,203 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:53:31,204 INFO __main__ MainThread : Debugger PIN: 902-129-401
+2019-11-09 22:53:44,201 INFO __main__ Thread-17 : @callback: Inicio 'update_file'
+2019-11-09 22:53:44,203 INFO __main__ Thread-18 : @callback: Inicio 'update_figure'
+2019-11-09 22:53:49,414 INFO __main__ Thread-21 : @callback: Inicio 'update_file'
+2019-11-09 22:53:49,414 INFO __main__ Thread-21 : el nombre del fichero es: 3_2.pdf
+2019-11-09 22:53:49,415 INFO __main__ Thread-21 : longitud del fichero?: 416548
+2019-11-09 22:53:55,449 INFO __main__ Thread-39 : @callback: Inicio 'update_file'
+2019-11-09 22:53:55,450 INFO __main__ Thread-40 : @callback: Inicio 'update_figure'
+2019-11-09 22:56:11,492 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:56:11,493 INFO __main__ MainThread : Debugger PIN: 565-182-574
+2019-11-09 22:56:14,238 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:56:14,238 INFO __main__ MainThread : Debugger PIN: 015-083-314
+2019-11-09 22:56:16,610 INFO __main__ Thread-17 : @callback: Inicio 'update_figure'
+2019-11-09 22:56:16,932 INFO __main__ Thread-18 : @callback: modal is close'
+2019-11-09 22:57:44,744 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:57:44,744 INFO __main__ MainThread : Debugger PIN: 967-069-697
+2019-11-09 22:57:47,253 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:57:47,253 INFO __main__ MainThread : Debugger PIN: 033-717-511
+2019-11-09 22:57:55,468 INFO __main__ Thread-17 : @callback: Inicio 'update_figure'
+2019-11-09 22:57:55,882 INFO __main__ Thread-18 : @callback: modal is close'
+2019-11-09 22:58:32,515 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:58:32,515 INFO __main__ MainThread : Debugger PIN: 658-314-717
+2019-11-09 22:58:35,196 INFO __main__ Thread-20 : @callback: Inicio 'update_figure'
+2019-11-09 22:58:35,688 INFO __main__ Thread-21 : @callback: modal is close'
+2019-11-09 22:58:40,509 INFO __main__ Thread-26 : @callback: modal is close'
+2019-11-09 22:59:49,776 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 22:59:49,777 INFO __main__ MainThread : Debugger PIN: 466-651-322
+2019-11-09 22:59:50,404 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 22:59:50,809 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 23:00:25,202 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:00:25,202 INFO __main__ MainThread : Debugger PIN: 013-194-939
+2019-11-09 23:00:25,829 INFO __main__ Thread-7 : @callback: Inicio 'update_figure'
+2019-11-09 23:00:26,025 INFO __main__ Thread-9 : @callback: modal is close'
+2019-11-09 23:00:30,729 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:00:30,730 INFO __main__ MainThread : Debugger PIN: 856-511-440
+2019-11-09 23:00:31,272 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 23:00:31,277 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 23:00:31,443 INFO __main__ Thread-9 : @callback: modal is close'
+2019-11-09 23:00:31,509 INFO __main__ Thread-10 : @callback: Inicio 'update_file'
+2019-11-09 23:00:33,238 INFO __main__ Thread-14 : @callback: Inicio 'update_file'
+2019-11-09 23:00:36,345 INFO __main__ Thread-16 : @callback: Inicio 'update_file'
+2019-11-09 23:00:36,345 INFO __main__ Thread-16 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:00:36,345 INFO __main__ Thread-16 : longitud del fichero?: 416548
+2019-11-09 23:00:37,801 INFO __main__ Thread-18 : @callback: modal is close'
+2019-11-09 23:00:37,856 INFO __main__ Thread-19 : @callback: Inicio 'update_file'
+2019-11-09 23:00:37,856 INFO __main__ Thread-19 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:00:37,856 INFO __main__ Thread-19 : longitud del fichero?: 416548
+2019-11-09 23:00:39,209 INFO __main__ Thread-23 : @callback: Inicio 'update_file'
+2019-11-09 23:00:39,209 INFO __main__ Thread-23 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:00:39,209 INFO __main__ Thread-23 : longitud del fichero?: 416548
+2019-11-09 23:01:34,371 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:01:34,371 INFO __main__ MainThread : Debugger PIN: 585-831-167
+2019-11-09 23:01:34,419 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 23:01:36,991 INFO __main__ Thread-18 : @callback: Inicio 'update_file'
+2019-11-09 23:01:36,993 INFO __main__ Thread-19 : @callback: Inicio 'update_figure'
+2019-11-09 23:01:37,405 INFO __main__ Thread-20 : @callback: modal is close'
+2019-11-09 23:01:37,435 INFO __main__ Thread-21 : @callback: Inicio 'update_file'
+2019-11-09 23:01:38,815 INFO __main__ Thread-23 : @callback: modal is close'
+2019-11-09 23:01:38,865 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 23:01:41,810 INFO __main__ Thread-26 : @callback: Inicio 'update_file'
+2019-11-09 23:01:41,810 INFO __main__ Thread-26 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:01:41,810 INFO __main__ Thread-26 : longitud del fichero?: 416548
+2019-11-09 23:01:45,604 INFO __main__ Thread-30 : @callback: modal is close'
+2019-11-09 23:01:45,694 INFO __main__ Thread-31 : @callback: Inicio 'update_file'
+2019-11-09 23:01:45,694 INFO __main__ Thread-31 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:01:45,694 INFO __main__ Thread-31 : longitud del fichero?: 416548
+2019-11-09 23:01:53,664 INFO __main__ Thread-35 : @callback: modal is close'
+2019-11-09 23:01:53,747 INFO __main__ Thread-36 : @callback: Inicio 'update_file'
+2019-11-09 23:01:53,748 INFO __main__ Thread-36 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:01:53,748 INFO __main__ Thread-36 : longitud del fichero?: 416548
+2019-11-09 23:02:08,271 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:02:08,271 INFO __main__ MainThread : Debugger PIN: 152-271-240
+2019-11-09 23:02:08,874 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 23:02:08,879 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 23:02:09,326 INFO __main__ Thread-9 : @callback: modal is close'
+2019-11-09 23:02:09,357 INFO __main__ Thread-10 : @callback: Inicio 'update_file'
+2019-11-09 23:02:12,891 INFO __main__ Thread-14 : @callback: modal is open'
+2019-11-09 23:02:12,997 INFO __main__ Thread-15 : @callback: Inicio 'update_file'
+2019-11-09 23:02:15,680 INFO __main__ Thread-17 : @callback: Inicio 'update_file'
+2019-11-09 23:02:15,680 INFO __main__ Thread-17 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:02:15,680 INFO __main__ Thread-17 : longitud del fichero?: 416548
+2019-11-09 23:02:23,060 INFO __main__ Thread-21 : @callback: modal is close'
+2019-11-09 23:02:23,110 INFO __main__ Thread-22 : @callback: Inicio 'update_file'
+2019-11-09 23:02:23,110 INFO __main__ Thread-22 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:02:23,116 INFO __main__ Thread-22 : longitud del fichero?: 416548
+2019-11-09 23:02:34,370 INFO __main__ Thread-28 : @callback: modal is open'
+2019-11-09 23:02:34,403 INFO __main__ Thread-29 : @callback: Inicio 'update_file'
+2019-11-09 23:02:34,403 INFO __main__ Thread-29 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:02:34,403 INFO __main__ Thread-29 : longitud del fichero?: 416548
+2019-11-09 23:13:22,517 INFO __main__ Thread-247 : @callback: modal is close'
+2019-11-09 23:13:22,618 INFO __main__ Thread-248 : @callback: Inicio 'update_file'
+2019-11-09 23:13:22,619 INFO __main__ Thread-248 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:13:22,619 INFO __main__ Thread-248 : longitud del fichero?: 416548
+2019-11-09 23:13:23,697 INFO __main__ Thread-250 : @callback: modal is open'
+2019-11-09 23:13:23,809 INFO __main__ Thread-251 : @callback: Inicio 'update_file'
+2019-11-09 23:13:23,810 INFO __main__ Thread-251 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:13:23,810 INFO __main__ Thread-251 : longitud del fichero?: 416548
+2019-11-09 23:13:25,855 INFO __main__ Thread-254 : @callback: modal is close'
+2019-11-09 23:13:25,916 INFO __main__ Thread-255 : @callback: Inicio 'update_file'
+2019-11-09 23:13:25,916 INFO __main__ Thread-255 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:13:25,916 INFO __main__ Thread-255 : longitud del fichero?: 416548
+2019-11-09 23:16:22,554 INFO __main__ Thread-316 : @callback: modal is open'
+2019-11-09 23:16:22,594 INFO __main__ Thread-317 : @callback: Inicio 'update_file'
+2019-11-09 23:16:22,594 INFO __main__ Thread-317 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:16:22,594 INFO __main__ Thread-317 : longitud del fichero?: 416548
+2019-11-09 23:19:25,763 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:19:25,763 INFO __main__ MainThread : Debugger PIN: 905-422-186
+2019-11-09 23:19:28,392 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:19:28,393 INFO __main__ MainThread : Debugger PIN: 247-300-535
+2019-11-09 23:19:34,085 INFO __main__ Thread-18 : @callback: Inicio 'update_file'
+2019-11-09 23:19:34,088 INFO __main__ Thread-19 : @callback: Inicio 'update_figure'
+2019-11-09 23:19:34,611 INFO __main__ Thread-20 : @callback: modal is close'
+2019-11-09 23:19:34,639 INFO __main__ Thread-21 : @callback: Inicio 'update_file'
+2019-11-09 23:19:36,059 INFO __main__ Thread-23 : @callback: modal is open'
+2019-11-09 23:19:36,129 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 23:19:39,788 INFO __main__ Thread-29 : @callback: modal is close'
+2019-11-09 23:19:39,958 INFO __main__ Thread-30 : @callback: Inicio 'update_file'
+2019-11-09 23:21:09,611 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:21:09,611 INFO __main__ MainThread : Debugger PIN: 103-485-762
+2019-11-09 23:21:10,201 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 23:21:10,204 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 23:21:10,660 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 23:21:10,690 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:21:11,390 INFO __main__ Thread-13 : @callback: modal is open'
+2019-11-09 23:21:11,446 INFO __main__ Thread-14 : @callback: Inicio 'update_file'
+2019-11-09 23:21:15,092 INFO __main__ Thread-16 : @callback: Inicio 'update_file'
+2019-11-09 23:21:15,092 INFO __main__ Thread-16 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:21:15,093 INFO __main__ Thread-16 : longitud del fichero?: 416548
+2019-11-09 23:21:16,252 INFO __main__ Thread-20 : @callback: modal is close'
+2019-11-09 23:21:16,294 INFO __main__ Thread-21 : @callback: Inicio 'update_file'
+2019-11-09 23:21:16,294 INFO __main__ Thread-21 : el nombre del fichero es: 
+2019-11-09 23:21:16,294 INFO __main__ Thread-21 : longitud del fichero?: 416548
+2019-11-09 23:21:17,916 INFO __main__ Thread-23 : @callback: modal is open'
+2019-11-09 23:21:18,020 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 23:21:18,020 INFO __main__ Thread-24 : el nombre del fichero es: 
+2019-11-09 23:21:18,020 INFO __main__ Thread-24 : longitud del fichero?: 416548
+2019-11-09 23:21:24,568 INFO __main__ Thread-29 : @callback: modal is close'
+2019-11-09 23:21:24,643 INFO __main__ Thread-30 : @callback: Inicio 'update_file'
+2019-11-09 23:21:24,644 INFO __main__ Thread-30 : el nombre del fichero es: 
+2019-11-09 23:21:24,644 INFO __main__ Thread-30 : longitud del fichero?: 416548
+2019-11-09 23:21:25,830 INFO __main__ Thread-33 : @callback: modal is open'
+2019-11-09 23:21:25,925 INFO __main__ Thread-34 : @callback: Inicio 'update_file'
+2019-11-09 23:21:25,925 INFO __main__ Thread-34 : el nombre del fichero es: 
+2019-11-09 23:21:25,925 INFO __main__ Thread-34 : longitud del fichero?: 416548
+2019-11-09 23:21:27,010 INFO __main__ Thread-37 : @callback: modal is close'
+2019-11-09 23:21:27,057 INFO __main__ Thread-38 : @callback: Inicio 'update_file'
+2019-11-09 23:21:27,057 INFO __main__ Thread-38 : el nombre del fichero es: 
+2019-11-09 23:21:27,058 INFO __main__ Thread-38 : longitud del fichero?: 416548
+2019-11-09 23:21:27,986 INFO __main__ Thread-41 : @callback: modal is open'
+2019-11-09 23:21:28,024 INFO __main__ Thread-42 : @callback: Inicio 'update_file'
+2019-11-09 23:21:28,024 INFO __main__ Thread-42 : el nombre del fichero es: 
+2019-11-09 23:21:28,025 INFO __main__ Thread-42 : longitud del fichero?: 416548
+2019-11-09 23:21:31,365 INFO __main__ Thread-44 : @callback: Inicio 'update_file'
+2019-11-09 23:21:31,365 INFO __main__ Thread-44 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:21:31,366 INFO __main__ Thread-44 : longitud del fichero?: 416548
+2019-11-09 23:21:32,491 INFO __main__ Thread-47 : @callback: modal is close'
+2019-11-09 23:21:32,552 INFO __main__ Thread-48 : @callback: Inicio 'update_file'
+2019-11-09 23:21:32,552 INFO __main__ Thread-48 : el nombre del fichero es: 
+2019-11-09 23:21:32,553 INFO __main__ Thread-48 : longitud del fichero?: 416548
+2019-11-09 23:21:33,357 INFO __main__ Thread-50 : @callback: modal is open'
+2019-11-09 23:21:33,401 INFO __main__ Thread-51 : @callback: Inicio 'update_file'
+2019-11-09 23:21:33,401 INFO __main__ Thread-51 : el nombre del fichero es: 
+2019-11-09 23:21:33,401 INFO __main__ Thread-51 : longitud del fichero?: 416548
+2019-11-09 23:21:34,459 INFO __main__ Thread-55 : @callback: modal is close'
+2019-11-09 23:21:34,518 INFO __main__ Thread-56 : @callback: Inicio 'update_file'
+2019-11-09 23:21:34,519 INFO __main__ Thread-56 : el nombre del fichero es: 
+2019-11-09 23:21:34,519 INFO __main__ Thread-56 : longitud del fichero?: 416548
+2019-11-09 23:24:21,459 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:24:21,459 INFO __main__ MainThread : Debugger PIN: 654-333-452
+2019-11-09 23:24:22,074 INFO __main__ Thread-9 : @callback: Inicio 'update_file'
+2019-11-09 23:24:22,079 INFO __main__ Thread-10 : @callback: Inicio 'update_figure'
+2019-11-09 23:24:22,680 INFO __main__ Thread-11 : @callback: modal is close'
+2019-11-09 23:24:22,740 INFO __main__ Thread-12 : @callback: Inicio 'update_file'
+2019-11-09 23:25:04,013 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:25:04,014 INFO __main__ MainThread : Debugger PIN: 734-182-939
+2019-11-09 23:25:04,564 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 23:25:04,568 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 23:25:04,775 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 23:25:04,820 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:25:29,198 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:25:29,198 INFO __main__ MainThread : Debugger PIN: 287-838-867
+2019-11-09 23:25:29,781 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 23:25:29,795 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 23:25:29,995 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 23:25:30,234 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:25:33,458 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:25:33,459 INFO __main__ MainThread : Debugger PIN: 509-590-954
+2019-11-09 23:25:33,998 INFO __main__ Thread-9 : @callback: Inicio 'update_file'
+2019-11-09 23:25:34,001 INFO __main__ Thread-10 : @callback: Inicio 'update_figure'
+2019-11-09 23:25:34,259 INFO __main__ Thread-11 : @callback: modal is close'
+2019-11-09 23:25:34,483 INFO __main__ Thread-12 : @callback: Inicio 'update_file'
+2019-11-09 23:25:39,735 INFO __main__ Thread-15 : @callback: modal is open'
+2019-11-09 23:25:39,847 INFO __main__ Thread-16 : @callback: Inicio 'update_file'
+2019-11-09 23:25:42,962 INFO __main__ Thread-19 : @callback: Inicio 'update_file'
+2019-11-09 23:25:42,962 INFO __main__ Thread-19 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:25:42,962 INFO __main__ Thread-19 : longitud del fichero?: 416548
+2019-11-09 23:25:44,269 INFO __main__ Thread-22 : @callback: modal is close'
+2019-11-09 23:25:44,313 INFO __main__ Thread-23 : @callback: Inicio 'update_file'
+2019-11-09 23:25:58,753 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:25:58,753 INFO __main__ MainThread : Debugger PIN: 587-420-187
+2019-11-09 23:25:58,825 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 23:26:01,522 INFO __main__ Thread-19 : @callback: Inicio 'update_file'
+2019-11-09 23:26:01,532 INFO __main__ Thread-20 : @callback: Inicio 'update_figure'
+2019-11-09 23:26:06,652 INFO __main__ Thread-23 : @callback: Inicio 'update_file'
+2019-11-09 23:26:06,654 INFO __main__ Thread-23 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:26:06,654 INFO __main__ Thread-23 : longitud del fichero?: 416548
+2019-11-09 23:26:26,083 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:26:26,084 INFO __main__ MainThread : Debugger PIN: 681-893-906
+2019-11-09 23:26:26,683 INFO __main__ Thread-8 : @callback: Inicio 'update_figure'
+2019-11-09 23:26:26,702 INFO __main__ Thread-9 : @callback: Inicio 'update_file'
+2019-11-09 23:26:27,217 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 23:26:27,242 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:26:44,414 INFO __main__ Thread-19 : @callback: modal is open'
+2019-11-09 23:26:44,472 INFO __main__ Thread-20 : @callback: Inicio 'update_file'
+2019-11-09 23:26:47,332 INFO __main__ Thread-22 : @callback: Inicio 'update_file'
+2019-11-09 23:26:47,333 INFO __main__ Thread-22 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:26:47,334 INFO __main__ Thread-22 : longitud del fichero?: 416548
+2019-11-09 23:26:48,263 INFO __main__ Thread-25 : @callback: modal is close'
+2019-11-09 23:26:48,324 INFO __main__ Thread-26 : @callback: Inicio 'update_file'
+2019-11-09 23:26:49,382 INFO __main__ Thread-29 : @callback: modal is open'
+2019-11-09 23:26:49,417 INFO __main__ Thread-30 : @callback: Inicio 'update_file'
+2019-11-09 23:26:51,600 INFO __main__ Thread-33 : @callback: modal is close'
+2019-11-09 23:26:51,668 INFO __main__ Thread-34 : @callback: Inicio 'update_file'
+2019-11-09 23:26:52,356 INFO __main__ Thread-37 : @callback: modal is open'
+2019-11-09 23:26:52,402 INFO __main__ Thread-38 : @callback: Inicio 'update_file'
+2019-11-09 23:26:55,655 INFO __main__ Thread-40 : @callback: Inicio 'update_file'
+2019-11-09 23:26:55,656 INFO __main__ Thread-40 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:26:55,656 INFO __main__ Thread-40 : longitud del fichero?: 416548
+2019-11-09 23:26:56,423 INFO __main__ Thread-43 : @callback: modal is close'
+2019-11-09 23:26:56,492 INFO __main__ Thread-44 : @callback: Inicio 'update_file'
+2019-11-09 23:26:57,271 INFO __main__ Thread-46 : @callback: modal is open'
+2019-11-09 23:26:57,320 INFO __main__ Thread-47 : @callback: Inicio 'update_file'
+2019-11-09 23:26:58,677 INFO __main__ Thread-51 : @callback: modal is close'
+2019-11-09 23:26:58,753 INFO __main__ Thread-52 : @callback: Inicio 'update_file'
+2019-11-09 23:27:09,605 INFO __main__ Thread-71 : @callback: Inicio 'update_file'
+2019-11-09 23:27:09,607 INFO __main__ Thread-72 : @callback: Inicio 'update_figure'
+2019-11-09 23:27:10,128 INFO __main__ Thread-73 : @callback: modal is close'
+2019-11-09 23:27:10,181 INFO __main__ Thread-74 : @callback: Inicio 'update_file'
+2019-11-09 23:27:11,318 INFO __main__ Thread-76 : @callback: modal is open'
+2019-11-09 23:27:11,393 INFO __main__ Thread-77 : @callback: Inicio 'update_file'
+2019-11-09 23:27:14,875 INFO __main__ Thread-79 : @callback: Inicio 'update_file'
+2019-11-09 23:27:14,875 INFO __main__ Thread-79 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:27:14,875 INFO __main__ Thread-79 : longitud del fichero?: 416548
+2019-11-09 23:27:16,157 INFO __main__ Thread-83 : @callback: modal is close'
+2019-11-09 23:27:16,253 INFO __main__ Thread-84 : @callback: Inicio 'update_file'
+2019-11-09 23:27:18,047 INFO __main__ Thread-86 : @callback: modal is open'
+2019-11-09 23:27:18,127 INFO __main__ Thread-87 : @callback: Inicio 'update_file'
+2019-11-09 23:27:21,564 INFO __main__ Thread-90 : @callback: Inicio 'update_file'
+2019-11-09 23:27:21,564 INFO __main__ Thread-90 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:27:21,564 INFO __main__ Thread-90 : longitud del fichero?: 416548
+2019-11-09 23:27:35,665 INFO __main__ Thread-97 : @callback: modal is close'
+2019-11-09 23:27:35,758 INFO __main__ Thread-98 : @callback: Inicio 'update_file'
+2019-11-09 23:28:21,306 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:28:21,306 INFO __main__ MainThread : Debugger PIN: 342-237-236
+2019-11-09 23:28:21,371 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 23:28:23,598 INFO __main__ Thread-19 : @callback: Inicio 'update_file'
+2019-11-09 23:28:23,608 INFO __main__ Thread-20 : @callback: Inicio 'update_figure'
+2019-11-09 23:28:24,122 INFO __main__ Thread-21 : @callback: modal is close'
+2019-11-09 23:28:24,177 INFO __main__ Thread-22 : @callback: Inicio 'update_file'
+2019-11-09 23:28:35,833 INFO __main__ Thread-31 : @callback: modal is close'
+2019-11-09 23:28:35,911 INFO __main__ Thread-32 : @callback: Inicio 'update_file'
+2019-11-09 23:28:40,539 INFO __main__ Thread-38 : @callback: modal is close'
+2019-11-09 23:28:40,633 INFO __main__ Thread-39 : @callback: Inicio 'update_file'
+2019-11-09 23:28:53,106 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:28:53,106 INFO __main__ MainThread : Debugger PIN: 150-566-188
+2019-11-09 23:28:53,172 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 271, in write
+    self.send_header("Date", self.date_time_string())
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 23:28:55,893 INFO __main__ Thread-20 : @callback: Inicio 'update_figure'
+2019-11-09 23:28:55,895 INFO __main__ Thread-19 : @callback: Inicio 'update_file'
+2019-11-09 23:28:56,341 INFO __main__ Thread-21 : @callback: modal is close'
+2019-11-09 23:28:56,369 INFO __main__ Thread-22 : @callback: Inicio 'update_file'
+2019-11-09 23:28:58,931 INFO __main__ Thread-25 : @callback: modal is open'
+2019-11-09 23:28:59,048 INFO __main__ Thread-26 : @callback: Inicio 'update_file'
+2019-11-09 23:29:01,854 INFO __main__ Thread-28 : @callback: Inicio 'update_file'
+2019-11-09 23:29:01,854 INFO __main__ Thread-28 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:29:01,855 INFO __main__ Thread-28 : longitud del fichero?: 416548
+2019-11-09 23:29:02,899 INFO __main__ Thread-31 : @callback: modal is close'
+2019-11-09 23:29:02,973 INFO __main__ Thread-32 : @callback: Inicio 'update_file'
+2019-11-09 23:29:03,929 INFO __main__ Thread-34 : @callback: modal is open'
+2019-11-09 23:29:03,970 INFO __main__ Thread-35 : @callback: Inicio 'update_file'
+2019-11-09 23:29:04,964 INFO __main__ Thread-39 : @callback: modal is close'
+2019-11-09 23:29:05,027 INFO __main__ Thread-40 : @callback: Inicio 'update_file'
+2019-11-09 23:29:19,673 INFO __main__ Thread-47 : @callback: modal is open'
+2019-11-09 23:29:19,728 INFO __main__ Thread-48 : @callback: Inicio 'update_file'
+2019-11-09 23:29:22,817 INFO __main__ Thread-50 : @callback: Inicio 'update_file'
+2019-11-09 23:29:22,817 INFO __main__ Thread-50 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:29:22,817 INFO __main__ Thread-50 : longitud del fichero?: 416548
+2019-11-09 23:29:29,623 INFO __main__ Thread-55 : @callback: modal is close'
+2019-11-09 23:29:29,717 INFO __main__ Thread-56 : @callback: Inicio 'update_file'
+2019-11-09 23:29:36,056 INFO __main__ Thread-60 : @callback: modal is open'
+2019-11-09 23:29:36,105 INFO __main__ Thread-61 : @callback: Inicio 'update_file'
+2019-11-09 23:29:38,540 INFO __main__ Thread-65 : @callback: modal is close'
+2019-11-09 23:29:38,606 INFO __main__ Thread-66 : @callback: Inicio 'update_file'
+2019-11-09 23:29:49,730 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:29:49,730 INFO __main__ MainThread : Debugger PIN: 679-420-713
+2019-11-09 23:29:50,313 INFO __main__ Thread-7 : @callback: Inicio 'update_file'
+2019-11-09 23:29:50,319 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 23:29:50,795 INFO __main__ Thread-10 : @callback: modal is open'
+2019-11-09 23:29:50,818 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:30:02,663 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:30:02,663 INFO __main__ MainThread : Debugger PIN: 127-648-469
+2019-11-09 23:30:02,737 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 23:30:02,745 ERROR werkzeug Thread-4 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 23:30:05,811 INFO __main__ Thread-23 : @callback: Inicio 'update_file'
+2019-11-09 23:30:05,812 INFO __main__ Thread-24 : @callback: Inicio 'update_figure'
+2019-11-09 23:30:06,259 INFO __main__ Thread-25 : @callback: modal is close'
+2019-11-09 23:30:06,303 INFO __main__ Thread-26 : @callback: Inicio 'update_file'
+2019-11-09 23:30:18,130 INFO __main__ Thread-44 : @callback: Inicio 'update_file'
+2019-11-09 23:30:18,175 INFO __main__ Thread-46 : @callback: Inicio 'update_figure'
+2019-11-09 23:30:18,500 INFO __main__ Thread-47 : @callback: modal is close'
+2019-11-09 23:30:18,727 INFO __main__ Thread-48 : @callback: Inicio 'update_file'
+2019-11-09 23:30:31,397 INFO __main__ Thread-54 : @callback: modal is open'
+2019-11-09 23:30:31,555 INFO __main__ Thread-55 : @callback: Inicio 'update_file'
+2019-11-09 23:30:37,278 INFO __main__ Thread-58 : @callback: Inicio 'update_file'
+2019-11-09 23:30:37,278 INFO __main__ Thread-58 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:30:37,279 INFO __main__ Thread-58 : longitud del fichero?: 416548
+2019-11-09 23:30:45,051 INFO __main__ Thread-64 : @callback: modal is close'
+2019-11-09 23:30:45,131 INFO __main__ Thread-65 : @callback: Inicio 'update_file'
+2019-11-09 23:31:17,049 INFO __main__ Thread-77 : @callback: modal is open'
+2019-11-09 23:31:17,099 INFO __main__ Thread-78 : @callback: Inicio 'update_file'
+2019-11-09 23:31:39,344 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:31:39,346 INFO __main__ MainThread : Debugger PIN: 679-246-626
+2019-11-09 23:31:39,419 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 303, in run_wsgi
+    execute(self.server.app)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 294, in execute
+    write(data)
+  File "/Applications/anaconda/lib/python2.7/site-packages/werkzeug/serving.py", line 257, in write
+    self.send_header(key, value)
+  File "/Applications/anaconda/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-09 23:31:42,024 INFO __main__ Thread-19 : @callback: Inicio 'update_file'
+2019-11-09 23:31:42,026 INFO __main__ Thread-20 : @callback: Inicio 'update_figure'
+2019-11-09 23:31:42,450 INFO __main__ Thread-21 : @callback: modal is close'
+2019-11-09 23:31:42,488 INFO __main__ Thread-22 : @callback: Inicio 'update_file'
+2019-11-09 23:32:17,555 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:32:17,555 INFO __main__ MainThread : Debugger PIN: 722-179-523
+2019-11-09 23:32:18,275 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 23:32:18,281 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 23:32:18,527 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 23:32:18,780 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:32:19,678 INFO __main__ Thread-13 : @callback: modal is close'
+2019-11-09 23:32:19,715 INFO __main__ Thread-14 : @callback: Inicio 'update_file'
+2019-11-09 23:32:22,506 INFO __main__ Thread-16 : @callback: Inicio 'update_file'
+2019-11-09 23:32:22,506 INFO __main__ Thread-16 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:32:22,506 INFO __main__ Thread-16 : longitud del fichero?: 416548
+2019-11-09 23:32:23,430 INFO __main__ Thread-19 : @callback: modal is close'
+2019-11-09 23:32:23,478 INFO __main__ Thread-20 : @callback: Inicio 'update_file'
+2019-11-09 23:32:24,628 INFO __main__ Thread-23 : @callback: modal is close'
+2019-11-09 23:32:24,765 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 23:32:27,321 INFO __main__ Thread-26 : @callback: Inicio 'update_file'
+2019-11-09 23:32:27,321 INFO __main__ Thread-26 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:32:27,321 INFO __main__ Thread-26 : longitud del fichero?: 416548
+2019-11-09 23:32:27,916 INFO __main__ Thread-29 : @callback: modal is close'
+2019-11-09 23:32:27,985 INFO __main__ Thread-30 : @callback: Inicio 'update_file'
+2019-11-09 23:33:05,656 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:33:05,657 INFO __main__ MainThread : Debugger PIN: 557-843-847
+2019-11-09 23:33:06,233 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 23:33:06,235 INFO __main__ Thread-9 : @callback: Inicio 'update_figure'
+2019-11-09 23:33:06,666 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 23:33:06,691 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:33:36,195 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:33:36,195 INFO __main__ MainThread : Debugger PIN: 319-323-589
+2019-11-09 23:33:36,773 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 23:33:36,776 INFO __main__ Thread-9 : @callback: Inicio 'update_figure(...)'
+2019-11-09 23:33:37,050 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 23:33:37,247 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:33:44,786 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:33:44,787 INFO __main__ MainThread : Debugger PIN: 805-520-497
+2019-11-09 23:33:45,349 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 23:33:45,353 INFO __main__ Thread-9 : @callback: Inicio 'update_figure(.)'
+2019-11-09 23:33:45,826 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 23:33:45,854 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:34:25,158 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:34:25,158 INFO __main__ MainThread : Debugger PIN: 251-584-912
+2019-11-09 23:34:25,714 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 23:34:25,718 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-09 23:34:25,909 INFO __main__ Thread-10 : @callback: modal is close'
+2019-11-09 23:34:25,954 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:34:49,126 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:34:49,127 INFO __main__ MainThread : Debugger PIN: 135-189-071
+2019-11-09 23:34:49,690 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 23:34:49,693 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-09 23:34:49,917 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()''
+2019-11-09 23:34:49,947 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:35:01,054 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:35:01,054 INFO __main__ MainThread : Debugger PIN: 521-856-885
+2019-11-09 23:35:01,627 INFO __main__ Thread-8 : @callback: Inicio 'update_file'
+2019-11-09 23:35:01,629 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-09 23:35:01,801 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:35:01,862 INFO __main__ Thread-11 : @callback: Inicio 'update_file'
+2019-11-09 23:35:09,351 INFO __main__ Thread-16 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:35:09,431 INFO __main__ Thread-17 : @callback: Inicio 'update_file'
+2019-11-09 23:38:57,825 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:38:57,825 INFO __main__ MainThread : Debugger PIN: 153-741-925
+2019-11-09 23:39:00,946 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:39:00,947 INFO __main__ MainThread : Debugger PIN: 438-168-247
+2019-11-09 23:39:03,748 INFO __main__ Thread-18 : @callback: Inicio 'update_file'
+2019-11-09 23:39:03,751 INFO __main__ Thread-19 : @callback: Inicio 'update_figure()'
+2019-11-09 23:39:04,262 INFO __main__ Thread-20 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:39:04,303 INFO __main__ Thread-21 : @callback: Inicio 'update_file'
+2019-11-09 23:39:05,566 INFO __main__ Thread-23 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:39:05,668 INFO __main__ Thread-24 : @callback: Inicio 'update_file'
+2019-11-09 23:39:08,173 INFO __main__ Thread-26 : @callback: Inicio 'update_file'
+2019-11-09 23:39:08,173 INFO __main__ Thread-26 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:39:08,173 INFO __main__ Thread-26 : longitud del fichero?: 416548
+2019-11-09 23:39:09,037 INFO __main__ Thread-29 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:39:09,082 INFO __main__ Thread-30 : @callback: Inicio 'update_file'
+2019-11-09 23:39:09,904 INFO __main__ Thread-33 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:39:09,946 INFO __main__ Thread-34 : @callback: Inicio 'update_file'
+2019-11-09 23:39:10,972 INFO __main__ Thread-37 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:39:11,046 INFO __main__ Thread-38 : @callback: Inicio 'update_file'
+2019-11-09 23:39:35,516 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-09 23:39:35,517 INFO __main__ MainThread : Debugger PIN: 653-759-574
+2019-11-09 23:39:36,141 INFO __main__ Thread-8 : @callback: Inicio 'update_figure()'
+2019-11-09 23:39:36,144 INFO __main__ Thread-9 : @callback: Inicio 'update_file()'
+2019-11-09 23:39:36,350 INFO __main__ Thread-11 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:39:36,426 INFO __main__ Thread-12 : @callback: Inicio 'update_file()'
+2019-11-09 23:39:37,422 INFO __main__ Thread-14 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:39:37,469 INFO __main__ Thread-15 : @callback: Inicio 'update_file()'
+2019-11-09 23:39:40,011 INFO __main__ Thread-17 : @callback: Inicio 'update_file()'
+2019-11-09 23:39:40,012 INFO __main__ Thread-17 : el nombre del fichero es: 3_2.pdf
+2019-11-09 23:39:40,012 INFO __main__ Thread-17 : longitud del fichero?: 416548
+2019-11-09 23:39:48,042 INFO __main__ Thread-22 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:39:48,105 INFO __main__ Thread-23 : @callback: Inicio 'update_file()'
+2019-11-09 23:39:49,819 INFO __main__ Thread-26 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:39:49,849 INFO __main__ Thread-27 : @callback: Inicio 'update_file()'
+2019-11-09 23:39:51,186 INFO __main__ Thread-30 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-09 23:39:51,253 INFO __main__ Thread-31 : @callback: Inicio 'update_file()'
