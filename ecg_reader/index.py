@@ -129,8 +129,11 @@ body = dbc.Container([
                 ]),
                 dbc.ModalFooter([
                     dbc.Button("Cerrar", id="close-upfile", className="mr-1"),
-                    dbc.Button("Procesar", id="proc-upfile", color="success", 
-                               className="col-md-2"),
+                    html.Div(id="btn-proces",
+                             children=dbc.Button("Procesar", id="proces-upfile", color="success", 
+                                disabled=True),
+                             ),
+                    
                 ]),
             ],
             id="modal",
@@ -224,7 +227,7 @@ def update_figure(lead):
     Output("modal", "is_open"),
     [Input("open-upfile", "n_clicks"), 
      Input("close-upfile", "n_clicks"), 
-     Input("proc-upfile", "n_clicks")
+     Input("proces-upfile", "n_clicks")
     ],
     [State("modal", "is_open")],
 )
@@ -237,31 +240,37 @@ def toggle_modal(n1, n2, n3, is_open):
 
 
 @app.callback(
-    Output("container-upfile", "children"),
+    [Output("container-upfile", "children"),
+     Output("btn-proces", "children")],
     [Input("modal", "is_open")],
 )
 def set_msg_uploadFile(is_open):
     app.logger.info("@callback: Inicio 'set_msg_uploadFile()'")
-    return html.Div([],
+    return [html.Div([],
                 id="msg-upfile",
                 style= {'display': 'block'},
-            )
+            ), dbc.Button("Procesar", id="proces-upfile", color="success", 
+                                disabled=True)]
         
     
 
 
 @app.callback(
     Output("upload-file", "filename"),
-    [Input("close-upfile", "n_clicks")],
+    [Input("close-upfile", "n_clicks"),
+     Input("proces-upfile", "n_clicks")],
 )
-def reset_updloadFile(nclose):
-    if nclose > 0:
+def reset_updloadFile(nclose, nproces):
+    if nclose > 0 or nproces > 0:
         return None
+
+
     
 
 
 
-@app.callback(Output('msg-upfile', 'children'),
+@app.callback([Output('msg-upfile', 'children'),
+               Output('proces-upfile', 'disabled')],
               [Input('upload-file', 'contents')],
               [State('upload-file', 'filename'),
                State('upload-file', 'last_modified')])
@@ -272,13 +281,14 @@ def update_file(list_contenidos, list_nombres, list_fechas):
     if list_nombres is not None:
         app.logger.info("el nombre del fichero es: " + list_nombres)
         app.logger.info("longitud del fichero?: " + str(len(list_contenidos)))
-        return html.Div([
+        return [html.Div([
                     html.Span("Fichero seleccionado: "),
                     dbc.Badge(list_nombres, color="info", className="mr-1")
                     ],                
-                )
+                ), False]
   
-
+    else:
+        return [None, True]
         
 ###############################################################################
 ############################### RUNER APP #####################################
