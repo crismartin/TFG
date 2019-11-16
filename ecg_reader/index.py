@@ -49,12 +49,11 @@ ecg_trace = go.Scatter(x = ejeX, y = ejeY,
                     name = 'SF', mode='lines')
 
 print(optsLeads)
-layout = go.Layout(title = "Representacion de la Derivacion " + str(optsLeads[0]['value']),
+layout = go.Layout(title = "Representacion de la Derivación " + str(optsLeads[0]['value']),
                    hovermode = 'closest')
 
 
 fig = go.Figure(data = [ecg_trace], layout = layout)
-
 
 
 navbar = dbc.NavbarSimple(
@@ -76,6 +75,7 @@ navbar = dbc.NavbarSimple(
     brand_href="#",
     sticky="top",
 )
+
 
 formulario = dbc.Form([
         
@@ -113,14 +113,25 @@ formulario = dbc.Form([
                  ),        
     ])
 ])
-
-body = dbc.Container([
         
-    html.H1(children='Formato ' + ecg.typeECG),
+         
+controls_ecg = html.Div([
     
+    html.Label("Elije una derivación"),
     
-    html.Div([
-        dbc.Button("Subir fichero", id="open-upfile", color="primary"),
+    dcc.Dropdown(
+        id = 'optLeads',
+        options = optsLeads,
+        value = optsLeads[0]['value'],
+        clearable=False             
+    )        
+])
+
+
+
+display_ecg = html.Div([   
+        
+    html.Div([       
         dbc.Modal(
             [
                 dbc.ModalHeader("Cargar Fichero"),
@@ -133,33 +144,49 @@ body = dbc.Container([
                              children=dbc.Button("Procesar", id="proces-upfile", color="success", 
                                 disabled=True),
                              ),
-                    
                 ]),
             ],
             id="modal",
             size="lg"
         ),
     ]),
-        
-
-    #Agregamos la figura
-    dcc.Graph(id='plot', figure=fig),
     
-    # Agregamos el dropdown
-    html.P([
-            html.Label("Elije una derivacion"),
-            dcc.Dropdown(
-                        id = 'opt', 
-                        options = optsLeads,
-                        value = optsLeads[0]['value'],
-                        clearable=False
-                    )
-            ], style = {'width': '400px',
-                        'fontSize' : '20px',
-                        'padding-left' : '100px',
-                        'display': 'inline-block'}
-        ),
+    #Agregamos la figura
+    dcc.Graph(id='plot', figure=fig,  style={'height': 600, 'width':1000}),
+])
         
+menu_ecg = html.Div([
+    dbc.Button("HRV", id="hrvGraph", outline=True, color="danger", className="mr-1"),
+    dbc.Button("Otro",id="otroGraph", outline=True, color="secondary", className="mr-1"),
+    dbc.Button("Subir fichero", id="open-upfile", color="primary")
+])
+
+
+body = dbc.Container([
+    dbc.Row([
+     html.H1(children='Formato ' + ecg.typeECG)
+    ]),
+    dbc.Row([
+        dbc.Col([
+            dbc.Row([
+                html.Div([
+                    html.Label("")
+                ])
+            ]),
+            dbc.Row([
+                controls_ecg
+            ])
+        ], width=2),
+        dbc.Col([
+            dbc.Row(
+                display_ecg,
+                className="float-right"
+            ),
+            dbc.Row(
+                menu_ecg, className="float-right"
+            )
+        ], width=10)    
+    ])
 ])
 
 
@@ -170,6 +197,7 @@ body = dbc.Container([
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"])
 logging.basicConfig(filename="ecgApp.log", level=logging.DEBUG, 
                     format="%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s")
+app.title = "ECGApp"
 app.layout = html.Div([navbar, body])
 
 
@@ -205,7 +233,7 @@ def parse_contents(contents, filename, date):
 
 # Agregamos el callback para actualizar el dropdown
 @app.callback(Output('plot', 'figure'),
-             [Input('opt', 'value')])
+             [Input('optLeads', 'value')])
 def update_figure(lead):
     # Actualizamos la derivacion de acuerdo a lo seleccionado en el dropdown
     app.logger.info("@callback: Inicio 'update_figure()'")
@@ -254,7 +282,6 @@ def set_msg_uploadFile(is_open):
         
     
 
-
 @app.callback(
     Output("upload-file", "filename"),
     [Input("close-upfile", "n_clicks"),
@@ -266,8 +293,6 @@ def reset_updloadFile(nclose, nproces):
 
 
     
-
-
 
 @app.callback([Output('msg-upfile', 'children'),
                Output('proces-upfile', 'disabled')],
@@ -289,7 +314,7 @@ def update_file(list_contenidos, list_nombres, list_fechas):
   
     else:
         return [None, True]
-        
+       
 ###############################################################################
 ############################### RUNER APP #####################################
 ###############################################################################

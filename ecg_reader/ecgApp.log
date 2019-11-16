@@ -2063,3 +2063,807 @@ IOError: [Errno 32] Broken pipe
 2019-11-13 23:39:37,870 INFO __main__ Thread-20 : @callback: Inicio 'set_msg_uploadFile()'
 2019-11-13 23:39:39,104 INFO __main__ Thread-22 : @callback: Inicio 'set_msg_uploadFile()'
 2019-11-13 23:39:41,398 INFO __main__ Thread-26 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-13 23:52:02,095 ERROR werkzeug Thread-279 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-13 23:52:03,358 INFO __main__ Thread-274 : @callback: Inicio 'update_file()'
+2019-11-13 23:52:03,363 INFO __main__ Thread-280 : @callback: Inicio 'update_figure()'
+2019-11-13 23:52:03,941 INFO __main__ Thread-281 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-13 23:52:16,566 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-13 23:52:16,566 INFO __main__ MainThread : Debugger PIN: 043-116-134
+2019-11-13 23:52:20,177 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-13 23:52:20,178 INFO __main__ MainThread : Debugger PIN: 863-422-126
+2019-11-13 23:52:23,486 INFO __main__ Thread-9 : @callback: Inicio 'update_file()'
+2019-11-13 23:52:23,489 INFO __main__ Thread-10 : @callback: Inicio 'update_figure()'
+2019-11-13 23:52:23,908 INFO __main__ Thread-11 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-13 23:54:37,670 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-13 23:54:37,672 INFO __main__ MainThread : Debugger PIN: 990-008-088
+2019-11-13 23:54:40,208 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-13 23:54:40,209 INFO __main__ MainThread : Debugger PIN: 513-932-571
+2019-11-13 23:54:44,809 INFO __main__ Thread-9 : @callback: Inicio 'update_file()'
+2019-11-13 23:54:44,811 INFO __main__ Thread-10 : @callback: Inicio 'update_figure()'
+2019-11-13 23:54:45,319 INFO __main__ Thread-11 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-13 23:56:55,938 INFO __main__ Thread-70 : @callback: Inicio 'update_figure()'
+2019-11-13 23:56:55,940 INFO __main__ Thread-71 : @callback: Inicio 'update_file()'
+2019-11-13 23:56:56,401 INFO __main__ Thread-72 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 08:42:38,954 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 08:42:38,959 INFO __main__ MainThread : Debugger PIN: 663-889-679
+2019-11-16 08:42:41,257 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 08:42:41,258 INFO __main__ MainThread : Debugger PIN: 301-764-637
+2019-11-16 08:42:50,447 ERROR werkzeug Thread-4 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 08:42:51,634 INFO __main__ Thread-9 : @callback: Inicio 'update_file()'
+2019-11-16 08:42:51,636 INFO __main__ Thread-10 : @callback: Inicio 'update_figure()'
+2019-11-16 08:42:51,990 INFO __main__ Thread-11 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 08:42:55,599 INFO __main__ Thread-14 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 08:45:51,446 INFO __main__ Thread-75 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:04:07,061 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:04:07,062 INFO __main__ MainThread : Debugger PIN: 874-956-788
+2019-11-16 09:04:07,467 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 09:04:07,469 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 09:04:07,787 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:04:23,266 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:04:23,266 INFO __main__ MainThread : Debugger PIN: 794-797-249
+2019-11-16 09:04:23,340 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 09:04:24,256 ERROR werkzeug Thread-12 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 09:04:25,221 INFO __main__ Thread-18 : @callback: Inicio 'update_file()'
+2019-11-16 09:04:25,223 INFO __main__ Thread-17 : @callback: Inicio 'update_figure()'
+2019-11-16 09:04:25,554 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:08:43,179 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:08:43,179 INFO __main__ MainThread : Debugger PIN: 058-297-887
+2019-11-16 09:08:43,600 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 09:08:43,603 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 09:08:43,933 INFO __main__ Thread-11 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:09:10,903 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:09:10,903 INFO __main__ MainThread : Debugger PIN: 484-452-208
+2019-11-16 09:09:11,335 INFO __main__ Thread-8 : @callback: Inicio 'update_figure()'
+2019-11-16 09:09:11,350 INFO __main__ Thread-9 : @callback: Inicio 'update_file()'
+2019-11-16 09:09:11,629 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:10:03,628 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:10:03,628 INFO __main__ MainThread : Debugger PIN: 591-392-754
+2019-11-16 09:10:04,144 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 09:10:04,146 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 09:10:04,267 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:10:22,989 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:10:22,990 INFO __main__ MainThread : Debugger PIN: 814-301-336
+2019-11-16 09:10:23,062 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 09:10:23,982 ERROR werkzeug Thread-12 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 09:10:24,873 INFO __main__ Thread-17 : @callback: Inicio 'update_file()'
+2019-11-16 09:10:24,877 INFO __main__ Thread-18 : @callback: Inicio 'update_figure()'
+2019-11-16 09:10:25,355 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:12:24,184 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:12:24,184 INFO __main__ MainThread : Debugger PIN: 964-961-541
+2019-11-16 09:12:24,595 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 09:12:24,600 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 09:12:24,906 INFO __main__ Thread-11 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:12:55,523 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:12:55,523 INFO __main__ MainThread : Debugger PIN: 414-225-019
+2019-11-16 09:12:55,912 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 09:12:55,914 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 09:12:56,090 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:13:52,932 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:13:52,932 INFO __main__ MainThread : Debugger PIN: 001-759-404
+2019-11-16 09:13:53,308 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 09:13:53,311 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 09:13:53,598 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:15:18,719 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:15:18,720 INFO __main__ MainThread : Debugger PIN: 039-802-239
+2019-11-16 09:15:19,150 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 09:15:19,153 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 09:15:19,413 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:15:38,356 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:15:38,356 INFO __main__ MainThread : Debugger PIN: 478-520-282
+2019-11-16 09:15:38,755 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 09:15:38,758 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 09:15:38,939 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:16:51,909 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:16:51,909 INFO __main__ MainThread : Debugger PIN: 254-586-057
+2019-11-16 09:16:54,706 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:16:54,707 INFO __main__ MainThread : Debugger PIN: 176-717-201
+2019-11-16 09:17:02,080 INFO __main__ Thread-17 : @callback: Inicio 'update_file()'
+2019-11-16 09:17:02,082 INFO __main__ Thread-18 : @callback: Inicio 'update_figure()'
+2019-11-16 09:17:02,559 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:21:12,833 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:21:12,833 INFO __main__ MainThread : Debugger PIN: 454-255-463
+2019-11-16 09:21:12,910 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 09:21:13,770 ERROR werkzeug Thread-12 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 09:21:14,646 INFO __main__ Thread-17 : @callback: Inicio 'update_file()'
+2019-11-16 09:21:14,648 INFO __main__ Thread-18 : @callback: Inicio 'update_figure()'
+2019-11-16 09:21:15,136 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:25:38,558 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:25:38,558 INFO __main__ MainThread : Debugger PIN: 366-812-772
+2019-11-16 09:25:38,667 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 09:25:39,583 ERROR werkzeug Thread-12 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 09:25:40,509 INFO __main__ Thread-17 : @callback: Inicio 'update_file()'
+2019-11-16 09:25:40,514 INFO __main__ Thread-18 : @callback: Inicio 'update_figure()'
+2019-11-16 09:25:40,837 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 09:51:04,072 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:51:04,078 INFO __main__ MainThread : Debugger PIN: 396-724-782
+2019-11-16 09:51:06,725 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:51:06,725 INFO __main__ MainThread : Debugger PIN: 501-366-080
+2019-11-16 09:51:09,083 ERROR werkzeug Thread-7 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 09:56:13,945 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:56:13,945 INFO __main__ MainThread : Debugger PIN: 941-522-421
+2019-11-16 09:58:37,269 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:58:37,270 INFO __main__ MainThread : Debugger PIN: 051-650-340
+2019-11-16 09:58:44,587 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:58:44,587 INFO __main__ MainThread : Debugger PIN: 179-705-150
+2019-11-16 09:59:21,066 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:59:21,067 INFO __main__ MainThread : Debugger PIN: 633-564-441
+2019-11-16 09:59:58,928 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 09:59:58,929 INFO __main__ MainThread : Debugger PIN: 484-292-284
+2019-11-16 10:00:38,684 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:00:38,684 INFO __main__ MainThread : Debugger PIN: 228-654-358
+2019-11-16 10:01:29,295 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:01:29,295 INFO __main__ MainThread : Debugger PIN: 256-437-366
+2019-11-16 10:02:05,727 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:02:05,727 INFO __main__ MainThread : Debugger PIN: 871-393-933
+2019-11-16 10:02:24,813 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:02:24,814 INFO __main__ MainThread : Debugger PIN: 700-563-587
+2019-11-16 10:02:31,887 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:02:31,887 INFO __main__ MainThread : Debugger PIN: 427-113-511
+2019-11-16 10:03:24,740 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:03:24,741 INFO __main__ MainThread : Debugger PIN: 029-902-998
+2019-11-16 10:03:40,458 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:03:40,459 INFO __main__ MainThread : Debugger PIN: 767-771-119
+2019-11-16 10:04:14,812 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:04:14,812 INFO __main__ MainThread : Debugger PIN: 373-416-389
+2019-11-16 10:04:19,607 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:04:19,607 INFO __main__ MainThread : Debugger PIN: 155-233-292
+2019-11-16 10:04:33,192 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:04:33,192 INFO __main__ MainThread : Debugger PIN: 397-430-715
+2019-11-16 10:04:37,999 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:04:37,999 INFO __main__ MainThread : Debugger PIN: 403-964-461
+2019-11-16 10:05:03,815 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:05:03,816 INFO __main__ MainThread : Debugger PIN: 849-477-968
+2019-11-16 10:05:14,050 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:05:14,050 INFO __main__ MainThread : Debugger PIN: 570-136-306
+2019-11-16 10:05:18,903 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:05:18,904 INFO __main__ MainThread : Debugger PIN: 627-826-100
+2019-11-16 10:05:23,267 ERROR werkzeug Thread-11 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 10:05:59,902 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:05:59,902 INFO __main__ MainThread : Debugger PIN: 808-212-057
+2019-11-16 10:06:50,763 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:06:50,763 INFO __main__ MainThread : Debugger PIN: 927-795-966
+2019-11-16 10:06:54,468 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:06:54,468 INFO __main__ MainThread : Debugger PIN: 457-733-799
+2019-11-16 10:06:58,172 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:06:58,173 INFO __main__ MainThread : Debugger PIN: 253-171-912
+2019-11-16 10:07:30,613 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:07:30,614 INFO __main__ MainThread : Debugger PIN: 007-871-856
+2019-11-16 10:08:00,138 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:08:00,139 INFO __main__ MainThread : Debugger PIN: 333-173-804
+2019-11-16 10:08:02,845 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:08:02,846 INFO __main__ MainThread : Debugger PIN: 533-909-228
+2019-11-16 10:08:20,395 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:08:20,395 INFO __main__ MainThread : Debugger PIN: 838-734-647
+2019-11-16 10:08:58,349 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:08:58,349 INFO __main__ MainThread : Debugger PIN: 413-440-184
+2019-11-16 10:10:02,996 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:10:02,997 INFO __main__ MainThread : Debugger PIN: 916-196-358
+2019-11-16 10:11:04,809 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:11:04,810 INFO __main__ MainThread : Debugger PIN: 899-137-386
+2019-11-16 10:11:55,180 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 10:11:55,181 INFO __main__ MainThread : Debugger PIN: 943-355-405
+2019-11-16 11:22:31,092 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:22:31,097 INFO __main__ MainThread : Debugger PIN: 747-992-136
+2019-11-16 11:22:51,219 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:22:51,219 INFO __main__ MainThread : Debugger PIN: 347-348-331
+2019-11-16 11:28:55,256 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:28:55,256 INFO __main__ MainThread : Debugger PIN: 529-472-533
+2019-11-16 11:28:59,473 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:28:59,473 INFO __main__ MainThread : Debugger PIN: 826-015-522
+2019-11-16 11:31:12,564 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:31:12,564 INFO __main__ MainThread : Debugger PIN: 183-461-575
+2019-11-16 11:31:15,176 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:31:15,176 INFO __main__ MainThread : Debugger PIN: 232-841-469
+2019-11-16 11:31:43,561 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:31:43,562 INFO __main__ MainThread : Debugger PIN: 189-738-603
+2019-11-16 11:31:48,712 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:31:48,713 INFO __main__ MainThread : Debugger PIN: 937-548-716
+2019-11-16 11:33:22,118 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:33:22,118 INFO __main__ MainThread : Debugger PIN: 580-447-203
+2019-11-16 11:33:22,588 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 11:33:22,589 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 11:33:22,962 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:33:28,120 INFO __main__ Thread-14 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:33:29,871 INFO __main__ Thread-17 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:33:40,275 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:33:40,275 INFO __main__ MainThread : Debugger PIN: 839-222-469
+2019-11-16 11:33:40,678 INFO __main__ Thread-8 : @callback: Inicio 'update_figure()'
+2019-11-16 11:33:40,691 INFO __main__ Thread-9 : @callback: Inicio 'update_file()'
+2019-11-16 11:33:40,867 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:33:44,555 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:33:44,556 INFO __main__ MainThread : Debugger PIN: 026-933-683
+2019-11-16 11:33:45,077 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 11:33:45,080 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 11:33:45,327 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:36:32,164 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:36:32,164 INFO __main__ MainThread : Debugger PIN: 922-548-529
+2019-11-16 11:36:32,608 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 11:36:32,619 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 11:36:32,847 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:37:54,655 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:37:54,655 INFO __main__ MainThread : Debugger PIN: 143-392-131
+2019-11-16 11:38:03,582 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:38:03,583 INFO __main__ MainThread : Debugger PIN: 292-364-033
+2019-11-16 11:38:03,687 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 11:38:05,778 INFO __main__ Thread-16 : @callback: Inicio 'update_file()'
+2019-11-16 11:38:05,789 INFO __main__ Thread-18 : @callback: Inicio 'update_figure()'
+2019-11-16 11:38:06,302 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:40:37,876 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:40:37,880 INFO __main__ MainThread : Debugger PIN: 473-093-286
+2019-11-16 11:41:09,962 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:41:09,962 INFO __main__ MainThread : Debugger PIN: 906-519-300
+2019-11-16 11:41:13,525 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:41:13,527 INFO __main__ MainThread : Debugger PIN: 237-892-851
+2019-11-16 11:41:13,633 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 11:41:16,321 INFO __main__ Thread-18 : @callback: Inicio 'update_file()'
+2019-11-16 11:41:16,323 INFO __main__ Thread-19 : @callback: Inicio 'update_figure()'
+2019-11-16 11:41:16,855 INFO __main__ Thread-20 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:41:53,025 INFO __main__ Thread-45 : @callback: Inicio 'update_file()'
+2019-11-16 11:41:53,035 INFO __main__ Thread-46 : @callback: Inicio 'update_figure()'
+2019-11-16 11:41:53,508 INFO __main__ Thread-47 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:43:30,681 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:43:30,681 INFO __main__ MainThread : Debugger PIN: 969-983-427
+2019-11-16 11:43:33,052 INFO __main__ Thread-19 : @callback: Inicio 'update_file()'
+2019-11-16 11:43:33,055 INFO __main__ Thread-20 : @callback: Inicio 'update_figure()'
+2019-11-16 11:43:33,544 INFO __main__ Thread-21 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:43:56,819 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:43:56,820 INFO __main__ MainThread : Debugger PIN: 830-433-881
+2019-11-16 11:43:59,162 INFO __main__ Thread-19 : @callback: Inicio 'update_file()'
+2019-11-16 11:43:59,165 INFO __main__ Thread-20 : @callback: Inicio 'update_figure()'
+2019-11-16 11:43:59,642 INFO __main__ Thread-21 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:44:16,351 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:44:16,352 INFO __main__ MainThread : Debugger PIN: 424-574-977
+2019-11-16 11:44:18,730 INFO __main__ Thread-19 : @callback: Inicio 'update_file()'
+2019-11-16 11:44:18,733 INFO __main__ Thread-20 : @callback: Inicio 'update_figure()'
+2019-11-16 11:44:19,244 INFO __main__ Thread-21 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 11:46:04,468 INFO __main__ Thread-57 : @callback: Inicio 'update_figure()'
+2019-11-16 11:54:40,085 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:54:40,087 INFO __main__ MainThread : Debugger PIN: 362-581-111
+2019-11-16 11:54:42,802 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 11:54:42,802 INFO __main__ MainThread : Debugger PIN: 519-996-436
+2019-11-16 11:54:52,559 INFO __main__ Thread-16 : @callback: Inicio 'update_file()'
+2019-11-16 11:54:52,923 INFO __main__ Thread-17 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:13:35,511 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:13:35,513 INFO __main__ MainThread : Debugger PIN: 843-255-409
+2019-11-16 12:13:37,895 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:13:37,896 INFO __main__ MainThread : Debugger PIN: 588-966-366
+2019-11-16 12:13:55,104 INFO __main__ Thread-16 : @callback: Inicio 'update_file()'
+2019-11-16 12:13:55,497 INFO __main__ Thread-17 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:17:20,187 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:17:20,187 INFO __main__ MainThread : Debugger PIN: 637-617-489
+2019-11-16 12:17:20,587 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 12:17:20,868 INFO __main__ Thread-9 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:17:33,020 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:17:33,020 INFO __main__ MainThread : Debugger PIN: 668-098-008
+2019-11-16 12:17:33,417 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 12:17:33,599 INFO __main__ Thread-9 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:23:35,997 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:23:35,997 INFO __main__ MainThread : Debugger PIN: 841-740-966
+2019-11-16 12:23:38,433 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:23:38,433 INFO __main__ MainThread : Debugger PIN: 169-241-387
+2019-11-16 12:38:30,127 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:38:30,127 INFO __main__ MainThread : Debugger PIN: 676-880-414
+2019-11-16 12:38:32,732 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:38:32,732 INFO __main__ MainThread : Debugger PIN: 613-030-664
+2019-11-16 12:38:35,566 INFO __main__ Thread-16 : @callback: Inicio 'update_file()'
+2019-11-16 12:38:35,922 INFO __main__ Thread-17 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:39:11,488 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:39:11,489 INFO __main__ MainThread : Debugger PIN: 330-374-202
+2019-11-16 12:39:11,904 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 12:39:12,212 INFO __main__ Thread-9 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:39:36,398 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:39:36,402 INFO __main__ MainThread : Debugger PIN: 960-306-442
+2019-11-16 12:39:36,835 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 12:39:37,021 INFO __main__ Thread-9 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:39:51,390 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:39:51,390 INFO __main__ MainThread : Debugger PIN: 094-824-063
+2019-11-16 12:39:51,844 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 12:39:52,132 INFO __main__ Thread-9 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:39:55,630 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:39:55,631 INFO __main__ MainThread : Debugger PIN: 947-599-554
+2019-11-16 12:39:56,065 INFO __main__ Thread-7 : @callback: Inicio 'update_file()'
+2019-11-16 12:39:56,266 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:40:05,173 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:40:05,174 INFO __main__ MainThread : Debugger PIN: 293-700-307
+2019-11-16 12:40:07,252 INFO __main__ Thread-15 : @callback: Inicio 'update_file()'
+2019-11-16 12:40:07,589 INFO __main__ Thread-17 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:45:45,694 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:45:45,694 INFO __main__ MainThread : Debugger PIN: 955-174-825
+2019-11-16 12:45:48,309 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:45:48,309 INFO __main__ MainThread : Debugger PIN: 822-473-017
+2019-11-16 12:45:50,400 INFO __main__ Thread-16 : @callback: Inicio 'update_file()'
+2019-11-16 12:45:50,726 INFO __main__ Thread-17 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 12:52:54,916 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:52:54,916 INFO __main__ MainThread : Debugger PIN: 328-602-916
+2019-11-16 12:52:57,274 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:52:57,274 INFO __main__ MainThread : Debugger PIN: 902-679-315
+2019-11-16 12:55:18,845 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:55:18,846 INFO __main__ MainThread : Debugger PIN: 622-955-350
+2019-11-16 12:55:21,466 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 12:55:21,466 INFO __main__ MainThread : Debugger PIN: 749-986-817
+2019-11-16 12:55:26,104 INFO __main__ Thread-16 : @callback: Inicio 'update_figure()'
+2019-11-16 12:55:26,106 INFO __main__ Thread-17 : @callback: Inicio 'update_file()'
+2019-11-16 12:55:26,596 INFO __main__ Thread-18 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:18:05,658 INFO __main__ Thread-471 : @callback: Inicio 'update_figure()'
+2019-11-16 13:18:08,024 INFO __main__ Thread-473 : @callback: Inicio 'update_figure()'
+2019-11-16 13:20:01,857 INFO __main__ Thread-512 : @callback: Inicio 'update_figure()'
+2019-11-16 13:20:03,398 INFO __main__ Thread-513 : @callback: Inicio 'update_figure()'
+2019-11-16 13:21:01,135 INFO __main__ Thread-534 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:21:02,447 INFO __main__ Thread-538 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:21:16,182 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:21:16,182 INFO __main__ MainThread : Debugger PIN: 855-939-057
+2019-11-16 13:21:16,623 INFO __main__ Thread-9 : @callback: Inicio 'update_file()'
+2019-11-16 13:21:16,625 INFO __main__ Thread-10 : @callback: Inicio 'update_figure()'
+2019-11-16 13:21:16,958 INFO __main__ Thread-11 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:21:25,711 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:21:25,711 INFO __main__ MainThread : Debugger PIN: 912-016-931
+2019-11-16 13:21:26,133 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:21:26,138 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:21:26,349 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:21:30,834 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:21:30,835 INFO __main__ MainThread : Debugger PIN: 570-938-304
+2019-11-16 13:21:31,227 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:21:31,236 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:21:31,435 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:21:47,956 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:21:47,956 INFO __main__ MainThread : Debugger PIN: 041-195-620
+2019-11-16 13:21:48,349 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:21:48,358 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:21:48,559 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:21:59,740 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:21:59,740 INFO __main__ MainThread : Debugger PIN: 390-421-851
+2019-11-16 13:22:00,153 ERROR werkzeug Thread-5 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 41] Protocol wrong type for socket
+2019-11-16 13:22:00,161 ERROR werkzeug Thread-4 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 13:22:02,210 INFO __main__ Thread-19 : @callback: Inicio 'update_file()'
+2019-11-16 13:22:02,212 INFO __main__ Thread-20 : @callback: Inicio 'update_figure()'
+2019-11-16 13:22:02,553 INFO __main__ Thread-21 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:22:35,041 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:22:35,041 INFO __main__ MainThread : Debugger PIN: 676-999-784
+2019-11-16 13:22:35,452 INFO __main__ Thread-8 : @callback: Inicio 'update_figure()'
+2019-11-16 13:22:35,454 INFO __main__ Thread-9 : @callback: Inicio 'update_file()'
+2019-11-16 13:22:35,753 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:23:16,881 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:23:16,881 INFO __main__ MainThread : Debugger PIN: 671-817-623
+2019-11-16 13:23:19,588 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:23:19,588 INFO __main__ MainThread : Debugger PIN: 121-392-928
+2019-11-16 13:23:21,792 INFO __main__ Thread-16 : @callback: Inicio 'update_file()'
+2019-11-16 13:23:21,795 INFO __main__ Thread-17 : @callback: Inicio 'update_figure()'
+2019-11-16 13:23:22,278 INFO __main__ Thread-18 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:24:59,057 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:24:59,058 INFO __main__ MainThread : Debugger PIN: 018-850-494
+2019-11-16 13:24:59,493 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:24:59,499 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:24:59,875 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:25:06,075 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:25:06,076 INFO __main__ MainThread : Debugger PIN: 554-069-383
+2019-11-16 13:25:06,485 INFO __main__ Thread-7 : @callback: Inicio 'update_file()'
+2019-11-16 13:25:06,493 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:25:06,718 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:27:57,066 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:27:57,067 INFO __main__ MainThread : Debugger PIN: 120-712-484
+2019-11-16 13:27:57,506 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:27:57,509 INFO __main__ Thread-7 : @callback: Inicio 'update_figure()'
+2019-11-16 13:27:58,038 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:29:43,512 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:29:43,512 INFO __main__ MainThread : Debugger PIN: 720-906-170
+2019-11-16 13:29:43,959 INFO __main__ Thread-7 : @callback: Inicio 'update_figure()'
+2019-11-16 13:29:43,962 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:29:44,221 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:29:59,428 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:29:59,429 INFO __main__ MainThread : Debugger PIN: 451-881-270
+2019-11-16 13:29:59,828 INFO __main__ Thread-9 : @callback: Inicio 'update_file()'
+2019-11-16 13:29:59,829 INFO __main__ Thread-8 : @callback: Inicio 'update_figure()'
+2019-11-16 13:30:00,078 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:30:28,729 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:30:28,730 INFO __main__ MainThread : Debugger PIN: 815-424-358
+2019-11-16 13:30:29,159 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:30:29,162 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:30:29,370 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:30:57,036 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:30:57,037 INFO __main__ MainThread : Debugger PIN: 849-293-240
+2019-11-16 13:30:57,452 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:30:57,454 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:30:57,978 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:31:11,849 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:31:11,849 INFO __main__ MainThread : Debugger PIN: 017-800-484
+2019-11-16 13:31:12,249 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:31:12,253 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:31:12,426 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:31:31,197 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:31:31,197 INFO __main__ MainThread : Debugger PIN: 505-956-678
+2019-11-16 13:31:31,594 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:31:31,596 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:31:31,772 INFO __main__ Thread-11 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:31:39,806 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:31:39,807 INFO __main__ MainThread : Debugger PIN: 122-017-094
+2019-11-16 13:31:40,210 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:31:40,213 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:31:40,407 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:31:49,394 INFO __main__ Thread-14 : @callback: Inicio 'update_figure()'
+2019-11-16 13:33:33,320 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:33:33,321 INFO __main__ MainThread : Debugger PIN: 220-700-637
+2019-11-16 13:33:45,911 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:33:45,911 INFO __main__ MainThread : Debugger PIN: 750-649-857
+2019-11-16 13:33:57,351 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:33:57,351 INFO __main__ MainThread : Debugger PIN: 867-537-385
+2019-11-16 13:34:02,172 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:34:02,172 INFO __main__ MainThread : Debugger PIN: 860-227-589
+2019-11-16 13:34:05,986 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:34:05,986 INFO __main__ MainThread : Debugger PIN: 910-464-338
+2019-11-16 13:34:12,069 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:34:12,070 INFO __main__ MainThread : Debugger PIN: 298-765-053
+2019-11-16 13:34:43,284 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:34:43,285 INFO __main__ MainThread : Debugger PIN: 957-598-933
+2019-11-16 13:34:45,810 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:34:45,811 INFO __main__ MainThread : Debugger PIN: 434-856-468
+2019-11-16 13:34:55,084 ERROR werkzeug Thread-17 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 13:34:56,182 INFO __main__ Thread-21 : @callback: Inicio 'update_file()'
+2019-11-16 13:34:56,185 INFO __main__ Thread-22 : @callback: Inicio 'update_figure()'
+2019-11-16 13:34:56,732 INFO __main__ Thread-23 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:35:38,770 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:35:38,770 INFO __main__ MainThread : Debugger PIN: 986-958-171
+2019-11-16 13:35:39,171 INFO __main__ Thread-7 : @callback: Inicio 'update_file()'
+2019-11-16 13:35:39,174 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:35:39,511 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:36:04,809 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:36:04,810 INFO __main__ MainThread : Debugger PIN: 612-888-620
+2019-11-16 13:36:05,199 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:36:05,203 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:36:05,472 INFO __main__ Thread-11 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:36:52,364 INFO __main__ Thread-28 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:36:53,574 INFO __main__ Thread-32 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:37:41,776 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:37:41,777 INFO __main__ MainThread : Debugger PIN: 259-307-490
+2019-11-16 13:37:44,330 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:37:44,330 INFO __main__ MainThread : Debugger PIN: 455-476-435
+2019-11-16 13:37:46,115 INFO __main__ Thread-15 : @callback: Inicio 'update_file()'
+2019-11-16 13:37:46,118 INFO __main__ Thread-16 : @callback: Inicio 'update_figure()'
+2019-11-16 13:37:46,596 INFO __main__ Thread-17 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:39:36,638 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:39:36,642 INFO __main__ MainThread : Debugger PIN: 227-129-368
+2019-11-16 13:39:37,081 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:39:37,083 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:39:37,362 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:40:06,012 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:40:06,012 INFO __main__ MainThread : Debugger PIN: 813-944-417
+2019-11-16 13:40:06,081 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 13:40:07,757 INFO __main__ Thread-16 : @callback: Inicio 'update_file()'
+2019-11-16 13:40:07,758 INFO __main__ Thread-17 : @callback: Inicio 'update_figure()'
+2019-11-16 13:40:08,236 INFO __main__ Thread-18 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:40:34,402 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:40:34,402 INFO __main__ MainThread : Debugger PIN: 908-595-947
+2019-11-16 13:40:34,800 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:40:34,802 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:40:35,099 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:44:22,599 INFO __main__ Thread-98 : @callback: Inicio 'update_file()'
+2019-11-16 13:44:22,618 INFO __main__ Thread-100 : @callback: Inicio 'update_figure()'
+2019-11-16 13:44:22,969 INFO __main__ Thread-101 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:45:20,384 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:45:20,385 INFO __main__ MainThread : Debugger PIN: 692-129-969
+2019-11-16 13:45:20,802 ERROR werkzeug Thread-4 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 13:45:22,795 INFO __main__ Thread-19 : @callback: Inicio 'update_file()'
+2019-11-16 13:45:22,800 INFO __main__ Thread-20 : @callback: Inicio 'update_figure()'
+2019-11-16 13:45:23,315 INFO __main__ Thread-21 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:45:45,869 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:45:45,869 INFO __main__ MainThread : Debugger PIN: 055-724-047
+2019-11-16 13:45:45,931 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 13:45:47,893 INFO __main__ Thread-18 : @callback: Inicio 'update_file()'
+2019-11-16 13:45:47,894 INFO __main__ Thread-17 : @callback: Inicio 'update_figure()'
+2019-11-16 13:45:48,446 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:47:08,740 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:47:08,740 INFO __main__ MainThread : Debugger PIN: 896-014-971
+2019-11-16 13:47:09,236 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:47:09,237 INFO __main__ Thread-7 : @callback: Inicio 'update_figure()'
+2019-11-16 13:47:09,509 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:47:15,430 INFO __main__ Thread-26 : @callback: Inicio 'update_file()'
+2019-11-16 13:47:15,433 INFO __main__ Thread-25 : @callback: Inicio 'update_figure()'
+2019-11-16 13:47:15,784 INFO __main__ Thread-27 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:47:59,197 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:47:59,197 INFO __main__ MainThread : Debugger PIN: 559-378-681
+2019-11-16 13:47:59,586 ERROR werkzeug Thread-4 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 13:48:01,685 INFO __main__ Thread-17 : @callback: Inicio 'update_file()'
+2019-11-16 13:48:01,753 INFO __main__ Thread-19 : @callback: Inicio 'update_figure()'
+2019-11-16 13:48:02,062 INFO __main__ Thread-20 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:48:12,759 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:48:12,759 INFO __main__ MainThread : Debugger PIN: 738-796-482
+2019-11-16 13:48:13,161 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 13:48:13,167 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 13:48:13,537 INFO __main__ Thread-11 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:48:47,147 INFO __main__ Thread-24 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:48:49,813 INFO __main__ Thread-28 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:49:18,313 INFO __main__ Thread-50 : @callback: Inicio 'update_file()'
+2019-11-16 13:49:18,316 INFO __main__ Thread-51 : @callback: Inicio 'update_figure()'
+2019-11-16 13:49:18,719 INFO __main__ Thread-52 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:49:25,077 INFO __main__ Thread-56 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:49:26,595 INFO __main__ Thread-59 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:49:56,261 INFO __main__ Thread-71 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:49:57,409 INFO __main__ Thread-74 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 13:56:46,625 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:56:46,625 INFO __main__ MainThread : Debugger PIN: 995-267-256
+2019-11-16 13:56:49,032 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 13:56:49,033 INFO __main__ MainThread : Debugger PIN: 574-784-521
+2019-11-16 14:01:18,331 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 14:01:18,331 INFO __main__ MainThread : Debugger PIN: 934-706-151
+2019-11-16 14:01:24,739 INFO __main__ Thread-17 : @callback: Inicio 'update_file()'
+2019-11-16 14:01:24,742 INFO __main__ Thread-18 : @callback: Inicio 'update_figure()'
+2019-11-16 14:01:25,227 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 14:01:50,975 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 14:01:50,976 INFO __main__ MainThread : Debugger PIN: 161-548-111
+2019-11-16 14:01:51,043 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 14:01:53,033 INFO __main__ Thread-17 : @callback: Inicio 'update_file()'
+2019-11-16 14:01:53,036 INFO __main__ Thread-18 : @callback: Inicio 'update_figure()'
+2019-11-16 14:01:53,593 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 14:02:03,940 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 14:02:03,941 INFO __main__ MainThread : Debugger PIN: 332-820-636
+2019-11-16 14:02:04,373 INFO __main__ Thread-8 : @callback: Inicio 'update_file()'
+2019-11-16 14:02:04,377 INFO __main__ Thread-9 : @callback: Inicio 'update_figure()'
+2019-11-16 14:02:04,598 INFO __main__ Thread-10 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 14:02:23,405 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 14:02:23,406 INFO __main__ MainThread : Debugger PIN: 173-260-046
+2019-11-16 14:02:25,681 INFO __main__ Thread-19 : @callback: Inicio 'update_file()'
+2019-11-16 14:02:25,687 INFO __main__ Thread-20 : @callback: Inicio 'update_figure()'
+2019-11-16 14:02:26,292 INFO __main__ Thread-21 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 14:02:46,008 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 14:02:46,008 INFO __main__ MainThread : Debugger PIN: 239-228-527
+2019-11-16 14:02:46,079 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 14:02:48,177 INFO __main__ Thread-17 : @callback: Inicio 'update_file()'
+2019-11-16 14:02:48,180 INFO __main__ Thread-18 : @callback: Inicio 'update_figure()'
+2019-11-16 14:02:48,682 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 14:03:17,933 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 14:03:17,933 INFO __main__ MainThread : Debugger PIN: 662-441-045
+2019-11-16 14:03:20,178 INFO __main__ Thread-18 : @callback: Inicio 'update_file()'
+2019-11-16 14:03:20,191 INFO __main__ Thread-20 : @callback: Inicio 'update_figure()'
+2019-11-16 14:03:20,694 INFO __main__ Thread-21 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 14:03:41,323 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 14:03:41,323 INFO __main__ MainThread : Debugger PIN: 049-169-024
+2019-11-16 14:03:43,607 INFO __main__ Thread-19 : @callback: Inicio 'update_file()'
+2019-11-16 14:03:43,609 INFO __main__ Thread-20 : @callback: Inicio 'update_figure()'
+2019-11-16 14:03:44,098 INFO __main__ Thread-21 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 14:04:19,903 INFO __main__ MainThread : Running on http://127.0.0.1:8050/
+2019-11-16 14:04:19,904 INFO __main__ MainThread : Debugger PIN: 064-049-870
+2019-11-16 14:04:19,975 ERROR werkzeug Thread-3 : Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 304, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 295, in execute
+    write(data)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/site-packages/werkzeug/serving.py", line 258, in write
+    self.send_header(key, value)
+  File "/opt/anaconda2/envs/TFGEnv/lib/python2.7/BaseHTTPServer.py", line 412, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+2019-11-16 14:04:22,172 INFO __main__ Thread-16 : @callback: Inicio 'update_file()'
+2019-11-16 14:04:22,174 INFO __main__ Thread-18 : @callback: Inicio 'update_figure()'
+2019-11-16 14:04:22,698 INFO __main__ Thread-19 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 14:04:34,785 INFO __main__ Thread-25 : @callback: Inicio 'set_msg_uploadFile()'
+2019-11-16 14:04:35,988 INFO __main__ Thread-28 : @callback: Inicio 'set_msg_uploadFile()'
