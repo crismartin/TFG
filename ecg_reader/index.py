@@ -14,12 +14,14 @@ import ecg_factory as ecgf
 import numpy as np
 import datetime
 import logging
+import base64
 
 from dash.dependencies import Input, Output, State
 
 import plotly.graph_objs as go
 
 
+DIR_UPLOAD_FILES = "./uploaded_files/"
 
 # Factoria de ECG
 ecgFactory = ecgf.ECGFactory()
@@ -189,7 +191,7 @@ body = dbc.Container([
     ])
 ])
 
-
+footer = html.Div()
 
 
 
@@ -198,7 +200,7 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, "https://c
 logging.basicConfig(filename="ecgApp.log", level=logging.DEBUG, 
                     format="%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s")
 app.title = "ECGApp"
-app.layout = html.Div([navbar, body])
+app.layout = html.Div([navbar, body, footer])
 
 
 
@@ -223,6 +225,16 @@ def parse_contents(contents, filename, date):
     ])
 
 
+def save_file_proces(nombre_file, contenido):
+    ruta_fichero = DIR_UPLOAD_FILES + nombre_file
+    content_type, content_string = contenido.split(',')
+    decoded = base64.b64decode(content_string)
+    
+    fh = open(ruta_fichero, "wb")
+    fh.write(decoded)
+    fh.close()
+    
+    return None
 
 
 ###############################################################################
@@ -306,6 +318,7 @@ def update_file(list_contenidos, list_nombres, list_fechas):
     if list_nombres is not None:
         app.logger.info("el nombre del fichero es: " + list_nombres)
         app.logger.info("longitud del fichero?: " + str(len(list_contenidos)))
+        save_file_proces(list_nombres, list_contenidos)
         return [html.Div([
                     html.Span("Fichero seleccionado: "),
                     dbc.Badge(list_nombres, color="info", className="mr-1")
