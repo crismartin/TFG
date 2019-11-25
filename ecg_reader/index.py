@@ -15,6 +15,7 @@ import numpy as np
 import datetime
 import logging
 import base64
+import os
 
 from dash.dependencies import Input, Output, State
 
@@ -241,6 +242,18 @@ def save_file_proces(nombre_file, contenido):
     return None
 
 
+
+def borrar_fichero(nombre_fichero):
+    app.logger.info("@callback: Inicio 'borrar_fichero()'")
+    ruta = DIR_UPLOAD_FILES + nombre_fichero
+    if os.path.exists(ruta):
+        os.remove(ruta)
+    else:
+        app.logger.info("@callback: 'borrar_fichero()'. El fichero con nombre '"+
+                        nombre_fichero +"' no existe.")
+    app.logger.info("@callback: FIN 'borrar_fichero()'")
+    
+    
 ###############################################################################
 ############################### CALLBACKS #####################################
 ###############################################################################
@@ -289,9 +302,16 @@ def toggle_modal(n1, n2, n3, is_open):
      Output("btn-eliminar-file", "children")],
     [Input("modal", "is_open"),
      Input("btn-eliminar-file", "n_clicks")],
+     [State('upload-file', 'filename')]
 )
-def set_msg_uploadFile(is_open, n_btn_eliminar):
-    app.logger.info("@callback: Inicio 'set_msg_uploadFile()'")
+def set_msg_uploadFile(is_open, n_btn_eliminar, nombre_fichero):
+    app.logger.info("@callback: INICIO 'set_msg_uploadFile()'")
+    app.logger.info("@callback: "+str(n_btn_eliminar))
+    app.logger.info("@callback: "+str(nombre_fichero))
+    if n_btn_eliminar > 0 and nombre_fichero != None:
+        borrar_fichero(nombre_fichero)
+        
+    app.logger.info("@callback: FIN 'set_msg_uploadFile()'")
     return [html.Div([],
                 id="msg-upfile",
                 style= {'display': 'block'},
