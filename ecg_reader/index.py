@@ -141,6 +141,10 @@ display_ecg = html.Div([
                     formulario
                 ]),
                 dbc.ModalFooter([
+                    html.Div(id="btn-eliminar-file",
+                             children=dbc.Button("Eliminar fichero/s", id="eliminar-file",
+                                className="mr-1", color="danger", disabled=True)
+                             ),
                     dbc.Button("Cerrar", id="close-upfile", className="mr-1"),
                     html.Div(id="btn-proces",
                              children=dbc.Button("Procesar", id="proces-upfile", color="success", 
@@ -281,16 +285,21 @@ def toggle_modal(n1, n2, n3, is_open):
 
 @app.callback(
     [Output("container-upfile", "children"),
-     Output("btn-proces", "children")],
-    [Input("modal", "is_open")],
+     Output("btn-proces", "children"),
+     Output("btn-eliminar-file", "children")],
+    [Input("modal", "is_open"),
+     Input("btn-eliminar-file", "n_clicks")],
 )
-def set_msg_uploadFile(is_open):
+def set_msg_uploadFile(is_open, n_btn_eliminar):
     app.logger.info("@callback: Inicio 'set_msg_uploadFile()'")
     return [html.Div([],
                 id="msg-upfile",
                 style= {'display': 'block'},
             ), dbc.Button("Procesar", id="proces-upfile", color="success", 
-                                disabled=True)]
+                disabled=True),
+            dbc.Button("Eliminar fichero/s", id="eliminar-file",
+                                className="mr-1", color="danger", disabled=True)
+            ]
         
     
 
@@ -304,10 +313,22 @@ def reset_updloadFile(nclose, nproces):
         return None
 
 
-    
 
-@app.callback([Output('msg-upfile', 'children'),
-               Output('proces-upfile', 'disabled')],
+@app.callback(
+    Output("msg-upfile", "style"),
+    [Input("eliminar-file", "n_clicks")]
+)
+def delete_file_uploaded(n_eliminar):
+    
+    if n_eliminar > 0:
+        return {"display": "none"}
+    return None
+
+
+
+@app.callback([Output('proces-upfile', 'disabled'),
+               Output('msg-upfile', 'children'),
+               Output("eliminar-file", "disabled")],
               [Input('upload-file', 'contents')],
               [State('upload-file', 'filename'),
                State('upload-file', 'last_modified')])
@@ -319,14 +340,18 @@ def update_file(list_contenidos, list_nombres, list_fechas):
         app.logger.info("el nombre del fichero es: " + list_nombres)
         app.logger.info("longitud del fichero?: " + str(len(list_contenidos)))
         save_file_proces(list_nombres, list_contenidos)
-        return [html.Div([
+        
+        """btn_eliminar = dbc.Button("Eliminar fichero/s", id="eliminar-file", className="mr-1", color="danger")"""
+        msg_file = html.Div([
                     html.Span("Fichero seleccionado: "),
-                    dbc.Badge(list_nombres, color="info", className="mr-1")
-                    ],                
-                ), False]
+                    dbc.Badge(list_nombres, color="info", className="mr-1")]               
+                )
+        
+        return [False, msg_file, False]
+                
   
     else:
-        return [None, True]
+        return [True, None, True]
        
 ###############################################################################
 ############################### RUNER APP #####################################
