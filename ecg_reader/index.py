@@ -16,6 +16,7 @@ import datetime
 import logging
 import base64
 import os
+import urllib2
 
 from dash.dependencies import Input, Output, State
 
@@ -80,18 +81,7 @@ navbar = dbc.NavbarSimple(
 )
 
 
-formulario = dbc.Form([
-        
-    dbc.FormGroup([
-        dbc.Label("Desde url remota: ", html_for="url-rem-file"),
-        dbc.Input(type="url", id="url-rem-file", placeholder="http://"),
-    ]),
-        
-    html.P([
-        html.Label("ó")
-    ], style={'text-align': 'center'} ),
-        
-    dbc.FormGroup([
+uploader = html.Div([
         dcc.Upload(
             id="upload-file",
             children=html.Div([
@@ -110,11 +100,30 @@ formulario = dbc.Form([
             multiple=False
         ),
         html.Div(id='container-upfile',
-                 children=html.Div(
-                             id="msg-upfile"
-                         )
-                 ),        
-    ])
+                 children=[
+                        html.Div(id="msg-upfile"),
+                        html.Div(id="div_file_aux", 
+                                 children= html.Div(id='name_file_aux', style={'display': 'none'})
+                       )
+                    ]
+                 ),
+        ])
+
+input_component = dbc.Input(type="url", id="url-rem-file", placeholder="http://")
+
+formulario = dbc.Form([
+        
+    dbc.FormGroup([
+        dbc.Label("Desde url remota: ", html_for="url-rem-file"),
+        html.Div(id="input-component", children = input_component)
+    ]),
+        
+    html.P([
+        html.Label("ó")
+    ], style={'text-align': 'center'} ),
+        
+    dbc.FormGroup(id="form-uploader",children = uploader),
+             
 ])
         
          
@@ -130,31 +139,31 @@ controls_ecg = html.Div([
     )        
 ])
 
-
+modal_component = html.Div([
+    dbc.ModalHeader("Cargar Fichero"),
+    dbc.ModalBody([
+        formulario
+    ]),
+    dbc.ModalFooter([
+        html.Div(id="btn-eliminar-file",
+                 children=dbc.Button("Eliminar fichero/s", id="eliminar-file",
+                    className="mr-1", color="danger", disabled=True)
+                 ),
+        dbc.Button("Cerrar", id="close-upfile", className="mr-1"),
+        html.Div(id="btn-proces",
+                 children=dbc.Button("Procesar", id="proces-upfile", color="success", 
+                    disabled=True),
+                 ),
+    ]),
+])
 
 display_ecg = html.Div([   
         
     html.Div([       
         dbc.Modal(
-            [
-                dbc.ModalHeader("Cargar Fichero"),
-                dbc.ModalBody([
-                    formulario
-                ]),
-                dbc.ModalFooter([
-                    html.Div(id="btn-eliminar-file",
-                             children=dbc.Button("Eliminar fichero/s", id="eliminar-file",
-                                className="mr-1", color="danger", disabled=True)
-                             ),
-                    dbc.Button("Cerrar", id="close-upfile", className="mr-1"),
-                    html.Div(id="btn-proces",
-                             children=dbc.Button("Procesar", id="proces-upfile", color="success", 
-                                disabled=True),
-                             ),
-                ]),
-            ],
-            id="modal",
-            size="lg"
+            children = modal_component,
+            id = "modal",
+            size = "lg"
         ),
     ]),
     
@@ -242,18 +251,42 @@ def save_file_proces(nombre_file, contenido):
     return None
 
 
+def save_file_url(url_file):
+    name_file = url_file.split('/')[-1]
+    save_file = DIR_UPLOAD_FILES + name_file
+    
+    try:
+        response = urllib2.urlopen(url_file)
+        datatowrite = response.read()
+        fh = open(save_file, "wb")
+        fh.write(datatowrite)
+        fh.close()    
+        return name_file
+    except:
+        return None
+   
+
 
 def borrar_fichero(nombre_fichero):
-    app.logger.info("@callback: Inicio 'borrar_fichero()'")
+    app.logger.info("def: INICIO 'borrar_fichero()'")
     ruta = DIR_UPLOAD_FILES + nombre_fichero
+    app.logger.info("def: 'borrar_fichero()' -> url a borrar: " + str(ruta) )
+    
     if os.path.exists(ruta):
+        app.logger.info("def: 'borrar_fichero()' -> removiendo ruta" )
         os.remove(ruta)
     else:
-        app.logger.info("@callback: 'borrar_fichero()'. El fichero con nombre '"+
+        app.logger.info("def: 'borrar_fichero()'. El fichero con nombre '"+
                         nombre_fichero +"' no existe.")
-    app.logger.info("@callback: FIN 'borrar_fichero()'")
+        
+    app.logger.info("def: FIN 'borrar_fichero()'")
     
-    
+
+def name_file_valid(nombre_file):
+    if nombre_file is not None and nombre_file != "":
+        return True
+        
+    return False    
 ###############################################################################
 ############################### CALLBACKS #####################################
 ###############################################################################
@@ -279,13 +312,11 @@ def update_figure(lead):
 
 
 
-
 @app.callback(
     Output("modal", "is_open"),
     [Input("open-upfile", "n_clicks"), 
      Input("close-upfile", "n_clicks"), 
-     Input("proces-upfile", "n_clicks")
-    ],
+     Input("proces-upfile", "n_clicks")],
     [State("modal", "is_open")],
 )
 def toggle_modal(n1, n2, n3, is_open):
@@ -295,83 +326,112 @@ def toggle_modal(n1, n2, n3, is_open):
 
 
 
+@app.callback(
+    Output("upload-file", "disabled"),
+    [Input("url-rem-file","value")]       
+)
+def disabled_uploader(name_file):
+    
+    if name_file_valid(name_file):
+        return True
+    else:
+        return False
+
+
+
 
 @app.callback(
-    [Output("container-upfile", "children"),
+    [Output('container-upfile', 'children'),
      Output("btn-proces", "children"),
-     Output("btn-eliminar-file", "children")],
-    [Input("modal", "is_open"),
-     Input("btn-eliminar-file", "n_clicks")],
-     [State('upload-file', 'filename')]
+     Output("btn-eliminar-file", "children"),
+     Output("url-rem-file", "value"),
+     Output("form-uploader", "children")],
+    [Input("eliminar-file", "n_clicks"),
+     Input("name_file_aux", "children")],
 )
-def set_msg_uploadFile(is_open, n_btn_eliminar, nombre_fichero):
-    app.logger.info("@callback: INICIO 'set_msg_uploadFile()'")
-    app.logger.info("@callback: "+str(n_btn_eliminar))
-    app.logger.info("@callback: "+str(nombre_fichero))
-    if n_btn_eliminar > 0 and nombre_fichero != None:
-        borrar_fichero(nombre_fichero)
+def delete_file(eliminar_file, name_file):
+    
+    app.logger.info("@callback: INICIO 'delete_file()'")
+    app.logger.info( "@callback: delete_file() -> eliminar_file: " + str(eliminar_file) )
+
+    if eliminar_file <= 0 or name_file is None:
+        app.logger.info("@callback: FIN by exception 'delete_file()'")
+        raise dash.exceptions.PreventUpdate()
+    
+    if name_file is not None:   
+        app.logger.info( "@callback: 'delete_file(): Borrando fichero: '" + str(name_file) )        
+        borrar_fichero(name_file)
         
-    app.logger.info("@callback: FIN 'set_msg_uploadFile()'")
-    return [html.Div([],
-                id="msg-upfile",
-                style= {'display': 'block'},
-            ), dbc.Button("Procesar", id="proces-upfile", color="success", 
-                disabled=True),
-            dbc.Button("Eliminar fichero/s", id="eliminar-file",
+        container = html.Div([
+                        html.Div(id="msg-upfile"),
+                        html.Div(id="div_file_aux",
+                                 children= html.Div(id='name_file_aux', style={'display': 'none'})
+                       )
+                    ])
+        btn_procesar = dbc.Button("Procesar", id="proces-upfile", color="success", 
+                disabled=True)
+        
+        btn_eliminar = dbc.Button("Eliminar fichero/s", id="eliminar-file", n_clicks=None,
                                 className="mr-1", color="danger", disabled=True)
-            ]
+
+        app.logger.info( "@callback: FIN 'delete_file()'" )
+        
+        return [container, btn_procesar, btn_eliminar, "", uploader]
         
     
-
-@app.callback(
-    Output("upload-file", "filename"),
-    [Input("close-upfile", "n_clicks"),
-     Input("proces-upfile", "n_clicks")],
-)
-def reset_updloadFile(nclose, nproces):
-    if nclose > 0 or nproces > 0:
-        return None
-
-
-
-@app.callback(
-    Output("msg-upfile", "style"),
-    [Input("eliminar-file", "n_clicks")]
-)
-def delete_file_uploaded(n_eliminar):
-    
-    if n_eliminar > 0:
-        return {"display": "none"}
-    return None
-
 
 
 @app.callback([Output('proces-upfile', 'disabled'),
                Output('msg-upfile', 'children'),
-               Output("eliminar-file", "disabled")],
-              [Input('upload-file', 'contents')],
+               Output("eliminar-file", "disabled"),
+               Output("div_file_aux", "children"),
+               Output("url-rem-file", "disabled")],
+              [Input('upload-file', 'contents'),
+               Input('url-rem-file', 'value')],
               [State('upload-file', 'filename'),
                State('upload-file', 'last_modified')])
-def update_file(list_contenidos, list_nombres, list_fechas):
+def update_file(list_contenidos, val_url, list_nombres, list_fechas):
     
-    app.logger.info("@callback: Inicio 'update_file()'")
+    app.logger.info("@callback: INICIO 'update_file()'")
+    app.logger.info( "url?: " + str(val_url) )
+    app.logger.info( "nombre uploader?: " + str(list_nombres) )
     
-    if list_nombres is not None:
-        app.logger.info("el nombre del fichero es: " + list_nombres)
-        app.logger.info("longitud del fichero?: " + str(len(list_contenidos)))
-        save_file_proces(list_nombres, list_contenidos)
+    nombre_file = ''
+    
+    if list_contenidos is not None or name_file_valid(val_url):
+        app.logger.info( "@callback: 'update_file() -> list_contenidos is None?: " + str(list_contenidos is None) )
+        app.logger.info( "@callback: 'update_file() -> val_url: " + str(val_url) )        
+        app.logger.info( "@callback: 'update_file() -> list_nombres: " + str(list_nombres) )
         
-        """btn_eliminar = dbc.Button("Eliminar fichero/s", id="eliminar-file", className="mr-1", color="danger")"""
+        if val_url is not None and val_url != '':
+            nombre_file = val_url
+            app.logger.info("el nombre del fichero URL es: " + str(nombre_file) )
+            nombre_file = save_file_url(nombre_file)
+            
+        elif list_contenidos is not None :
+            nombre_file = list_nombres
+            app.logger.info("el nombre del fichero UPL es: " + str(nombre_file) )
+            app.logger.info("el contenido del fichero UPL es None?: " + str(list_contenidos is None) )
+            save_file_proces(nombre_file, list_contenidos)
+            
+
         msg_file = html.Div([
-                    html.Span("Fichero seleccionado: "),
-                    dbc.Badge(list_nombres, color="info", className="mr-1")]               
-                )
+                        html.Span("Fichero seleccionado: "),
+                        dbc.Badge(nombre_file, color="info", className="mr-1", id="lbl_name_file")]               
+                    )
         
-        return [False, msg_file, False]
-                
-  
+        
+        name_file_aux = html.Div(nombre_file, id='name_file_aux', style={'display': 'none'})
+    
+        app.logger.info("@callback: FIN 'update_file()'")
+    
+        return [False, msg_file, False, name_file_aux, True]
+    
     else:
-        return [True, None, True]
+        
+        name_file_aux = html.Div(nombre_file, id='name_file_aux', style={'display': 'none'})
+        app.logger.info("@callback: FIN 'update_file()'")
+        return [True, None, True, nombre_file, False]
        
 ###############################################################################
 ############################### RUNER APP #####################################
