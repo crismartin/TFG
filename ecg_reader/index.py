@@ -6,6 +6,9 @@ Created on Sun Jul 28 21:40:58 2019
 @author: cristian
 """
 
+import json
+
+
 import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
@@ -17,6 +20,7 @@ import logging
 import base64
 import os
 import urllib2
+
 
 from dash.dependencies import Input, Output, State
 
@@ -54,7 +58,8 @@ ecg_trace = go.Scatter(x = ejeX, y = ejeY,
 
 print(optsLeads)
 layout = go.Layout(title = "Representacion de la Derivación " + str(optsLeads[0]['value']),
-                   hovermode = 'closest')
+                   hovermode = 'closest', clickmode= 'event+select', uirevision=True,
+                   autosize=True, xaxis=dict(gridcolor="LightPink") )
 
 
 fig = go.Figure(data = [ecg_trace], layout = layout)
@@ -79,6 +84,14 @@ navbar = dbc.NavbarSimple(
     brand_href="#",
     sticky="top",
 )
+        
+
+styles = {
+    'pre': {
+        'border': 'thin lightgrey solid',
+        'overflowX': 'scroll'
+    }
+}
 
 
 uploader = html.Div([
@@ -136,7 +149,8 @@ controls_ecg = html.Div([
         options = optsLeads,
         value = optsLeads[0]['value'],
         clearable=False             
-    )        
+    ),
+        
 ])
 
 modal_component = html.Div([
@@ -168,7 +182,9 @@ display_ecg = html.Div([
     ]),
     
     #Agregamos la figura
-    dcc.Graph(id='plot', figure=fig,  style={'height': 600, 'width':1000}),
+    dcc.Graph(id='plot', 
+              figure=fig,  
+              style={'height': 600, 'width':1000}),
 ])
         
 menu_ecg = html.Div([
@@ -176,6 +192,7 @@ menu_ecg = html.Div([
     dbc.Button("Otro",id="otroGraph", outline=True, color="secondary", className="mr-1"),
     dbc.Button("Subir fichero", id="open-upfile", color="primary")
 ])
+
 
 
 body = dbc.Container([
@@ -191,6 +208,15 @@ body = dbc.Container([
             ]),
             dbc.Row([
                 controls_ecg
+            ]),
+            dbc.Row([
+                html.Div([
+                    html.P("Edicion de punto."),
+                    html.P(id="point-x", children=["eje X: "]),
+                    dbc.Input(type="number", id="point-y", placeholder="eje Y"),
+                    dbc.Button("Guardar", id="guardar-modif", color="success", n_clicks_timestamp=0),
+                    dbc.Input(type="hidden", id="time-guardar-modif"),
+                ])
             ])
         ], width=2),
         dbc.Col([
@@ -295,19 +321,38 @@ def name_file_valid(nombre_file):
 
 # Agregamos el callback para actualizar el dropdown
 @app.callback(Output('plot', 'figure'),
-             [Input('optLeads', 'value')])
-def update_figure(lead):
+             [Input('optLeads', 'value'),
+              Input("guardar-modif", "n_clicks_timestamp"),
+              Input("point-x", "children"),
+              Input("point-y", "value")],
+              )
+def update_figure(lead, curr_click, point_x, point_y ):
     # Actualizamos la derivacion de acuerdo a lo seleccionado en el dropdown
     app.logger.info("@callback: Inicio 'update_figure()'")
-    
     ejeY = signals[lead-1]
     ejeX = np.arange(0, len(ejeY), 1.0)/fs
+    
+    app.logger.info("@callback: 'update_figure() -> tclicks: '" + str(curr_click))
+        
+    if point_x is not None and point_y is not None:    
+        app.logger.info("@callback: 'update_figure()' -> point-x: " + str(point_x))
+        app.logger.info("@callback: 'update_figure()' -> point-y: " + str(point_y))
+        val_pt_x = point_x.split(": ")[1]
+        data_x = float(val_pt_x) * fs
+        data_x = int(data_x)
+        ejeY[data_x] = float(point_y)
+        app.logger.info("@callback: 'update_figure()' -> data-x: " + str(data_x))
+    
+   
                     
     ecg_trace = go.Scatter(x = ejeX, y = ejeY,
                     name = 'SF', mode='lines')
     layout = go.Layout(title = "Representacion de la Derivacion " + str(lead),
-                   hovermode = 'closest')
+                   hovermode = 'closest', uirevision=True, autosize=True, 
+                   xaxis=dict(gridcolor="LightPink"), yaxis=dict(gridcolor="LightPink") )
     fig = go.Figure(data = [ecg_trace], layout = layout)
+    
+    app.logger.info("@callback: FIN 'update_figure()'")
     return fig
 
 
@@ -432,7 +477,37 @@ def update_file(list_contenidos, val_url, list_nombres, list_fechas):
         name_file_aux = html.Div(nombre_file, id='name_file_aux', style={'display': 'none'})
         app.logger.info("@callback: FIN 'update_file()'")
         return [True, None, True, nombre_file, False]
-       
+
+
+
+### Modificacion de puntos de la grafica
+
+@app.callback(
+    [Output("point-x", "children"),
+     Output("point-y", "value")],
+    [Input('plot', 'clickData')])
+def display_click_data(clickData):
+    app.logger.info("@callback: INICIO 'display_click_data()'")
+    if clickData is None:
+        raise dash.exceptions.PreventUpdate()
+        
+    data_json = json.dumps(clickData, indent=2)
+    y = json.loads(data_json)
+    app.logger.info("@callback: 'display_click_data() -> data_json: " + str(data_json))
+    app.logger.info("@callback: 'display_click_data() -> data_python: " + str(y["points"][0]["x"]))
+    app.logger.info("@callback: FIN 'display_click_data()'")
+    return "eje X: " + str(y["points"][0]["x"]), y["points"][0]["y"]
+
+
+@app.callback(
+    Output("time-guardar-modif", "value"),
+    [Input("guardar-modif", "n_clicks_timestamp")]
+)
+def savetime_guardar_modif(time_click):
+    app.logger.info("*** @callback: INICIO 'savetime_guardar_modif()")
+    if time_click > 0:
+        app.logger.info("*** @callback: 'savetime_guardar_modif() -> time_click: " + str(time_click))
+        return time_click
 ###############################################################################
 ############################### RUNER APP #####################################
 ###############################################################################
