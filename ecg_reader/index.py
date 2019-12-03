@@ -58,8 +58,10 @@ ecg_trace = go.Scatter(x = ejeX, y = ejeY,
 
 print(optsLeads)
 layout = go.Layout(title = "Representacion de la Derivación " + str(optsLeads[0]['value']),
-                   hovermode = 'closest', clickmode= 'event+select', uirevision=True,
-                   autosize=True, xaxis=dict(gridcolor="LightPink") )
+                    hovermode = 'closest', uirevision=True, autosize=True, 
+                    xaxis=dict(gridcolor="LightPink", range=[0, 12]), 
+                    yaxis=dict(gridcolor="LightPink")  
+                    )
 
 
 fig = go.Figure(data = [ecg_trace], layout = layout)
@@ -349,7 +351,7 @@ def update_figure(lead, curr_click, point_x, point_y ):
                     name = 'SF', mode='lines')
     layout = go.Layout(title = "Representacion de la Derivacion " + str(lead),
                    hovermode = 'closest', uirevision=True, autosize=True, 
-                   xaxis=dict(gridcolor="LightPink"), yaxis=dict(gridcolor="LightPink") )
+                   xaxis=dict(gridcolor="LightPink", range=[0, 12]), yaxis=dict(gridcolor="LightPink") )
     fig = go.Figure(data = [ecg_trace], layout = layout)
     
     app.logger.info("@callback: FIN 'update_figure()'")
