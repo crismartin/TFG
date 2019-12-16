@@ -8,26 +8,24 @@ Created on Sun Jul 28 21:40:58 2019
 
 import json
 
-
+import flask
 import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import ecg_factory as ecgf
 import numpy as np
-import datetime
-import logging
-import base64
-import os
-import urllib2
 
+import logging
+import datetime
+import utils_ecg as utils
 
 from dash.dependencies import Input, Output, State
 
 import plotly.graph_objs as go
 
 
-DIR_UPLOAD_FILES = "./uploaded_files/"
+
 
 # Factoria de ECG
 ecgFactory = ecgf.ECGFactory()
@@ -68,25 +66,24 @@ fig = go.Figure(data = [ecg_trace], layout = layout)
 
 
 navbar = dbc.NavbarSimple(
-    children=[
-        dbc.NavItem(dbc.NavLink("Link", href="#")),
-        dbc.DropdownMenu(
-            nav=True,
-            in_navbar=True,
-            label="Menu",
             children=[
-                dbc.DropdownMenuItem("Entry 1"),
-                dbc.DropdownMenuItem("Entry 2"),
-                dbc.DropdownMenuItem(divider=True),
-                dbc.DropdownMenuItem("Entry 3"),
+                dbc.NavItem(dbc.NavLink("Link", href="#")),
+                dbc.DropdownMenu(
+                    nav=True,
+                    in_navbar=True,
+                    label="Menu",
+                    children=[
+                        dbc.DropdownMenuItem("Entry 1"),
+                        dbc.DropdownMenuItem("Entry 2"),
+                        dbc.DropdownMenuItem(divider=True),
+                        dbc.DropdownMenuItem("Entry 3"),
+                    ],
+                ),
             ],
-        ),
-    ],
-    brand="ECG App",
-    brand_href="#",
-    sticky="top",
-)
-        
+            brand="ECG App",
+            brand_href="#",
+            sticky="top",
+        )
 
 styles = {
     'pre': {
@@ -238,17 +235,29 @@ footer = html.Div()
 
 
 # Dash APP
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"])
+server = flask.Flask(__name__)
+app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.BOOTSTRAP, "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"])
 logging.basicConfig(filename="ecgApp.log", level=logging.DEBUG, 
                     format="%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s")
 app.title = "ECGApp"
-app.layout = html.Div([navbar, body, footer])
+
+
+def serve_layout():
+    token_session = utils.generateTokenSession()
+    sessionDiv = html.Div(token_session, id="session-id", style={'display': 'none'})
+
+    return html.Div([navbar, body, footer, sessionDiv])
+
+
+app.layout = serve_layout
 
 
 
 ###############################################################################
 ############################## FUNCIONES AUXILIARES ###########################
 ###############################################################################
+
+
 
 def parse_contents(contents, filename, date):
     return html.Div([
@@ -265,62 +274,15 @@ def parse_contents(contents, filename, date):
             'wordBreak': 'break-all'
         })
     ])
+ 
 
-
-def save_file_proces(nombre_file, contenido):
-    ruta_fichero = DIR_UPLOAD_FILES + nombre_file
-    content_type, content_string = contenido.split(',')
-    decoded = base64.b64decode(content_string)
     
-    fh = open(ruta_fichero, "wb")
-    fh.write(decoded)
-    fh.close()
-    
-    return None
-
-
-def save_file_url(url_file):
-    name_file = url_file.split('/')[-1]
-    save_file = DIR_UPLOAD_FILES + name_file
-    
-    try:
-        response = urllib2.urlopen(url_file)
-        datatowrite = response.read()
-        fh = open(save_file, "wb")
-        fh.write(datatowrite)
-        fh.close()    
-        return name_file
-    except:
-        return None
-   
-
-
-def borrar_fichero(nombre_fichero):
-    app.logger.info("def: INICIO 'borrar_fichero()'")
-    ruta = DIR_UPLOAD_FILES + nombre_fichero
-    app.logger.info("def: 'borrar_fichero()' -> url a borrar: " + str(ruta) )
-    
-    if os.path.exists(ruta):
-        app.logger.info("def: 'borrar_fichero()' -> removiendo ruta" )
-        os.remove(ruta)
-    else:
-        app.logger.info("def: 'borrar_fichero()'. El fichero con nombre '"+
-                        nombre_fichero +"' no existe.")
-        
-    app.logger.info("def: FIN 'borrar_fichero()'")
-    
-
-def name_file_valid(nombre_file):
-    if nombre_file is not None and nombre_file != "":
-        return True
-        
-    return False    
 ###############################################################################
 ############################### CALLBACKS #####################################
 ###############################################################################
 
 
-
+    
 # Agregamos el callback para actualizar el dropdown
 @app.callback(Output('plot', 'figure'),
              [Input('optLeads', 'value'),
@@ -379,7 +341,7 @@ def toggle_modal(n1, n2, n3, is_open):
 )
 def disabled_uploader(name_file):
     
-    if name_file_valid(name_file):
+    if utils.name_file_valid(name_file):
         return True
     else:
         return False
@@ -407,7 +369,7 @@ def delete_file(eliminar_file, name_file):
     
     if name_file is not None:   
         app.logger.info( "@callback: 'delete_file(): Borrando fichero: '" + str(name_file) )        
-        borrar_fichero(name_file)
+        utils.borrar_fichero(name_file)
         
         container = html.Div([
                         html.Div(id="msg-upfile"),
@@ -434,10 +396,11 @@ def delete_file(eliminar_file, name_file):
                Output("div_file_aux", "children"),
                Output("url-rem-file", "disabled")],
               [Input('upload-file', 'contents'),
-               Input('url-rem-file', 'value')],
+               Input('url-rem-file', 'value'),
+               Input('session-id', 'children')],
               [State('upload-file', 'filename'),
                State('upload-file', 'last_modified')])
-def update_file(list_contenidos, val_url, list_nombres, list_fechas):
+def update_file(list_contenidos, val_url, session_id, list_nombres, list_fechas):
     
     app.logger.info("@callback: INICIO 'update_file()'")
     app.logger.info( "url?: " + str(val_url) )
@@ -445,7 +408,7 @@ def update_file(list_contenidos, val_url, list_nombres, list_fechas):
     
     nombre_file = ''
     
-    if list_contenidos is not None or name_file_valid(val_url):
+    if list_contenidos is not None or utils.name_file_valid(val_url):
         app.logger.info( "@callback: 'update_file() -> list_contenidos is None?: " + str(list_contenidos is None) )
         app.logger.info( "@callback: 'update_file() -> val_url: " + str(val_url) )        
         app.logger.info( "@callback: 'update_file() -> list_nombres: " + str(list_nombres) )
@@ -453,21 +416,20 @@ def update_file(list_contenidos, val_url, list_nombres, list_fechas):
         if val_url is not None and val_url != '':
             nombre_file = val_url
             app.logger.info("el nombre del fichero URL es: " + str(nombre_file) )
-            nombre_file = save_file_url(nombre_file)
+            nombre_file = utils.download_file_url(nombre_file)
             
         elif list_contenidos is not None :
             nombre_file = list_nombres
             app.logger.info("el nombre del fichero UPL es: " + str(nombre_file) )
             app.logger.info("el contenido del fichero UPL es None?: " + str(list_contenidos is None) )
-            save_file_proces(nombre_file, list_contenidos)
+            utils.save_file_proces(nombre_file, list_contenidos)
             
 
         msg_file = html.Div([
                         html.Span("Fichero seleccionado: "),
                         dbc.Badge(nombre_file, color="info", className="mr-1", id="lbl_name_file")]               
                     )
-        
-        
+                
         name_file_aux = html.Div(nombre_file, id='name_file_aux', style={'display': 'none'})
     
         app.logger.info("@callback: FIN 'update_file()'")
@@ -510,9 +472,13 @@ def savetime_guardar_modif(time_click):
     if time_click > 0:
         app.logger.info("*** @callback: 'savetime_guardar_modif() -> time_click: " + str(time_click))
         return time_click
+    
+    
+    
 ###############################################################################
 ############################### RUNER APP #####################################
 ###############################################################################
+
 if __name__ == '__main__':
     app.run_server(debug=True)
     
