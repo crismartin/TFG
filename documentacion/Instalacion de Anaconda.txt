@@ -1,0 +1,47 @@
+Instalacion de Entorno de Desarrollo
+
+- https://www.datacamp.com/community/tutorials/installing-anaconda-mac-os-x
+- Creacion de un enviroment en conda
+	* Desde el la interfaz grafica, vamos a ENVIROMENTS, y clicamos en "Create"
+	* Elegimos un nombre, y la versión de python que queremos usar, y guardamos
+	* Para activar y usar ese enviroment, desde la terminal ponemos: conda activate {enviroment}, donde enviroment será el nombre
+	  de ese entorno
+	* Para desactivar el entorno en el que estamos, usaremos: conda deactivate
+
+	Sobre este entorno, podremos instalar los programas que queramos usar para desarrollar
+
+
+
+Instalacion de Dash
+
+Dentro de un entorno de conda, en una terminal, tecleamos lo siguiente:
+	conda install -c conda-forge dash
+Para instalar una version preferida, pondremos =={version}, ejemplo:
+	conda install -c conda-forge dash==0.43.0
+
+Esperamos, ya que es un proceso un poco lento, debe salir "Executing transaction: Done"
+
+
+https://anaconda.org/conda-forge/dash
+
+Para instalar dash-bootstrap, hay que tener cuidado, ya que hay versiones que solamente funcionan con ciertas versiones de python
+En este caso, como trabajamos con la version 2.7 de python, nos sirve la versión 0.5.0 de dash-bootstrap.
+Esto se puede ver en la página del paquete en Anaconda Cloud Forge, en la pestaña Files, y para cada paquete, en la pestaña (i),
+allí miramos la característica "build".
+En caso de que queramos instalar una versión no compatible, la consola de conda nos avisará que hay incompatibilidades con otros paquetes, y que es mejor abortar la operación pulsando Ctrl+C
+
+
+Instalacion Numpy
+- conda install numpy
+
+Instalacion Matplotlib
+- conda install matplotlib
+
+Instalacion IPython
+- conda install -c anaconda ipython
+
+Instalacion WFDB
+- conda install -c conda-forge wfdb
+
+Instalacion WGET
+- conda install -c anaconda wget

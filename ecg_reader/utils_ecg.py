@@ -16,17 +16,35 @@ import constantes_ecg as cte
 
 
 # Para obtener token de session
-def generateTokenSession():
+def generateNewTokenSession():
     token_user = random.randint(cte.MIN_RANDOM_SESSION, cte.MAX_RANDOM_SESSION)
     return "user_"+str(token_user)    
 
+# Obtener el valor de la session
+def get_session_token(data_session):    
+    return data_session["token_session"]
+    
+
+# Crea un nuevo directorio para usuario
+def create_new_user_dir(token_user):
+    ruta_dir = cte.DIR_UPLOAD_FILES + token_user
+    
+    if not os.path.isdir(ruta_dir) :
+        os.mkdir(ruta_dir)
+
+def get_route_file(token_user, fname):
+    ruta = cte.DIR_UPLOAD_FILES + token_user + "/" + fname
+    return ruta
+    
 
 # Guarda el contenido en un fichero
-def save_file_proces(nombre_file, contenido):
-    ruta_fichero = cte.DIR_UPLOAD_FILES + nombre_file
+def save_file_proces(token_user, nombre_file, contenido):
+    ruta_fichero = cte.DIR_UPLOAD_FILES + token_user + "/" + nombre_file
     content_type, content_string = contenido.split(',')
     decoded = base64.b64decode(content_string)
     
+    create_new_user_dir(token_user)
+   
     fh = open(ruta_fichero, "wb")
     fh.write(decoded)
     fh.close()
@@ -35,13 +53,16 @@ def save_file_proces(nombre_file, contenido):
 
 
 # Descarga un fichero desde una url
-def download_file_url(url_file):
+def download_file_url(token_user, url_file):
     name_file = url_file.split('/')[-1]
-    save_file = cte.DIR_UPLOAD_FILES + name_file
+    save_file = cte.DIR_UPLOAD_FILES + token_user + "/" + name_file
     
     try:
         response = urllib2.urlopen(url_file)
         datatowrite = response.read()
+        
+        create_new_user_dir(token_user)
+        
         fh = open(save_file, "wb")
         fh.write(datatowrite)
         fh.close()    
@@ -51,8 +72,8 @@ def download_file_url(url_file):
    
 
 # Borrar un fichero subido
-def borrar_fichero(nombre_fichero):    
-    ruta = cte.DIR_UPLOAD_FILES + nombre_fichero
+def borrar_fichero(ruta_fichero):    
+    ruta = cte.DIR_UPLOAD_FILES + ruta_fichero
     
     if os.path.exists(ruta):
         os.remove(ruta)

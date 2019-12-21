@@ -1,0 +1,15 @@
+Cada punto de la gráfica será multiplicado por la frecuencia de muestreo para obtener la posicion 
+en el array de datos, es decir, si por ejemplo tenemos el punto con x = 100.7, para obtener la
+posicion en el array será: 100.7 * fs(en este caso 200) = 20140, donde y será igual a data[20140]
+
+{
+  "points": [
+    {
+      "y": 1290, 
+      "x": 127.085, 
+      "pointNumber": 25417, 
+      "pointIndex": 25417, 
+      "curveNumber": 0
+    }
+  ]
+}

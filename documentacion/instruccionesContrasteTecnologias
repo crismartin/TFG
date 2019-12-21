@@ -1,0 +1,30 @@
+
+Escribe la introducción. Empieza con un punto general que establezca la similitud entre los dos temas y luego pasa al enfoque específico del ensayo. Al final de la introducción, escribe un enunciado de tesis que anuncie primero cuáles aspectos de cada tema planeas comparar y que luego presente la conclusión que has sacado de ellos. 
+
+Enunciado de tesis:
+tienes que expresar en una sola oración por qué estás comparando los dos temas. La comparación debe revelar algo sobre la naturaleza de los temas o la relación entre ellos, y el enunciado de tesis debe expresar ese argumento.
+
+Primero, establecer la base de la comparación. 
+Hablar sobre las similitudes y las diferencias entre ellas. Argumentar por qué una tecnología (de front o back del framework) puede ser mejor o peor, y cómo cada una de ellas puede hacer mejor o peor al momento de realizar la programación.
+
+
+
+
+Cosas buenas de Dash:
+-	Encuentro que Dash es mucho más fácil de aprender y trabajar, así como también más fácil de mantener.
+-	Debido a que Dash lleva por dentro plotly, el usarlo se hace más intuitivo.
+-	Es más fácil codificar en este framework que en Bokeh
+-	Tiene documentación offline y online, además de una gran comunidad que se preocupa por interactuar con los developers que necesitan algún tipo de ayuda
+-	Las gráficas funcionan mediante diccionarios, lo cual hace que el procesamiento sea más rápido. Por ejemplo, generar una gráfica con 10x10 subplots, toma alrededor de 7 minutos llamar a la función de plotly append_trace, mientras que generándolo con un diccionario, la llamada tarda alrededor de 4 segundos en realizarse, cabe recalcar que el navegador también toma su tiempo en renderizar los gráficos, lo cual hace que aún sea lento mostrarlos en pantalla.
+
+Cosas que no gustan de Dash:
+-	En este momento, lo que puede perjudicar a Dash es la falta de algunas características / capacidades. Como por ejemplo, un manejo mejor de los clicks, como lo que se tiene en Jquery o en Bowtie; pero está en desarrollo bastante activo y las nuevas capacidades están surgiendo rápidamente.
+-	Entender el manejo de los callbacks y las salidas, la limitación es que solamente puede haber un callback para una salida de componente. Lo cual puede llegar a ser frustrante.
+
+
+Cosas que gustan de Bokeh:
+-	Bokeh tiene una gama más amplia de interacciones que Dash. Por ejemplo, puede desplazar múltiples gráficos al mismo tiempo, lo que no es posible en Dash en este momento. Creo que se debe a que Dash apunta a ser solo de Python y necesita interacciones de JavaScript para sincronizar.
+
+Cosas que no gustan de Bhoke:
+-	Configurar gráficos para que pareciera que quería era una molestia, y me llevó mucho tiempo entender cómo funcionan las interacciones.
+-	La documentación no está muy ordenada, un problema sencillo de resolver se puede convertir en algo inmenso debido a que no es fácil encontrar la solución al problema en la documentación. La comunidad ha decidido pasarse a Dash debido a este problema, en resumen, los recursos de documentación y aprendizaje son limitados, todo lo contrario a Dash.
