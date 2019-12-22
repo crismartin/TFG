@@ -158,6 +158,7 @@ controls_ecg = dbc.FormGroup([
 ])
 
 edit_point_input = dbc.FormGroup([
+        
     dbc.Row([
         html.H6("Editar Punto"),    
     ]),
@@ -194,22 +195,22 @@ edit_point_input = dbc.FormGroup([
     ], className="float-right", row=True)
 ])
 
+title_controls =  dbc.FormGroup([
+                    html.H2("Controles", id="controles-title", style={'text-align': 'left'})
+                  ], row=True)
 
 form_controls = dbc.Form(id="form-controls", 
-                         children=[controls_ecg, edit_point_input]
+                         children=[title_controls, controls_ecg, edit_point_input]
 )
 
 
 body = dbc.Container([
+    html.H1("Formato", id="formato-title", style={'textAlign': 'center'}),
     dbc.Row([
-        html.H1(id="formato-title", children='Formato')
-    ]),
-    
-    dbc.Row([
-        dbc.Col([
-            dbc.Row(),
-            dbc.Row(),
-            dbc.Row(form_controls),
+        dbc.Col([                       
+            dbc.Row([
+                form_controls
+            ]),
         ], width=2),
         dbc.Col([
             dbc.Row(
@@ -262,6 +263,7 @@ def build_plot_by_lead(file_name, lead):
     signals = ecg.signal
     nLeads = ecg.header.nLeads
     fs = ecg.header.samplingRate
+    title = "Formato " + ecg.typeECG
     
     if lead > nLeads:
         return None    
@@ -284,7 +286,7 @@ def build_plot_by_lead(file_name, lead):
     
     fig = go.Figure(data = [ecg_trace], layout = layout)
     
-    return fig
+    return fig, title
 
     
 ###############################################################################
@@ -459,7 +461,8 @@ def select_first_lead(fname_uploaded):
 
 
 @app.callback(
-    Output("plot", "figure"),
+    [Output("plot", "figure"),
+     Output("formato-title", "children")],
     [Input("optLeads", "value"),
      Input("fname_process", "value")]
 )
@@ -480,9 +483,9 @@ def print_ecg_lead(selected_lead, fname_uploaded):
     app.logger.info("@callback: 'print_ecg()' -> ruta_file: " + str(ruta_file))
     app.logger.info("@callback: 'print_ecg()' -> Pintando datos...")
     
-    fig = build_plot_by_lead(ruta_file, selected_lead)
+    fig, title = build_plot_by_lead(ruta_file, selected_lead)
     app.logger.info("@callback: FIN 'print_ecg()'")
-    return fig
+    return fig, title 
     
 
 ###############################################################################
