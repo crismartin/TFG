@@ -32,6 +32,14 @@ spiner_loading = html.Div([
 ])
 
 
+cnt_msg_upfile = html.Div([
+                        html.Div(id="msg-upfile"),
+                        html.Div(id="div_file_aux",
+                                 children= html.Div(id='name_file_aux', style={'display': 'none'})
+                       )
+                    ])
+                        
+
 uploader = html.Div([
         dcc.Upload(
             id="upload-file",
@@ -51,12 +59,7 @@ uploader = html.Div([
             multiple=False
         ),
         html.Div(id='container-upfile',
-                 children=[
-                        html.Div(id="msg-upfile"),
-                        html.Div(id="div_file_aux", 
-                                 children= html.Div(id='name_file_aux', style={'display': 'none'})
-                       )
-                    ]
+                 children=[cnt_msg_upfile]
                  ),
         ])
 
@@ -94,23 +97,28 @@ controls_ecg = html.Div([
     
 ])
 
+
+btn_procesar = dbc.Button("Procesar", id="proces-upfile", color="success", 
+                disabled=True)
+
+btn_eliminar = dbc.Button("Eliminar fichero/s", id="eliminar-file", n_clicks=None,
+                                className="mr-1", color="danger", disabled=True)
+
+btn_cerrar_modal = dbc.Button("Cerrar", id="close-upfile", className="mr-1")
+
 modal_component = html.Div([
     dbc.ModalHeader("Cargar Fichero"),
     dbc.ModalBody([
         formulario
     ]),
     dbc.ModalFooter([
-        html.Div(id="btn-eliminar-file",
-                 children=dbc.Button("Eliminar fichero/s", id="eliminar-file",
-                    className="mr-1", color="danger", disabled=True)
-                 ),
-        dbc.Button("Cerrar", id="close-upfile", className="mr-1"),
-        html.Div(id="btn-proces",
-                 children=dbc.Button("Procesar", id="proces-upfile", color="success", 
-                    disabled=True),
-                 ),
+        html.Div( id="btn-eliminar-file", children=[btn_eliminar] ),
+        btn_cerrar_modal,
+        html.Div( id="btn-proces", children=[btn_procesar] ),
     ]),
 ])
+
+
 
 display_ecg = html.Div([   
         
@@ -138,13 +146,13 @@ menu_ecg = html.Div([
 
 body = dbc.Container([
     dbc.Row([
-     html.H1(id="formato-title", children='Formato')
+        html.H1(id="formato-title", children='Formato')
     ]),
     dbc.Row([
         dbc.Col([
             dbc.Row([
                 html.Div([
-                    html.Label("")
+                    html.Label("Controles")
                 ])
             ]),
             dbc.Row([
@@ -192,22 +200,35 @@ def build_select_leads(nleads):
     
     
 
-def build_plot_file(file_name):
+def get_nleads_array(file_name):
     # Factoria de ECG
     ecgFactory = ecgf.ECGFactory()
     
     ecg = ecgFactory.create_ECG(file_name)
+    nLeads = ecg.header.nLeads    
+    
+    return build_select_leads(nLeads)    
+    
+
+
+def build_plot_by_lead(file_name, lead):
+    ecgFactory = ecgf.ECGFactory()    
+    ecg = ecgFactory.create_ECG(file_name)
+    
     signals = ecg.signal
     nLeads = ecg.header.nLeads
     fs = ecg.header.samplingRate
     
+    if lead > nLeads:
+        return None    
+    
     #Datos de la señal (Y(x))
-    ejeY = signals[0]
+    ejeY = signals[lead-1]
     ejeX = np.arange(0, len(ejeY), 1.0)/fs
     
     optsLeads = build_select_leads(nLeads)
     
-    layout = go.Layout(title = "Representacion de la Derivación " + str(optsLeads[0]['value']),
+    layout = go.Layout(title = "Representacion de la Derivación " + str(optsLeads[lead-1]['value']),
                     hovermode = 'closest', uirevision=True, autosize=True, 
                     xaxis=dict(gridcolor="LightPink", range=[0, 12]), 
                     yaxis=dict(gridcolor="LightPink")  
@@ -221,7 +242,7 @@ def build_plot_file(file_name):
     
     return fig
 
-
+    
 ###############################################################################
 ############################### CALLBACKS #####################################
 ###############################################################################
@@ -279,22 +300,13 @@ def delete_file(eliminar_file, name_file, data_session):
         app.logger.info( "@callback: 'delete_file(): Borrando fichero: '" + str(name_file) )        
         ruta_fichero = token_user + "/" + name_file
         utils.borrar_fichero(ruta_fichero)
-        
-        container = html.Div([
-                        html.Div(id="msg-upfile"),
-                        html.Div(id="div_file_aux",
-                                 children= html.Div(id='name_file_aux', style={'display': 'none'})
-                       )
-                    ])
-        btn_procesar = dbc.Button("Procesar", id="proces-upfile", color="success", 
-                disabled=True)
-        
+                
         btn_eliminar = dbc.Button("Eliminar fichero/s", id="eliminar-file", n_clicks=None,
                                 className="mr-1", color="danger", disabled=True)
 
         app.logger.info( "@callback: FIN 'delete_file()'" )
         
-        return [container, btn_procesar, btn_eliminar, "", uploader]
+        return [cnt_msg_upfile, btn_procesar, btn_eliminar, "", uploader]
     
     
 
@@ -378,36 +390,56 @@ def process_file(click_button, data_session, name_file):
 
 
 @app.callback(
-    Output("plot","figure"),
+    [Output("optLeads","disabled"),
+     Output("optLeads","options"),
+     Output("optLeads","value")],
     [Input("fname_process", "value")]
 )
-def print_plot_readed(fname_uploaded):
-    app.logger.info("@callback: INICIO 'print_plot_readed()'")
+def select_first_lead(fname_uploaded):
+    app.logger.info("@callback: INICIO 'select_first_lead()'")
     
     if fname_uploaded is not None:
-        app.logger.info("@callback: 'print_plot_readed()' -> Configurando parametros para pintar")
+        app.logger.info("@callback: 'select_first_lead()' -> Configurando parametros para pintar")
         ruta_file = cte.DIR_UPLOAD_FILES + fname_uploaded
-        app.logger.info("@callback: 'print_plot_readed()' -> ruta_file: " + str(ruta_file))
-        app.logger.info("@callback: 'print_plot_readed()' -> Pintando datos...")
-        fig = build_plot_file(ruta_file)
-        app.logger.info("@callback: FIN 'print_plot_readed()'")
-        return fig
+        app.logger.info("@callback: 'select_first_lead()' -> ruta_file: " + str(ruta_file))
+        app.logger.info("@callback: 'select_first_lead()' -> Obteniendo leads...")
+        optLeads = get_nleads_array(ruta_file)
+        app.logger.info("@callback: 'select_first_lead()' -> optLeads: " + str(optLeads))
+        app.logger.info("@callback: FIN 'select_first_lead()'")
+        return False, optLeads, 1
     
-    app.logger.info("@callback: FIN 'print_plot_readed()'")
+    app.logger.info("@callback: FIN 'select_first_lead()'")
 
-    return go.Figure()
+    return True, None, None
 
 
-"""
-@app.callback([],
-    [Input("msg-upfile","children")],
-    [State("upload-file","loading_state")]
+
+@app.callback(
+    Output("plot", "figure"),
+    [Input("optLeads", "value"),
+     Input("fname_process", "value")]
 )
-def spiner_loading(child, status):
-    app.logger.info("@callback: INICIO 'spiner_loading()'")
-    app.logger.info("@callback: 'spiner_loading()' -> " + str(status))
-    pass
-"""
+def print_ecg_lead(selected_lead, fname_uploaded):
+    app.logger.info("@callback: INICIO 'print_ecg()'")
+    
+    app.logger.info("@callback: 'print_ecg()' -> selected_lead: " + str(selected_lead))
+
+    app.logger.info("@callback: 'print_ecg()' -> fname_uploaded: " + str(fname_uploaded))
+    
+    if fname_uploaded is None or selected_lead is None:
+        app.logger.info("@callback: FIN 'print_ecg()' by Exception")
+        raise dash.exceptions.PreventUpdate()
+    
+    
+    app.logger.info("@callback: 'print_ecg()' -> Configurando parametros para pintar")
+    ruta_file = cte.DIR_UPLOAD_FILES + fname_uploaded
+    app.logger.info("@callback: 'print_ecg()' -> ruta_file: " + str(ruta_file))
+    app.logger.info("@callback: 'print_ecg()' -> Pintando datos...")
+    
+    fig = build_plot_by_lead(ruta_file, selected_lead)
+    app.logger.info("@callback: FIN 'print_ecg()'")
+    return fig
+    
 
 ###############################################################################
 ############################## Main layout ####################################
