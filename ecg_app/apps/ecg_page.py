@@ -80,31 +80,23 @@ formulario = dbc.Form([
     dbc.FormGroup(id="form-uploader",children = uploader),
              
 ])
-        
-         
-controls_ecg = html.Div([
-    
-    html.Label("Elije una derivación"),
-    
-    
-    dcc.Dropdown(
-        id = 'optLeads',
-        #options = optsLeads,
-        #value = optsLeads[0]['value'],
-        clearable=False,
-        disabled=True             
-    ),
-    
-])
 
 
-btn_procesar = dbc.Button("Procesar", id="proces-upfile", color="success", 
-                disabled=True)
+btn_procesar = dbc.Button(id="proces-upfile", color="success", 
+                          children=[
+                                html.Span([html.I(className="fas fa-cogs ml-2"), " Procesar"])
+                             ], disabled=True)
 
-btn_eliminar = dbc.Button("Eliminar fichero/s", id="eliminar-file", n_clicks=None,
-                                className="mr-1", color="danger", disabled=True)
+btn_eliminar = dbc.Button(id="eliminar-file", n_clicks=None,
+                          className="mr-1", color="danger", disabled=True,
+                          children=[
+                             html.Span([html.I(className="fas fa-trash ml-2"), " Borrar fichero/s"])
+                          ])
 
-btn_cerrar_modal = dbc.Button("Cerrar", id="close-upfile", className="mr-1")
+btn_cerrar_modal = dbc.Button(id="close-upfile", n_clicks=None, className="mr-1",
+                              children=[
+                                html.Span([html.I(className="fas fa-times ml-2"), " Cancelar"])
+                             ])
 
 modal_component = html.Div([
     dbc.ModalHeader("Cargar Fichero"),
@@ -120,7 +112,7 @@ modal_component = html.Div([
 
 
 
-display_ecg = html.Div([   
+display_ecg = dbc.FormGroup([   
         
     html.Div([       
         dbc.Modal(
@@ -135,38 +127,89 @@ display_ecg = html.Div([
               figure=fig,
               style={'height': 600, 'width':900}),
 ])
+    
         
 menu_ecg = html.Div([
     dbc.Button("HRV", id="hrvGraph", outline=True, color="danger", className="mr-1"),
     dbc.Button("Otro",id="otroGraph", outline=True, color="secondary", className="mr-1"),
-    dbc.Button("Subir fichero", id="open-upfile", color="primary")
+    dbc.Button(id="open-upfile",
+               color="primary", 
+               children=[
+                       html.Span([html.I(className="fas fa-upload ml-2"), " Subir fichero"])
+                       ]
+               )
 ])
 
+
+controls_ecg = dbc.FormGroup([
+    dbc.Row([
+        html.H6("Elije una derivación"),    
+    ]),
+        
+    dbc.Row([
+        dbc.Col(
+            dcc.Dropdown(
+                id = 'optLeads',
+                clearable=False,
+                disabled=True             
+            ), width=12
+        )
+    ])
+])
+
+edit_point_input = dbc.FormGroup([
+    dbc.Row([
+        html.H6("Editar Punto"),    
+    ]),
+    
+    dbc.FormGroup([
+        dbc.Label("X:", html_for="point-x", width=2),
+        dbc.Col(
+            dbc.Input(
+                type="number", id="point-x", disabled=True
+            ),
+            width=10,
+        ),
+    ], row=True),
+                    
+    dbc.FormGroup([
+        dbc.Label("Y:", html_for="point-y", width=2),
+        dbc.Col(
+            dbc.Input(
+                type="number", id="point-y"
+            ),
+            width=10,
+        ),
+    ], row=True),
+                    
+    dbc.FormGroup([
+        dbc.Col([
+            dbc.Button(id="guardar-modif", color="success",
+               children=[
+                   html.Span([html.I(className="fas fa-floppy-o ml-2"), " Guardar"])
+                  ]
+            )
+        ])
+        
+    ], className="float-right", row=True)
+])
+
+
+form_controls = dbc.Form(id="form-controls", 
+                         children=[controls_ecg, edit_point_input]
+)
 
 
 body = dbc.Container([
     dbc.Row([
         html.H1(id="formato-title", children='Formato')
     ]),
+    
     dbc.Row([
         dbc.Col([
-            dbc.Row([
-                html.Div([
-                    html.Label("Controles")
-                ])
-            ]),
-            dbc.Row([
-                controls_ecg
-            ]),
-            dbc.Row([
-                html.Div([
-                    html.P("Edicion de punto."),
-                    html.P(id="point-x", children=["eje X: "]),
-                    dbc.Input(type="number", id="point-y", placeholder="eje Y", bs_size="2", disabled=True),
-                    dbc.Button("Guardar", id="guardar-modif", color="success", n_clicks_timestamp=0),
-                    dbc.Input(type="hidden", id="time-guardar-modif"),
-                ])
-            ])
+            dbc.Row(),
+            dbc.Row(),
+            dbc.Row(form_controls),
         ], width=2),
         dbc.Col([
             dbc.Row(
@@ -176,8 +219,9 @@ body = dbc.Container([
             dbc.Row(
                 menu_ecg, className="float-right"
             )
-        ], width=10)    
-    ])
+        ], width=10)  
+    ])    
+    
 ])
 
 
