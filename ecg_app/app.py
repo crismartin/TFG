@@ -13,7 +13,8 @@ import logging
 from flask_caching import Cache
 
 stylesheets = [dbc.themes.BOOTSTRAP, 
-               "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"]
+               "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
+               "https://use.fontawesome.com/releases/v5.7.2/css/all.css"]
 
 server = flask.Flask(__name__)
 app = dash.Dash(server=server, external_stylesheets=stylesheets)
