@@ -340,7 +340,7 @@ def delete_file(eliminar_file, cancel_modal, name_file, data_session):
     token_user = utils.get_session_token(data_session)
     app.logger.info( "@callback: delete_file() -> token_user: " + str(token_user) )
 
-    if name_file is None:
+    if name_file is None or name_file == "":
         app.logger.info("@callback: FIN by exception 'delete_file()'")
         raise dash.exceptions.PreventUpdate()
     
