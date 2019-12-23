@@ -41,27 +41,36 @@ cnt_msg_upfile = html.Div([
                         
 
 uploader = html.Div([
-        dcc.Upload(
-            id="upload-file",
-            children=html.Div([
-                'Arrastra y suelta o ',
-                html.A('selecciona un archivo')
-            ]),
-            style={
-                'width': '100%',
-                'height': '60px',
-                'lineHeight': '60px',
-                'borderWidth': '1px',
-                'borderStyle': 'dashed',
-                'borderRadius': '5px',
-                'textAlign': 'center'
-            },
-            multiple=False
-        ),
-        html.Div(id='container-upfile',
-                 children=[cnt_msg_upfile]
-                 ),
-        ])
+            dcc.Upload(
+                id="upload-file",
+                children=html.Div([
+                    'Arrastra y suelta o ',
+                    html.A('selecciona un archivo')
+                ]),
+                style={
+                    'width': '100%',
+                    'height': '60px',
+                    'lineHeight': '60px',
+                    'borderWidth': '1px',
+                    'borderStyle': 'dashed',
+                    'borderRadius': '5px',
+                    'textAlign': 'center'
+                },
+                multiple=False
+            ),
+            html.Div(id='container-upfile',
+                     children=[cnt_msg_upfile]
+                     ),
+            html.Div(id="cnt-alert-format", 
+                     children=[
+                        dbc.Alert(
+                            "Error! El fichero no tiene un formato válido",
+                            id="alert-format",
+                            is_open=False,
+                            color="danger"
+                        )
+                    ])
+            ])
 
 input_component = dbc.Input(type="url", id="url-rem-file", placeholder="http://")
 
@@ -243,7 +252,15 @@ def getTokenUser():
 def build_select_leads(nleads):
     return [ {'value': i+1, 'label': 'Derivacion '+ str(i+1)} for i in range(nleads)]
     
-    
+
+def is_file_soported(file_name):
+    ecgFactory = ecgf.ECGFactory()
+    try:
+        ecgFactory.create_ECG(file_name)
+        return True
+    except ValueError:
+        return False
+
 
 def get_nleads_array(file_name):
     # Factoria de ECG
@@ -301,9 +318,10 @@ def build_plot_by_lead(file_name, lead):
      Input("proces-upfile", "n_clicks")],
     [State("modal", "is_open")],
 )
-def toggle_modal(n1, n2, n3, is_open):
-    if n1 or n2 or n3:
-        return not is_open
+def toggle_modal(n1, n2, n3, is_open):    
+    
+    if (n1 or n2 or n3):
+        return not is_open    
     return is_open
 
 
@@ -360,7 +378,8 @@ def delete_file(eliminar_file, cancel_modal, name_file, data_session):
                Output('msg-upfile', 'children'),
                Output("eliminar-file", "disabled"),
                Output("div_file_aux", "children"),
-               Output("url-rem-file", "disabled")],
+               Output("url-rem-file", "disabled"),
+               Output("alert-format", "is_open")],
               [Input('upload-file', 'contents'),
                Input('url-rem-file', 'value')],
               [State('upload-file', 'filename'),
@@ -400,20 +419,23 @@ def update_file(list_contenidos, val_url, list_nombres, list_fechas, data_sessio
                 
         name_file_aux = html.Div(nombre_file, id='name_file_aux', style={'display': 'none'})
     
+        ruta_fichero = cte.DIR_UPLOAD_FILES + "/" + token_user + "/" + nombre_file
+        app.logger.info( "@callback: FIN 'update_file()' -> ruta_fichero: " + str(ruta_fichero) )
+        
+        fichero_valido = is_file_soported(ruta_fichero)
         app.logger.info("@callback: FIN 'update_file()'")
-    
-        return [False, msg_file, False, name_file_aux, True]
+
+        return [not fichero_valido, msg_file, False, name_file_aux, True, not fichero_valido]
     
     else:
-        
         name_file_aux = html.Div(nombre_file, id='name_file_aux', style={'display': 'none'})
         app.logger.info("@callback: FIN 'update_file()'")
-        return [True, None, True, name_file_aux, False]
+        return [True, None, True, name_file_aux, False, False]
 
-
+#alert-format
 
 @app.callback(
-    Output("fname_process", "value"),
+    [Output("fname_process", "value")],
     [Input("proces-upfile", "n_clicks")],
     [State("session", "data"),
      State("lbl_name_file", "children")]
@@ -431,7 +453,11 @@ def process_file(click_button, data_session, name_file):
 
     app.logger.info("@callback: FIN 'process_file()'")
     ruta_file = token_user + "/" + name_file
-    return ruta_file
+    
+    if is_file_soported(ruta_file) : 
+        return ruta_file
+    else:
+        return None
 
 
 
