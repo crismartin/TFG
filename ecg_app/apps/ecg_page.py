@@ -105,7 +105,7 @@ modal_component = html.Div([
     ]),
     dbc.ModalFooter([
         html.Div( id="btn-eliminar-file", children=[btn_eliminar] ),
-        btn_cerrar_modal,
+        html.Div( id="btn-cerrar-modal", children=[btn_cerrar_modal] ),
         html.Div( id="btn-proces", children=[btn_procesar] ),
     ]),
 ])
@@ -123,7 +123,7 @@ display_ecg = dbc.FormGroup([
     ]),
     
     #Agregamos la figura
-    dcc.Graph(id='plot', 
+    dcc.Graph(id='cnt-ecg-fig', 
               figure=fig,
               style={'height': 600, 'width':900}),
 ])
@@ -323,36 +323,36 @@ def disabled_uploader(name_file):
 
 @app.callback(
     [Output('container-upfile', 'children'),
-     Output("btn-proces", "children"),
-     Output("btn-eliminar-file", "children"),
      Output("url-rem-file", "value"),
      Output("form-uploader", "children")],
     [Input("eliminar-file", "n_clicks"),
-     Input("name_file_aux", "children")],
-    [State("session", "data")]
+     Input("close-upfile", "n_clicks")],
+    [State("name_file_aux", "children"),
+     State("session", "data")]
 )
-def delete_file(eliminar_file, name_file, data_session):
+def delete_file(eliminar_file, cancel_modal, name_file, data_session):
     
     app.logger.info("@callback: INICIO 'delete_file()'")
     app.logger.info( "@callback: delete_file() -> eliminar_file: " + str(eliminar_file) )
+    app.logger.info( "@callback: delete_file() -> cancel_modal: " + str(cancel_modal) )
+    app.logger.info( "@callback: delete_file() -> name_file_aux: " + str(name_file) )    
+    
     token_user = utils.get_session_token(data_session)
     app.logger.info( "@callback: delete_file() -> token_user: " + str(token_user) )
 
-    if eliminar_file <= 0 or name_file is None:
+    if name_file is None:
         app.logger.info("@callback: FIN by exception 'delete_file()'")
         raise dash.exceptions.PreventUpdate()
     
-    if name_file is not None:   
-        app.logger.info( "@callback: 'delete_file(): Borrando fichero: '" + str(name_file) )        
-        ruta_fichero = token_user + "/" + name_file
-        utils.borrar_fichero(ruta_fichero)
-                
-        btn_eliminar = dbc.Button("Eliminar fichero/s", id="eliminar-file", n_clicks=None,
-                                className="mr-1", color="danger", disabled=True)
+    app.logger.info( "@callback: 'delete_file(): Borrando fichero: '" + str(name_file) )        
+    ruta_fichero = token_user + "/" + name_file
+    utils.borrar_fichero(ruta_fichero)
 
-        app.logger.info( "@callback: FIN 'delete_file()'" )
+    app.logger.info( "@callback: FIN 'delete_file()'" )
+    
+    return [cnt_msg_upfile, "", uploader]
+    
         
-        return [cnt_msg_upfile, btn_procesar, btn_eliminar, "", uploader]
     
     
 
@@ -408,7 +408,7 @@ def update_file(list_contenidos, val_url, list_nombres, list_fechas, data_sessio
         
         name_file_aux = html.Div(nombre_file, id='name_file_aux', style={'display': 'none'})
         app.logger.info("@callback: FIN 'update_file()'")
-        return [True, None, True, nombre_file, False]
+        return [True, None, True, name_file_aux, False]
 
 
 
@@ -461,7 +461,7 @@ def select_first_lead(fname_uploaded):
 
 
 @app.callback(
-    [Output("plot", "figure"),
+    [Output("cnt-ecg-fig", "figure"),
      Output("formato-title", "children")],
     [Input("optLeads", "value"),
      Input("fname_process", "value")]
