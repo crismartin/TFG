@@ -104,7 +104,7 @@ btn_eliminar = dbc.Button(id="eliminar-file", n_clicks=None,
 
 btn_cerrar_modal = dbc.Button(id="close-upfile", n_clicks=None, className="mr-1",
                               children=[
-                                html.Span([html.I(className="fas fa-times ml-2"), " Cancelar"])
+                                html.Span([html.I(className="fas fa-times ml-2"), " Cerrar"])
                              ])
 
 modal_component = html.Div([
@@ -150,7 +150,7 @@ menu_ecg = html.Div([
 ])
 
 
-controls_ecg = dbc.FormGroup([
+dropdown_leads = dbc.FormGroup([
     dbc.Row([
         html.H6("Elije una derivación"),    
     ]),
@@ -186,7 +186,7 @@ edit_point_input = dbc.FormGroup([
         dbc.Label("Y:", html_for="point-y", width=2),
         dbc.Col(
             dbc.Input(
-                type="number", id="point-y"
+                type="number", id="point-y", disabled=True
             ),
             width=10,
         ),
@@ -208,9 +208,9 @@ title_controls =  dbc.FormGroup([
                     html.H2("Controles", id="controles-title", style={'text-align': 'left'})
                   ], row=True)
 
-form_controls = dbc.Form(id="form-controls", 
-                         children=[title_controls, controls_ecg, edit_point_input]
-)
+form_controls = html.Div(id="form-controls", children=[title_controls, dropdown_leads, edit_point_input])
+
+cnt_form_controls = dbc.Form(id="cnt-form-controls", children=form_controls)
 
 
 body = dbc.Container([
@@ -343,16 +343,14 @@ def disabled_uploader(name_file):
     [Output('container-upfile', 'children'),
      Output("url-rem-file", "value"),
      Output("form-uploader", "children")],
-    [Input("eliminar-file", "n_clicks"),
-     Input("close-upfile", "n_clicks")],
+    [Input("eliminar-file", "n_clicks")],
     [State("name_file_aux", "children"),
      State("session", "data")]
 )
-def delete_file(eliminar_file, cancel_modal, name_file, data_session):
+def delete_file(eliminar_file, name_file, data_session):
     
     app.logger.info("@callback: INICIO 'delete_file()'")
     app.logger.info( "@callback: delete_file() -> eliminar_file: " + str(eliminar_file) )
-    app.logger.info( "@callback: delete_file() -> cancel_modal: " + str(cancel_modal) )
     app.logger.info( "@callback: delete_file() -> name_file_aux: " + str(name_file) )    
     
     token_user = utils.get_session_token(data_session)
@@ -432,10 +430,10 @@ def update_file(list_contenidos, val_url, list_nombres, list_fechas, data_sessio
         app.logger.info("@callback: FIN 'update_file()'")
         return [True, None, True, name_file_aux, False, False]
 
-#alert-format
+
 
 @app.callback(
-    [Output("fname_process", "value")],
+    Output("fname_process", "value"),
     [Input("proces-upfile", "n_clicks")],
     [State("session", "data"),
      State("lbl_name_file", "children")]
@@ -454,10 +452,7 @@ def process_file(click_button, data_session, name_file):
     app.logger.info("@callback: FIN 'process_file()'")
     ruta_file = token_user + "/" + name_file
     
-    if is_file_soported(ruta_file) : 
-        return ruta_file
-    else:
-        return None
+    return ruta_file
 
 
 
@@ -488,9 +483,10 @@ def select_first_lead(fname_uploaded):
 
 @app.callback(
     [Output("cnt-ecg-fig", "figure"),
-     Output("formato-title", "children")],
-    [Input("optLeads", "value"),
-     Input("fname_process", "value")]
+     Output("formato-title", "children"),
+     Output("point-y", "disabled")],
+    [Input("optLeads", "value")],
+    [State("fname_process", "value")]
 )
 def print_ecg_lead(selected_lead, fname_uploaded):
     app.logger.info("@callback: INICIO 'print_ecg()'")
@@ -511,7 +507,7 @@ def print_ecg_lead(selected_lead, fname_uploaded):
     
     fig, title = build_plot_by_lead(ruta_file, selected_lead)
     app.logger.info("@callback: FIN 'print_ecg()'")
-    return fig, title 
+    return fig, title, False
     
 
 ###############################################################################
