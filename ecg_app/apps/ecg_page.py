@@ -31,18 +31,26 @@ spiner_loading = html.Div([
     )
 ])
 
+msg_file = html.Div([
+                    html.Span("Fichero seleccionado: "),
+                    dbc.Badge(id="lbl_name_file", color="info", className="mr-1")
+                ])
 
 cnt_msg_upfile = html.Div([
-                        html.Div(id="msg-upfile"),
-                        html.Div(id="div_file_aux",
-                                 children= html.Div(id='name_file_aux', style={'display': 'none'})
-                       )
+                        html.Div(id="msg-upfile", children=msg_file)
                     ])
-                        
+
+msg_file_ant = html.Div([
+                        html.Span("Fichero seleccionado: "),
+                        dbc.Badge(id="lbl_name_file_ant", color="info", className="mr-1")]               
+                    )
+
+cnt_msg_upfile_ant = html.Div([
+                        html.Div(id="msg-upfile-ant", children=msg_file_ant)
+                    ])                        
 
 uploader = html.Div([
-            dcc.Upload(
-                id="upload-file",
+            dcc.Upload(id="upload-file",
                 children=html.Div([
                     'Arrastra y suelta o ',
                     html.A('selecciona un archivo')
@@ -71,12 +79,37 @@ uploader = html.Div([
                         )
                     ])
             ])
+                        
+                        
+uploader_ant = html.Div([
+                dcc.Upload(id="upload-ant",
+                    children=html.Div([
+                        'Arrastra y suelta o ',
+                        html.A('selecciona un archivo')
+                    ]),
+                    style={
+                        'width': '100%',
+                        'height': '60px',
+                        'lineHeight': '60px',
+                        'borderWidth': '1px',
+                        'borderStyle': 'dashed',
+                        'borderRadius': '5px',
+                        'textAlign': 'center'
+                    },
+                    multiple=False
+                ),
+                html.Div(id='container-upfile-ant',
+                         children=[cnt_msg_upfile_ant]
+                         )
+            ])
+  
 
 input_component = dbc.Input(type="url", id="url-rem-file", placeholder="http://")
+input_component_ant = dbc.Input(type="url", id="url-ant-file", placeholder="http://")
 
 
-formulario = dbc.Form([
-        
+form_datos_ecg = html.Div([
+    html.H5("Datos ECG"),
     dbc.FormGroup([
         dbc.Label("Desde url remota: ", html_for="url-rem-file"),
         html.Div(id="input-component", children = input_component)
@@ -86,8 +119,41 @@ formulario = dbc.Form([
         html.Label("ó")
     ], style={'text-align': 'center'} ),
         
-    dbc.FormGroup(id="form-uploader",children = uploader),
-             
+    dbc.FormGroup(id="form-uploader", children = uploader),
+])
+
+
+form_datos_ant = html.Div([
+    html.H5("Anotaciones"),
+    dbc.FormGroup([
+        dbc.Label("Desde url remota: ", html_for="url-ant-file"),
+        html.Div(id="input-component-ant", children = input_component_ant)
+    ]),
+
+    html.P([
+        html.Label("ó")
+    ], style={'text-align': 'center'} ),
+    
+    dbc.FormGroup(id="form-uploader-ant", children = uploader_ant),
+])
+
+
+collapse = html.Div([
+    dbc.FormGroup([ dbc.Button(id="collapse-button",
+                    className="mb-3",
+                    color="link",
+                    children=["Anotaciones (opcional)", html.I(className="fas fa-angle-down ml-2")]
+                    )
+    ]),        
+    dbc.Collapse(id="collapse",
+                 children=form_datos_ant
+                 ),
+])
+
+
+formulario = dbc.Form([
+    form_datos_ecg,    
+    dbc.FormGroup(id="form-optional", children= collapse )
 ])
 
 
@@ -107,15 +173,22 @@ btn_cerrar_modal = dbc.Button(id="close-upfile", n_clicks=None, className="mr-1"
                                 html.Span([html.I(className="fas fa-times ml-2"), " Cerrar"])
                              ])
 
+cnt_state_files = html.Div([
+        dbc.Input( id="st-file-data",   type="hidden",   value=None),
+        dbc.Input( id="st-file-ant",    type="hidden",   value=None),
+        dbc.Input( id="st-valid-data",  type="hidden",   value=None),
+])
+
 modal_component = html.Div([
     dbc.ModalHeader("Cargar Fichero"),
     dbc.ModalBody([
         formulario
     ]),
     dbc.ModalFooter([
-        html.Div( id="btn-eliminar-file", children=[btn_eliminar] ),
-        html.Div( id="btn-cerrar-modal", children=[btn_cerrar_modal] ),
-        html.Div( id="btn-proces", children=[btn_procesar] ),
+        html.Div( id="cnt-eliminar-file",   children=[btn_eliminar] ),
+        html.Div( id="cnt-cerrar-modal",    children=[btn_cerrar_modal] ),
+        html.Div( id="cnt-proces-modal",    children=[btn_procesar] ),
+        html.Div( id="cnt-st-btns",         children=[cnt_state_files] )
     ]),
 ])
 
@@ -305,7 +378,37 @@ def build_plot_by_lead(file_name, lead):
     
     return fig, title
 
+
+def delete_file_system(token_user, name_file):
+    ruta_fichero = token_user + "/" + name_file
+    utils.borrar_fichero(ruta_fichero)
     
+
+
+def upload_data_file(val_url, nombre_file, content_file, token_user):
+    if utils.name_file_valid(val_url):
+        nombre_file = val_url
+        app.logger.info("@callback: 'update_file() -> el nombre del fichero URL es: " + str(nombre_file) )
+        nombre_file = utils.download_file_url(token_user, nombre_file)
+            
+    elif content_file is not None :
+        nombre_file = nombre_file
+        app.logger.info("@callback: 'update_file() -> el nombre del fichero UPL es: " + str(nombre_file) )
+        app.logger.info("@callback: 'update_file() -> el contenido del fichero UPL es None?: " + str(content_file is None) )
+        utils.save_file_proces(token_user, nombre_file, content_file)
+    
+    ruta_fichero = cte.DIR_UPLOAD_FILES + "/" + token_user + "/" + nombre_file
+    app.logger.info( "@callback: FIN 'update_file()' -> ruta_fichero: " + str(ruta_fichero) )
+    
+    fichero_valido = is_file_soported(ruta_fichero)
+    app.logger.info("@callback: FIN 'update_file()'")
+    
+    return [nombre_file, fichero_valido]
+
+
+
+def upload_ant_file():
+    pass
 ###############################################################################
 ############################### CALLBACKS #####################################
 ###############################################################################
@@ -325,6 +428,16 @@ def toggle_modal(n1, n2, n3, is_open):
     return is_open
 
 
+@app.callback(
+    Output("collapse", "is_open"),
+    [Input("collapse-button", "n_clicks")],
+    [State("collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
 
 @app.callback(
     Output("upload-file", "disabled"),
@@ -338,97 +451,140 @@ def disabled_uploader(name_file):
         return False
 
 
+@app.callback(
+     Output("eliminar-file",  "disabled"),
+    [Input("st-file-data", "value")],
+)
+def activar_btn_delete(st_file_data):
+    app.logger.info("@callback: INICIO 'activar_btn_delete()'")
+    
+    if st_file_data is None:
+        app.logger.info("@callback: FIN by Exception 'activar_btn_delete()'")
+        raise dash.exceptions.PreventUpdate()
+    
+    app.logger.info( "@callback: 'activar_btn_delete()' -> st_file_data: " + str(st_file_data) )
+    app.logger.info("@callback: FIN 'activar_btn_delete()'")
+    
+    return not st_file_data
+
 
 @app.callback(
-    [Output('container-upfile', 'children'),
-     Output("url-rem-file", "value"),
-     Output("form-uploader", "children")],
-    [Input("eliminar-file", "n_clicks")],
-    [State("name_file_aux", "children"),
-     State("session", "data")]
+    [Output("proces-upfile",    "disabled"),
+     Output("alert-format",     "is_open")],
+    [Input("st-valid-data",     "value")],
 )
-def delete_file(eliminar_file, name_file, data_session):
+def activar_btn_process(is_file_valid):
+    app.logger.info("@callback: INICIO 'activar_btn_process()'")
+    
+    if is_file_valid is None:
+        app.logger.info( "@callback: FIN 'activar_btn_process()'" )
+        return True, False
+    
+    app.logger.info( "@callback: 'activar_btn_process()' -> is_file_valid: " + str(is_file_valid) )
+    app.logger.info( "@callback: FIN 'activar_btn_process()'" )
+    return not is_file_valid, not is_file_valid
+    
+
+
+@app.callback(
+    [Output('container-upfile',     'children'),
+     Output('container-upfile-ant', 'children'),
+     Output("url-rem-file",         "value"),
+     Output("form-uploader",        "children"),
+     Output("cnt-st-btns",          "children")],
+    [Input("eliminar-file",         "n_clicks")],
+    [State("lbl_name_file",         "children"),
+     State("lbl_name_file_ant",     "children"),
+     State("session",               "data")]
+)
+def delete_file(eliminar_file, name_file, ant_file, data_session):
     
     app.logger.info("@callback: INICIO 'delete_file()'")
     app.logger.info( "@callback: delete_file() -> eliminar_file: " + str(eliminar_file) )
-    app.logger.info( "@callback: delete_file() -> name_file_aux: " + str(name_file) )    
+    app.logger.info( "@callback: delete_file() -> name_file: " + str(name_file) )    
+    app.logger.info( "@callback: delete_file() -> ant_file: " + str(ant_file) )  
     
     token_user = utils.get_session_token(data_session)
     app.logger.info( "@callback: delete_file() -> token_user: " + str(token_user) )
 
-    if name_file is None or name_file == "":
+    if (name_file is None or name_file == "") and (ant_file is None or ant_file == ""):
         app.logger.info("@callback: FIN by exception 'delete_file()'")
         raise dash.exceptions.PreventUpdate()
     
-    app.logger.info( "@callback: 'delete_file(): Borrando fichero: '" + str(name_file) )        
-    ruta_fichero = token_user + "/" + name_file
-    utils.borrar_fichero(ruta_fichero)
+
+    if name_file is not None and name_file != "":
+        app.logger.info( "@callback: 'delete_file(): Borrando fichero: '" + str(name_file) )
+        delete_file_system(token_user, name_file)
+        
+    if ant_file is not None and ant_file != "":
+        app.logger.info( "@callback: 'delete_file(): Borrando fichero: '" + str(ant_file) )
+        delete_file_system(token_user, ant_file)
 
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
-    return [cnt_msg_upfile, "", uploader]
-    
-        
-    
-    
+    return [cnt_msg_upfile, cnt_msg_upfile_ant ,"", uploader, cnt_state_files]
 
-@app.callback([Output('proces-upfile', 'disabled'),
-               Output('msg-upfile', 'children'),
-               Output("eliminar-file", "disabled"),
-               Output("div_file_aux", "children"),
-               Output("url-rem-file", "disabled"),
-               Output("alert-format", "is_open")],
-              [Input('upload-file', 'contents'),
-               Input('url-rem-file', 'value')],
-              [State('upload-file', 'filename'),
-               State('upload-file', 'last_modified'),
-               State("session", "data")])
-def update_file(list_contenidos, val_url, list_nombres, list_fechas, data_session):
+
+
+@app.callback([Output('lbl_name_file',  'children'),
+               Output("url-rem-file",   "disabled"),
+               Output("st-file-data",   "value"),
+               Output('st-valid-data',  'value')],
+              [Input('upload-file',     'contents'),
+               Input('url-rem-file',    'value')],
+              [State('upload-file',     'filename'),
+               State("session",         "data")]
+)
+def updload_file(content_file, val_url, nombre_file, data_session):
     
-    app.logger.info( "@callback: INICIO 'update_file()'" )
-    app.logger.info( "@callback: 'update_file() -> val_url: " + str(val_url) )
-    app.logger.info( "@callback: 'update_file() -> list_nombres: " + str(list_nombres) )
-    app.logger.info( "@callback: 'update_file() -> token_user: " + str(utils.get_session_token(data_session)) )
+    app.logger.info( "@callback: INICIO 'updload_file()'" )
+    app.logger.info( "@callback: 'updload_file() -> val_url: " + str(val_url) )
+    app.logger.info( "@callback: 'updload_file() -> content_file is None?: " + str(content_file is None) )
+    app.logger.info( "@callback: 'updload_file() -> nombre_file: " + str(nombre_file) )
+    app.logger.info( "@callback: 'updload_file() -> token_user: " + str(utils.get_session_token(data_session)) )
     
-    nombre_file = ''
+    
     token_user = utils.get_session_token(data_session)
     
-    if list_contenidos is not None or utils.name_file_valid(val_url):
-        app.logger.info( "@callback: 'update_file() -> list_contenidos is None?: " + str(list_contenidos is None) )
-        app.logger.info( "@callback: 'update_file() -> val_url: " + str(val_url) )        
-        app.logger.info( "@callback: 'update_file() -> list_nombres: " + str(list_nombres) )
-        
-        if val_url is not None and val_url != '':
-            nombre_file = val_url
-            app.logger.info("el nombre del fichero URL es: " + str(nombre_file) )
-            nombre_file = utils.download_file_url(token_user, nombre_file)
-            
-        elif list_contenidos is not None :
-            nombre_file = list_nombres
-            app.logger.info("el nombre del fichero UPL es: " + str(nombre_file) )
-            app.logger.info("el contenido del fichero UPL es None?: " + str(list_contenidos is None) )
-            utils.save_file_proces(token_user, nombre_file, list_contenidos)
-            
-
-        msg_file = html.Div([
-                        html.Span("Fichero seleccionado: "),
-                        dbc.Badge(nombre_file, color="info", className="mr-1", id="lbl_name_file")]               
-                    )
+    if content_file is not None or utils.name_file_valid(val_url):
+        app.logger.info( "@callback: 'updload_file() -> Guardando fichero de DATOS ECG" )
+        app.logger.info( "@callback: 'updload_file() -> val_url: " + str(val_url) )        
+        app.logger.info( "@callback: 'updload_file() -> nombre_file: " + str(nombre_file) )
                 
-        name_file_aux = html.Div(nombre_file, id='name_file_aux', style={'display': 'none'})
-    
-        ruta_fichero = cte.DIR_UPLOAD_FILES + "/" + token_user + "/" + nombre_file
-        app.logger.info( "@callback: FIN 'update_file()' -> ruta_fichero: " + str(ruta_fichero) )
-        
-        fichero_valido = is_file_soported(ruta_fichero)
-        app.logger.info("@callback: FIN 'update_file()'")
+        nombre_file, fichero_valido = upload_data_file(val_url, nombre_file, content_file, token_user)
 
-        return [not fichero_valido, msg_file, False, name_file_aux, True, not fichero_valido]
+        return [nombre_file, True, True, fichero_valido]
+    
+    else:    
+        app.logger.info("@callback: FIN 'updload_file()'")
+        return [None, False, False, None]
+
+
+
+
+@app.callback(
+    Output("lbl_name_file_ant", "children"),
+    [Input('upload-ant', 'contents')],
+    [State('upload-ant', 'filename'),
+     State("session", "data")]
+)
+def upload_file_ant(content_file, nombre_file, data_session):
+    app.logger.info( "@callback: INICIO 'upload_file_ant()'" )
+    app.logger.info( "@callback: INICIO 'upload_file_ant() -> content_file is None?: " + str(content_file is None) )
+    
+    if content_file is not None:
+        app.logger.info( "@callback: FIN 'upload_file_ant()' -> content_file: " + str(len(content_file)) )
+        
+        token_user = utils.get_session_token(data_session)
+        
+        utils.save_file_proces(token_user, nombre_file, content_file)
+        
+        app.logger.info( "@callback: FIN 'upload_file_ant()'" )
+        return nombre_file
     
     else:
-        name_file_aux = html.Div(nombre_file, id='name_file_aux', style={'display': 'none'})
-        app.logger.info("@callback: FIN 'update_file()'")
-        return [True, None, True, name_file_aux, False, False]
+        app.logger.info("@callback: FIN by exception 'upload_file_ant()'")
+        raise dash.exceptions.PreventUpdate()
 
 
 
