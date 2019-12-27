@@ -173,10 +173,13 @@ btn_cerrar_modal = dbc.Button(id="close-upfile", n_clicks=None, className="mr-1"
                                 html.Span([html.I(className="fas fa-times ml-2"), " Cerrar"])
                              ])
 
-cnt_state_files = html.Div([
-        dbc.Input( id="st-up-data",   type="hidden",   value=None),
-        dbc.Input( id="st-up-ant",    type="hidden",   value=None),
+cnt_state_fdata = html.Div([
+        dbc.Input( id="st-up-data",   type="hidden",   value=None),        
         dbc.Input( id="st-valid-data",  type="hidden",   value=None),
+])
+
+cnt_state_fant =  html.Div([
+        dbc.Input( id="st-up-ant",    type="hidden",   value=None),        
 ])
 
 modal_component = html.Div([
@@ -188,7 +191,8 @@ modal_component = html.Div([
         html.Div( id="cnt-eliminar-file",   children=[btn_eliminar] ),
         html.Div( id="cnt-cerrar-modal",    children=[btn_cerrar_modal] ),
         html.Div( id="cnt-proces-modal",    children=[btn_procesar] ),
-        html.Div( id="cnt-st-btns",         children=[cnt_state_files] )
+        html.Div( id="cnt-st-fdata",        children=[cnt_state_fdata] ),
+        html.Div( id="cnt-st-fant",         children=[cnt_state_fant] ),
     ]),
 ])
 
@@ -329,10 +333,11 @@ def build_select_leads(nleads):
 def is_file_soported(file_name):
     ecgFactory = ecgf.ECGFactory()
     try:
-        ecgFactory.create_ECG(file_name)
-        return True
+        ecg_data = ecgFactory.create_ECG(file_name)
+        app.logger.info( "** 'is_file_soported()' -> fileName: " + str(ecg_data.fileName) )
+        return True, ecg_data.fileName
     except ValueError:
-        return False
+        return False, None
 
 
 def get_nleads_array(file_name):
@@ -386,26 +391,27 @@ def delete_file_system(token_user, name_file):
 
 
 def upload_file(val_url, nombre_file, content_file, token_user):
+    app.logger.info("** INICIO 'update_file()")
+    
     if utils.name_file_valid(val_url):
         nombre_file = val_url
-        app.logger.info("@callback: 'update_file() -> el nombre del fichero URL es: " + str(nombre_file) )
+        app.logger.info("** 'update_file() -> el nombre del fichero URL es: " + str(nombre_file) )
         nombre_file = utils.download_file_url(token_user, nombre_file)
             
     elif content_file is not None :
         nombre_file = nombre_file
-        app.logger.info("@callback: 'update_file() -> el nombre del fichero UPL es: " + str(nombre_file) )
-        app.logger.info("@callback: 'update_file() -> el contenido del fichero UPL es None?: " + str(content_file is None) )
+        app.logger.info("** 'update_file() -> el nombre del fichero UPL es: " + str(nombre_file) )
+        app.logger.info("** 'update_file() -> el contenido del fichero UPL es None?: " + str(content_file is None) )
         utils.save_file_proces(token_user, nombre_file, content_file)
     
-    ruta_fichero = cte.DIR_UPLOAD_FILES + "/" + token_user + "/" + nombre_file
-    app.logger.info( "@callback: FIN 'update_file()' -> ruta_fichero: " + str(ruta_fichero) )
+    ruta_fichero = cte.DIR_UPLOAD_FILES + token_user + "/" + nombre_file
+    app.logger.info( "** 'update_file()' -> ruta_fichero: " + str(ruta_fichero) )
     
+    app.logger.info("** FIN 'update_file()")
     return nombre_file, ruta_fichero
 
 
 
-def upload_ant_file():
-    pass
 ###############################################################################
 ############################### CALLBACKS #####################################
 ###############################################################################
@@ -508,42 +514,60 @@ def activar_btn_process(is_file_valid):
     [Output('container-upfile',     'children'),
      Output("input-component",      "children"),
      Output("form-uploader",        "children"),
-     Output('container-upfile-ant', 'children'),
-     Output("input-component-ant",  "children"),
-     Output("form-uploader-ant",    "children"),
-     Output("cnt-st-btns",          "children")],
+     Output("cnt-st-fdata",         "children")],
     [Input("eliminar-file",         "n_clicks")],
     [State("lbl_name_file",         "children"),
-     State("lbl_name_file_ant",     "children"),
      State("session",               "data")]
 )
-def delete_file(eliminar_file, name_file, ant_file, data_session):
+def delete_file(eliminar_file, name_file, data_session):
     
     app.logger.info("@callback: INICIO 'delete_file()'")
     app.logger.info( "@callback: delete_file() -> eliminar_file: " + str(eliminar_file) )
     app.logger.info( "@callback: delete_file() -> name_file: " + str(name_file) )    
-    app.logger.info( "@callback: delete_file() -> ant_file: " + str(ant_file) )  
+    
+    if not utils.name_file_valid(name_file):
+        app.logger.info("@callback: FIN by exception 'delete_file()'")
+        raise dash.exceptions.PreventUpdate()
     
     token_user = utils.get_session_token(data_session)
     app.logger.info( "@callback: delete_file() -> token_user: " + str(token_user) )
 
-    if (name_file is None or name_file == "") and (ant_file is None or ant_file == ""):
-        app.logger.info("@callback: FIN by exception 'delete_file()'")
-        raise dash.exceptions.PreventUpdate()
-    
-
-    if name_file is not None and name_file != "":
-        app.logger.info( "@callback: 'delete_file(): Borrando fichero: '" + str(name_file) )
-        delete_file_system(token_user, name_file)
+    app.logger.info( "@callback: 'delete_file(): Borrando fichero datos: '" + str(name_file) )
+    delete_file_system(token_user, name_file)
         
-    if ant_file is not None and ant_file != "":
-        app.logger.info( "@callback: 'delete_file(): Borrando fichero: '" + str(ant_file) )
-        delete_file_system(token_user, ant_file)
-
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
-    return [cnt_msg_upfile, input_component, uploader, 
-            cnt_msg_upfile_ant, input_component_ant, uploader_ant, cnt_state_files]
+    return [cnt_msg_upfile, input_component, uploader, cnt_state_fdata]
+    
+
+
+@app.callback(
+    [Output('container-upfile-ant', 'children'),
+     Output("input-component-ant",  "children"),
+     Output("form-uploader-ant",    "children"),
+     Output("cnt-st-fant",          "children")],
+    [Input("eliminar-file",         "n_clicks")],
+    [State("lbl_name_file_ant",     "children"),
+     State("session",               "data")]
+)
+def delete_file_ant(eliminar_file, name_ant_file, data_session):
+    
+    app.logger.info("@callback: INICIO 'delete_file_ant()'")
+    app.logger.info( "@callback: delete_file_ant() -> name_ant_file: " + str(name_ant_file) )  
+    
+    if not utils.name_file_valid(name_ant_file):
+        app.logger.info("@callback: FIN by Exception 'delete_file_ant()'")
+        raise dash.exceptions.PreventUpdate()
+        
+    token_user = utils.get_session_token(data_session)
+    app.logger.info( "@callback: delete_file_ant() -> token_user: " + str(token_user) )
+        
+    app.logger.info( "@callback: 'delete_file_ant(): Borrando fichero anotaciones: '" + str(name_ant_file) )
+    delete_file_system(token_user, name_ant_file)
+    
+    app.logger.info( "@callback: FIN 'delete_file_ant()'" )
+    
+    return [cnt_msg_upfile_ant, input_component_ant, uploader_ant, cnt_state_fant]
     
 
 
@@ -571,7 +595,9 @@ def updload_file_data(content_file, url_file, nombre_file, data_session):
         
         token_user = utils.get_session_token(data_session)
         nombre_file, ruta_fichero = upload_file(url_file, nombre_file, content_file, token_user)
-        fichero_valido = is_file_soported(ruta_fichero)
+        
+        ruta_abs_file = utils.dir_files + token_user + "/" + nombre_file
+        fichero_valido, nombre_file = is_file_soported(ruta_abs_file)
         
         app.logger.info("@callback: FIN 'update_file()'")
 
@@ -599,7 +625,7 @@ def upload_file_ant(content_file, url_file, nombre_file, data_session):
     app.logger.info( "@callback: 'upload_file_ant() -> url_file: " + str(url_file) )
         
     if content_file is not None or utils.name_file_valid(url_file):   
-        app.logger.info( "@callback: 'updload_file() -> Guardando fichero de ANOTACIONES" )
+        app.logger.info( "@callback: 'upload_file_ant() -> Guardando fichero de ANOTACIONES" )
         app.logger.info( "@callback: 'upload_file_ant() -> nombre_file: " + str(nombre_file) )
         app.logger.info( "@callback: 'upload_file_ant() -> url_file: " + str(url_file) )
         
@@ -650,7 +676,7 @@ def select_first_lead(fname_uploaded):
     
     if fname_uploaded is not None:
         app.logger.info("@callback: 'select_first_lead()' -> Configurando parametros para pintar")
-        ruta_file = cte.DIR_UPLOAD_FILES + fname_uploaded
+        ruta_file = utils.dir_files + fname_uploaded
         app.logger.info("@callback: 'select_first_lead()' -> ruta_file: " + str(ruta_file))
         app.logger.info("@callback: 'select_first_lead()' -> Obteniendo leads...")
         optLeads = get_nleads_array(ruta_file)
@@ -684,7 +710,7 @@ def print_ecg_lead(selected_lead, fname_uploaded):
     
     
     app.logger.info("@callback: 'print_ecg()' -> Configurando parametros para pintar")
-    ruta_file = cte.DIR_UPLOAD_FILES + fname_uploaded
+    ruta_file = utils.dir_files + fname_uploaded
     app.logger.info("@callback: 'print_ecg()' -> ruta_file: " + str(ruta_file))
     app.logger.info("@callback: 'print_ecg()' -> Pintando datos...")
     

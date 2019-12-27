@@ -13,14 +13,19 @@ class ECG(object):
     Function that implements an ECG object, which is goin to have basic ECG elements
     indepently of the original format
     """
+    fileRoute = ""
     fileName = ""
     typeECG = ""
     header = []
     signal = []
     
-    def __init__(self, fileName):
-        self.fileName = fileName
+    def __init__(self, fileRoute):        
+        self.fileRoute = fileRoute
+        self.fileName = fileRoute.split("/")[-1]
         
+    def getFileName(self):
+        return self.fileName
+    
     def getTypeECG(self):
         return self.typeECG
     
@@ -45,6 +50,7 @@ class ECG(object):
         print("************ T E S T - E C G - B E G I N ***************\n")
         print("********************************************************\n")
         print("[TEST][ECG] - fileName: %s\n" %self.fileName)
+        print("[TEST][ECG] - fileRoute: %s\n" %self.fileRoute)
         print("[TEST][ECG] - typeECG : %s\n" %self.typeECG)
         print("[TEST][ECG] - header - printInfo method called\n")
         self.header.printInfo()

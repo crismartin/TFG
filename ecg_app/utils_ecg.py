@@ -14,6 +14,8 @@ import random
 import constantes_ecg as cte
 
 
+dir_files = os.getcwd() + cte.DIR_UPLOAD_FILES
+
 
 # Para obtener token de session
 def generateNewTokenSession():
@@ -27,7 +29,7 @@ def get_session_token(data_session):
 
 # Crea un nuevo directorio para usuario
 def create_new_user_dir(token_user):
-    ruta_dir = cte.DIR_UPLOAD_FILES + token_user
+    ruta_dir = dir_files + token_user
     
     if not os.path.isdir(ruta_dir) :
         os.mkdir(ruta_dir)
@@ -39,7 +41,7 @@ def get_route_file(token_user, fname):
 
 # Guarda el contenido en un fichero
 def save_file_proces(token_user, nombre_file, contenido):
-    ruta_fichero = cte.DIR_UPLOAD_FILES + token_user + "/" + nombre_file
+    ruta_fichero = dir_files + token_user + "/" + nombre_file
     content_type, content_string = contenido.split(',')
     decoded = base64.b64decode(content_string)
     
@@ -55,7 +57,7 @@ def save_file_proces(token_user, nombre_file, contenido):
 # Descarga un fichero desde una url
 def download_file_url(token_user, url_file):
     name_file = url_file.split('/')[-1]
-    save_file = cte.DIR_UPLOAD_FILES + token_user + "/" + name_file
+    save_file = dir_files + token_user + "/" + name_file
     
     try:
         response = urllib2.urlopen(url_file)
@@ -73,7 +75,7 @@ def download_file_url(token_user, url_file):
 
 # Borrar un fichero subido
 def borrar_fichero(ruta_fichero):    
-    ruta = cte.DIR_UPLOAD_FILES + ruta_fichero
+    ruta = dir_files + ruta_fichero
     
     if os.path.exists(ruta):
         os.remove(ruta)

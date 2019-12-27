@@ -16,30 +16,35 @@ from IPython.display import display
 PHYSIONET_TYPE = "PHYSIONET"
 
 
-def is_Physionet_file(fileName):
-        header = None
-        
-        try:
-            header = wfdb.rdheader(fileName)
-        except IOError:
-            pass
-        
-        if (header is None):
-            return False
-        else:
-            return True
+def is_Physionet_file(fileRoute):
+    header = None  
+    fileRoute = fileRoute.split(".")[0]
+    print("[INFO][physionet] fichero a crear: " + fileRoute)
+    
+    try:
+        header = wfdb.rdheader(fileRoute)
+    except IOError:
+        pass
+    
+    if (header is None):
+        return False
+    else:
+        return True
+    
 
 # Clase Principal ECGPhysionet
 class ECGPhysionet(ecg.ECG):
     typeECG = PHYSIONET_TYPE
     
-    def __init__(self, fileName):
-        self.fileName = fileName
+    def __init__(self, fileRoute):
+        fileRoute = fileRoute.split(".")[0]
+        self.fileName = fileRoute.split("/")[-1]
+        self.fileRoute = fileRoute
         self.header = []      
         self.signal = []
         self.lenEcg = 0
         self.__allSignal = [] #Asi tengo todos los datos de la señal
-        self.read_physionet_file(fileName)        
+        self.read_physionet_file(fileRoute)        
         
     ""
     " Devuelve el formato de ECG "
@@ -76,21 +81,21 @@ class ECGPhysionet(ecg.ECG):
     
     
     class Header():
-        def __init__(self, fileName):           
-            self.__otherData = self._read_header(fileName) #Aqui tengo todos los datos de la cabecera
+        def __init__(self, fileRoute):           
+            self.__otherData = self._read_header(fileRoute) #Aqui tengo todos los datos de la cabecera
             self.nLeads = self.__otherData.n_sig
             self.samplingRate = self.__otherData.fs
             
-        def _read_header(self, fileName):
-            return wfdb.rdheader(fileName)
+        def _read_header(self, fileRoute):
+            return wfdb.rdheader(fileRoute)
         
         def printInfo(self):
             display('[INFO] Leyendo cabecera fichero physionet %s' %self.__otherData.__dict__)
             
             
     class ECG():
-        def _read_ecg_data(self, fileName):
-            return wfdb.rdrecord(fileName, sampfrom=100, sampto=4000)
+        def _read_ecg_data(self, fileRoute):
+            return wfdb.rdrecord(fileRoute, sampfrom=100, sampto=4000)
 
             
         def printInfo(self):
@@ -98,12 +103,12 @@ class ECGPhysionet(ecg.ECG):
             print(self.signal)
     
     
-    def read_physionet_file(self, fileName):
+    def read_physionet_file(self, fileRoute):
         """
         Function that reads Physionet files format
         """        
-        self.header = self.Header(fileName)
-        self.__allSignal = self.ECG()._read_ecg_data(fileName)       
+        self.header = self.Header(fileRoute)
+        self.__allSignal = self.ECG()._read_ecg_data(fileRoute)       
         self.lenEcg = self.__allSignal.sig_len
         self.signal = []
         auxSignal = self.__allSignal.p_signal
@@ -115,6 +120,6 @@ class ECGPhysionet(ecg.ECG):
 
 if __name__=="__main__":
     #print(is_Ishne_file("./sample-data/a103l.hea"))
-    physioECG = ECGPhysionet("./sample-data/100")
+    physioECG = ECGPhysionet("/Users/cristian/TFG/datos_prueba/physionet/100")
     physioECG.printECG(100, 15000)        
     display(physioECG.signal)

@@ -58,9 +58,10 @@ class ECGIshne(ecg.ECG):
     
     typeECG = ISHNE_MAGIC_NUM
     
-    def __init__(self, fileName):
-        self.fileName = fileName
-        data = self._read_ishne_file(fileName)
+    def __init__(self, fileRoute):
+        self.fileRoute = fileRoute
+        self.fileName = fileRoute.split("/")[-1]
+        data = self._read_ishne_file(fileRoute)
         self.header = data['header'] if data != {} else []    
         self.__allSignal = data['ecg'] if data != {} else []
         self.signal = self.__allSignal.ecg
@@ -285,7 +286,7 @@ class ECGIshne(ecg.ECG):
         
         
                 
-    def _read_ishne_file(self, fileName):
+    def _read_ishne_file(self, fileRoute):
         header = self.Header()
         ecg = self.ECG()
         crc = self.Crc()
@@ -300,7 +301,7 @@ class ECGIshne(ecg.ECG):
         """
         "Read file."
        
-        fdIshne = read_file(fileName) #Open File 'r' mode
+        fdIshne = read_file(fileRoute) #Open File 'r' mode
         if(fdIshne > -1):
             fdIshne.read(LONG_MAGICNUM_ISHNE)
             
