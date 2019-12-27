@@ -174,8 +174,8 @@ btn_cerrar_modal = dbc.Button(id="close-upfile", n_clicks=None, className="mr-1"
                              ])
 
 cnt_state_files = html.Div([
-        dbc.Input( id="st-file-data",   type="hidden",   value=None),
-        dbc.Input( id="st-file-ant",    type="hidden",   value=None),
+        dbc.Input( id="st-up-data",   type="hidden",   value=None),
+        dbc.Input( id="st-up-ant",    type="hidden",   value=None),
         dbc.Input( id="st-valid-data",  type="hidden",   value=None),
 ])
 
@@ -453,19 +453,29 @@ def disabled_uploader(name_file):
 
 @app.callback(
      Output("eliminar-file",  "disabled"),
-    [Input("st-file-data", "value")],
+    [Input("st-up-data", "value"),
+     Input("st-up-ant", "value")],
 )
-def activar_btn_delete(st_file_data):
+def activar_btn_delete(st_upfile_data, st_upfile_ant):
     app.logger.info("@callback: INICIO 'activar_btn_delete()'")
     
-    if st_file_data is None:
+    app.logger.info( "@callback: 'activar_btn_delete()' -> st_upfile_data: " + str(st_upfile_data) )
+    app.logger.info( "@callback: 'activar_btn_delete()' -> st_upfile_ant: "  + str(st_upfile_ant) )
+    
+    disabled_btn = True
+    
+    if st_upfile_data is None and st_upfile_ant is None:
         app.logger.info("@callback: FIN by Exception 'activar_btn_delete()'")
         raise dash.exceptions.PreventUpdate()
+        
+    if st_upfile_data is True or st_upfile_ant is True:
+        disabled_btn = False
+        
+    app.logger.info( "@callback: 'activar_btn_delete()' -> disabled_btn: "  + str(disabled_btn) )
     
-    app.logger.info( "@callback: 'activar_btn_delete()' -> st_file_data: " + str(st_file_data) )
     app.logger.info("@callback: FIN 'activar_btn_delete()'")
     
-    return not st_file_data
+    return disabled_btn
 
 
 @app.callback(
@@ -528,7 +538,7 @@ def delete_file(eliminar_file, name_file, ant_file, data_session):
 
 @app.callback([Output('lbl_name_file',  'children'),
                Output("url-rem-file",   "disabled"),
-               Output("st-file-data",   "value"),
+               Output("st-up-data",   "value"),
                Output('st-valid-data',  'value')],
               [Input('upload-file',     'contents'),
                Input('url-rem-file',    'value')],
@@ -542,8 +552,7 @@ def updload_file(content_file, val_url, nombre_file, data_session):
     app.logger.info( "@callback: 'updload_file() -> content_file is None?: " + str(content_file is None) )
     app.logger.info( "@callback: 'updload_file() -> nombre_file: " + str(nombre_file) )
     app.logger.info( "@callback: 'updload_file() -> token_user: " + str(utils.get_session_token(data_session)) )
-    
-    
+        
     token_user = utils.get_session_token(data_session)
     
     if content_file is not None or utils.name_file_valid(val_url):
@@ -563,10 +572,11 @@ def updload_file(content_file, val_url, nombre_file, data_session):
 
 
 @app.callback(
-    Output("lbl_name_file_ant", "children"),
-    [Input('upload-ant', 'contents')],
-    [State('upload-ant', 'filename'),
-     State("session", "data")]
+    [Output("lbl_name_file_ant", "children"),
+     Output("st-up-ant",        "value")],
+    [Input('upload-ant',         "contents")],
+    [State('upload-ant',         "filename"),
+     State("session",            "data")]
 )
 def upload_file_ant(content_file, nombre_file, data_session):
     app.logger.info( "@callback: INICIO 'upload_file_ant()'" )
@@ -580,11 +590,11 @@ def upload_file_ant(content_file, nombre_file, data_session):
         utils.save_file_proces(token_user, nombre_file, content_file)
         
         app.logger.info( "@callback: FIN 'upload_file_ant()'" )
-        return nombre_file
+        return nombre_file, True
     
     else:
         app.logger.info("@callback: FIN by exception 'upload_file_ant()'")
-        raise dash.exceptions.PreventUpdate()
+        return None, False
 
 
 
