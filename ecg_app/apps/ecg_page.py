@@ -104,8 +104,8 @@ uploader_ant = html.Div([
             ])
   
 
-input_component = dbc.Input(type="url", id="url-rem-file", placeholder="http://")
-input_component_ant = dbc.Input(type="url", id="url-ant-file", placeholder="http://")
+input_component     = dbc.Input(type="url", id="url-rem-file", placeholder="http://", value="")
+input_component_ant = dbc.Input(type="url", id="url-ant-file", placeholder="http://", value="")
 
 
 form_datos_ecg = html.Div([
@@ -385,7 +385,7 @@ def delete_file_system(token_user, name_file):
     
 
 
-def upload_data_file(val_url, nombre_file, content_file, token_user):
+def upload_file(val_url, nombre_file, content_file, token_user):
     if utils.name_file_valid(val_url):
         nombre_file = val_url
         app.logger.info("@callback: 'update_file() -> el nombre del fichero URL es: " + str(nombre_file) )
@@ -400,10 +400,7 @@ def upload_data_file(val_url, nombre_file, content_file, token_user):
     ruta_fichero = cte.DIR_UPLOAD_FILES + "/" + token_user + "/" + nombre_file
     app.logger.info( "@callback: FIN 'update_file()' -> ruta_fichero: " + str(ruta_fichero) )
     
-    fichero_valido = is_file_soported(ruta_fichero)
-    app.logger.info("@callback: FIN 'update_file()'")
-    
-    return [nombre_file, fichero_valido]
+    return nombre_file, ruta_fichero
 
 
 
@@ -445,6 +442,17 @@ def toggle_collapse(n, is_open):
 )
 def disabled_uploader(name_file):
     
+    if utils.name_file_valid(name_file):
+        return True
+    else:
+        return False
+
+
+@app.callback(
+    Output("upload-ant", "disabled"),
+    [Input("url-ant-file","value")]       
+)
+def disabled_uploader_ant(name_file):
     if utils.name_file_valid(name_file):
         return True
     else:
@@ -498,9 +506,11 @@ def activar_btn_process(is_file_valid):
 
 @app.callback(
     [Output('container-upfile',     'children'),
-     Output('container-upfile-ant', 'children'),
-     Output("url-rem-file",         "value"),
+     Output("input-component",      "children"),
      Output("form-uploader",        "children"),
+     Output('container-upfile-ant', 'children'),
+     Output("input-component-ant",  "children"),
+     Output("form-uploader-ant",    "children"),
      Output("cnt-st-btns",          "children")],
     [Input("eliminar-file",         "n_clicks")],
     [State("lbl_name_file",         "children"),
@@ -532,40 +542,43 @@ def delete_file(eliminar_file, name_file, ant_file, data_session):
 
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
-    return [cnt_msg_upfile, cnt_msg_upfile_ant ,"", uploader, cnt_state_files]
-
+    return [cnt_msg_upfile, input_component, uploader, 
+            cnt_msg_upfile_ant, input_component_ant, uploader_ant, cnt_state_files]
+    
 
 
 @app.callback([Output('lbl_name_file',  'children'),
                Output("url-rem-file",   "disabled"),
-               Output("st-up-data",   "value"),
+               Output("st-up-data",     "value"),
                Output('st-valid-data',  'value')],
               [Input('upload-file',     'contents'),
                Input('url-rem-file',    'value')],
               [State('upload-file',     'filename'),
                State("session",         "data")]
 )
-def updload_file(content_file, val_url, nombre_file, data_session):
+def updload_file_data(content_file, url_file, nombre_file, data_session):
     
     app.logger.info( "@callback: INICIO 'updload_file()'" )
-    app.logger.info( "@callback: 'updload_file() -> val_url: " + str(val_url) )
+    app.logger.info( "@callback: 'updload_file() -> url_file: " + str(url_file) )
     app.logger.info( "@callback: 'updload_file() -> content_file is None?: " + str(content_file is None) )
     app.logger.info( "@callback: 'updload_file() -> nombre_file: " + str(nombre_file) )
     app.logger.info( "@callback: 'updload_file() -> token_user: " + str(utils.get_session_token(data_session)) )
-        
-    token_user = utils.get_session_token(data_session)
-    
-    if content_file is not None or utils.name_file_valid(val_url):
+            
+    if content_file is not None or utils.name_file_valid(url_file):
         app.logger.info( "@callback: 'updload_file() -> Guardando fichero de DATOS ECG" )
-        app.logger.info( "@callback: 'updload_file() -> val_url: " + str(val_url) )        
+        app.logger.info( "@callback: 'updload_file() -> url_file: " + str(url_file) )        
         app.logger.info( "@callback: 'updload_file() -> nombre_file: " + str(nombre_file) )
-                
-        nombre_file, fichero_valido = upload_data_file(val_url, nombre_file, content_file, token_user)
+        
+        token_user = utils.get_session_token(data_session)
+        nombre_file, ruta_fichero = upload_file(url_file, nombre_file, content_file, token_user)
+        fichero_valido = is_file_soported(ruta_fichero)
+        
+        app.logger.info("@callback: FIN 'update_file()'")
 
         return [nombre_file, True, True, fichero_valido]
     
     else:    
-        app.logger.info("@callback: FIN 'updload_file()'")
+        app.logger.info("@callback: FIN by None content 'updload_file()'")
         return [None, False, False, None]
 
 
@@ -573,28 +586,32 @@ def updload_file(content_file, val_url, nombre_file, data_session):
 
 @app.callback(
     [Output("lbl_name_file_ant", "children"),
-     Output("st-up-ant",        "value")],
-    [Input('upload-ant',         "contents")],
-    [State('upload-ant',         "filename"),
+     Output("st-up-ant",         "value"),
+     Output("url-ant-file",      "disabled")],
+    [Input("upload-ant",         "contents"),
+     Input("url-ant-file",       "value")],
+    [State("upload-ant",         "filename"),
      State("session",            "data")]
 )
-def upload_file_ant(content_file, nombre_file, data_session):
+def upload_file_ant(content_file, url_file, nombre_file, data_session):
     app.logger.info( "@callback: INICIO 'upload_file_ant()'" )
-    app.logger.info( "@callback: INICIO 'upload_file_ant() -> content_file is None?: " + str(content_file is None) )
-    
-    if content_file is not None:
-        app.logger.info( "@callback: FIN 'upload_file_ant()' -> content_file: " + str(len(content_file)) )
+    app.logger.info( "@callback: 'upload_file_ant() -> content_file is None?: " + str(content_file is None) )
+    app.logger.info( "@callback: 'upload_file_ant() -> url_file: " + str(url_file) )
+        
+    if content_file is not None or utils.name_file_valid(url_file):   
+        app.logger.info( "@callback: 'updload_file() -> Guardando fichero de ANOTACIONES" )
+        app.logger.info( "@callback: 'upload_file_ant() -> nombre_file: " + str(nombre_file) )
+        app.logger.info( "@callback: 'upload_file_ant() -> url_file: " + str(url_file) )
         
         token_user = utils.get_session_token(data_session)
-        
-        utils.save_file_proces(token_user, nombre_file, content_file)
+        nombre_file, ruta_fichero = upload_file(url_file, nombre_file, content_file, token_user)
         
         app.logger.info( "@callback: FIN 'upload_file_ant()'" )
-        return nombre_file, True
+        return nombre_file, True, True
     
     else:
-        app.logger.info("@callback: FIN by exception 'upload_file_ant()'")
-        return None, False
+        app.logger.info("@callback: FIN by None content 'upload_file_ant()'")
+        return None, False, False
 
 
 
