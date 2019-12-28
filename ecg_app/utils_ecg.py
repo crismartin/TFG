@@ -95,20 +95,29 @@ def name_file_valid(nombre_file):
     return False   
 
 
+def get_name_file(file_url):
+    filename_aux, extension = os.path.splitext(file_url)
+    filename_aux = filename_aux.split("/")[-1]  
+    return filename_aux
 
-def is_file_soported(file_name):    
+def is_file_soported(file_route):
+
     ecgFactory = ecgf.ECGFactory()    
+    
     try:
-        ecg_data = ecgFactory.create_ECG(file_name)
-        print( "** 'is_file_soported()' -> fileName: " + str(ecg_data.fileName) )    
-        return True, ecg_data.fileName
+        ecg_data = ecgFactory.create_ECG(file_route)
+        filename = ecg_data.fileName
+        print( "** 'is_file_soported()' -> fileName: " + str(filename) )    
+        return True, filename
+    
     except ValueError:
-        print( "** 'is_file_soported()' -> Ha ocurrido un error al comprobar el fichero" + str(file_name) )
+        print( "** 'is_file_soported()' -> Ha ocurrido un error al comprobar el fichero" + str(file_route) )
+        filename = get_name_file(file_route)
+        return False, filename
+    
     except IOError:
-        print( "** 'is_file_soported()' -> Ha ocurrido un error de lectura al comprobar el fichero" + str(file_name) )
-    finally:
-        filename, extension = os.path.splitext(file_name)
-        filename = filename.split("/")[-1]        
+        print( "** 'is_file_soported()' -> Ha ocurrido un error de lectura al comprobar el fichero" + str(file_route) )    
+        filename = get_name_file(file_route)
         return False, filename
     
     
