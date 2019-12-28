@@ -64,7 +64,7 @@ uploader = html.Div([
                     'borderRadius': '5px',
                     'textAlign': 'center'
                 },
-                multiple=False
+                multiple=True
             ),
             html.Div(id='container-upfile',
                      children=[cnt_msg_upfile]
@@ -388,17 +388,19 @@ def delete_file_system(token_user, name_file):
     ruta_fichero = token_user + "/" + name_file
     utils.borrar_fichero(ruta_fichero)
     
-
+    
 
 def upload_file(val_url, nombre_file, content_file, token_user):
     app.logger.info("** INICIO 'update_file()")
     
+    """
     if utils.name_file_valid(val_url):
         nombre_file = val_url
         app.logger.info("** 'update_file() -> el nombre del fichero URL es: " + str(nombre_file) )
         nombre_file = utils.download_file_url(token_user, nombre_file)
-            
-    elif content_file is not None :
+    """
+
+    if content_file is not None:
         nombre_file = nombre_file
         app.logger.info("** 'update_file() -> el nombre del fichero UPL es: " + str(nombre_file) )
         app.logger.info("** 'update_file() -> el contenido del fichero UPL es None?: " + str(content_file is None) )
@@ -571,30 +573,36 @@ def delete_file_ant(eliminar_file, name_ant_file, data_session):
     
 
 
-@app.callback([Output('lbl_name_file',  'children'),
-               Output("url-rem-file",   "disabled"),
-               Output("st-up-data",     "value"),
-               Output('st-valid-data',  'value')],
-              [Input('upload-file',     'contents'),
-               Input('url-rem-file',    'value')],
-              [State('upload-file',     'filename'),
-               State("session",         "data")]
+@app.callback(
+    [Output('lbl_name_file',  'children'),
+     Output("url-rem-file",   "disabled"),
+     Output("st-up-data",     "value"),
+     Output('st-valid-data',  'value')],
+    [Input('upload-file',     'contents'),
+     Input('url-rem-file',    'value')],
+    [State('upload-file',     'filename'),
+     State("session",         "data")]
 )
-def updload_file_data(content_file, url_file, nombre_file, data_session):
+def updload_file_data(list_contents, url_file, list_nombres, data_session):
     
     app.logger.info( "@callback: INICIO 'updload_file()'" )
-    app.logger.info( "@callback: 'updload_file() -> url_file: " + str(url_file) )
-    app.logger.info( "@callback: 'updload_file() -> content_file is None?: " + str(content_file is None) )
-    app.logger.info( "@callback: 'updload_file() -> nombre_file: " + str(nombre_file) )
+    app.logger.info( "@callback: 'updload_file() -> url_file: " + str(url_file) )    
     app.logger.info( "@callback: 'updload_file() -> token_user: " + str(utils.get_session_token(data_session)) )
-            
-    if content_file is not None or utils.name_file_valid(url_file):
+    
+    nombre_file = None
+    ruta_fichero = None
+    
+    if list_contents is not None:
         app.logger.info( "@callback: 'updload_file() -> Guardando fichero de DATOS ECG" )
-        app.logger.info( "@callback: 'updload_file() -> url_file: " + str(url_file) )        
-        app.logger.info( "@callback: 'updload_file() -> nombre_file: " + str(nombre_file) )
+        app.logger.info( "@callback: 'updload_file() -> url_file: " + str(url_file) )
         
         token_user = utils.get_session_token(data_session)
-        nombre_file, ruta_fichero = upload_file(url_file, nombre_file, content_file, token_user)
+        num_files = len(list_contents)
+        
+        for i in range(num_files):
+            content_file = list_contents[i]
+            file_name = list_nombres[i]
+            nombre_file, ruta_fichero = upload_file(url_file, file_name, content_file, token_user)
         
         ruta_abs_file = utils.dir_files + token_user + "/" + nombre_file
         fichero_valido, nombre_file = is_file_soported(ruta_abs_file)

@@ -8,7 +8,7 @@ Created on Mon Dec 16 23:08:13 2019
 
 
 import base64
-import os
+import os, glob
 import urllib2
 import random
 import constantes_ecg as cte
@@ -71,14 +71,19 @@ def download_file_url(token_user, url_file):
         return name_file
     except:
         return None
-   
+
+
 
 # Borrar un fichero subido
 def borrar_fichero(ruta_fichero):    
-    ruta = dir_files + ruta_fichero
+    filename, extension = os.path.splitext(ruta_fichero)
+    ruta = dir_files + filename
     
-    if os.path.exists(ruta):
-        os.remove(ruta)
+    #print("** utils_ecg. borrar_fichero() -> ruta: " + ruta)
+    for filename in glob.glob(ruta + "*"):
+        if os.path.exists(filename):
+            os.remove(filename)
+
     
 
 # Comprueba si el nombre del fichero no es nulo o vacío
