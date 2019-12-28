@@ -53,7 +53,7 @@ uploader = html.Div([
             dcc.Upload(id="upload-file",
                 children=html.Div([
                     'Arrastra y suelta o ',
-                    html.A('selecciona un archivo')
+                    html.A('selecciona el/los archivo/s')
                 ]),
                 style={
                     'width': '100%',
@@ -104,17 +104,24 @@ uploader_ant = html.Div([
             ])
   
 
-input_component     = dbc.Input(type="url", id="url-rem-file", placeholder="http://", value="")
-input_component_ant = dbc.Input(type="url", id="url-ant-file", placeholder="http://", value="")
+input_component      = dbc.Input(type="url", id="url-dat-file", placeholder="http://", value="")
+input_component_hed  = dbc.Input(type="url", id="url-hed-file", placeholder="http://", value="")
+input_component_ant  = dbc.Input(type="url", id="url-ant-file", placeholder="http://", value="")
 
 
 form_datos_ecg = html.Div([
-    html.H5("Datos ECG"),
+    html.H5("Datos Header"),
     dbc.FormGroup([
-        dbc.Label("Desde url remota: ", html_for="url-rem-file"),
-        html.Div(id="input-component", children = input_component)
+        dbc.Label("Desde url remota: ", html_for="url-hed-file"),
+        html.Div(id="input-component-hed", children = input_component_hed)
     ]),
         
+    html.H5("Datos ECG"),
+    dbc.FormGroup([
+        dbc.Label("Desde url remota: ", html_for="url-dat-file"),
+        html.Div(id="input-component", children = input_component)
+    ]),
+    
     html.P([
         html.Label("ó")
     ], style={'text-align': 'center'} ),
@@ -381,16 +388,9 @@ def delete_file_system(token_user, name_file):
     
     
 
-def upload_file(val_url, nombre_file, content_file, token_user):
+def upload_file(nombre_file, content_file, token_user):
     app.logger.info("** INICIO 'update_file()")
-    
-    """
-    if utils.name_file_valid(val_url):
-        nombre_file = val_url
-        app.logger.info("** 'update_file() -> el nombre del fichero URL es: " + str(nombre_file) )
-        nombre_file = utils.download_file_url(token_user, nombre_file)
-    """
-
+        
     if content_file is not None:
         nombre_file = nombre_file
         app.logger.info("** 'update_file() -> el nombre del fichero UPL es: " + str(nombre_file) )
@@ -404,6 +404,20 @@ def upload_file(val_url, nombre_file, content_file, token_user):
     return nombre_file, ruta_fichero
 
 
+
+def upload_file_by_url(file_url, token_user):
+    app.logger.info("** INICIO 'upload_file_by_url()")
+    
+    if utils.name_file_valid(file_url):
+        nombre_file = file_url
+        app.logger.info("** 'upload_file_by_url() -> el nombre del fichero URL es: " + str(nombre_file) )
+        nombre_file = utils.download_file_url(token_user, nombre_file)
+        
+    ruta_fichero = cte.DIR_UPLOAD_FILES + token_user + "/" + nombre_file
+    app.logger.info( "** 'upload_file_by_url()' -> ruta_fichero: " + str(ruta_fichero) )
+    
+    app.logger.info("** FIN 'upload_file_by_url()")
+    return nombre_file, ruta_fichero    
 
 ###############################################################################
 ############################### CALLBACKS #####################################
@@ -437,11 +451,12 @@ def toggle_collapse(n, is_open):
 
 @app.callback(
     Output("upload-file", "disabled"),
-    [Input("url-rem-file","value")]       
+    [Input("url-hed-file","value"),
+     Input("url-dat-file","value")]
 )
-def disabled_uploader(name_file):
+def disabled_uploader(head_file, data_file):
     
-    if utils.name_file_valid(name_file):
+    if utils.name_file_valid(head_file) or utils.name_file_valid(data_file):
         return True
     else:
         return False
@@ -506,6 +521,7 @@ def activar_btn_process(is_file_valid):
 @app.callback(
     [Output('container-upfile',     'children'),
      Output("input-component",      "children"),
+     Output("input-component-hed",  "children"),
      Output("form-uploader",        "children"),
      Output("cnt-st-fdata",         "children")],
     [Input("eliminar-file",         "n_clicks")],
@@ -530,7 +546,7 @@ def delete_file(eliminar_file, name_file, data_session):
         
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
-    return [cnt_msg_upfile, input_component, uploader, cnt_state_fdata]
+    return [cnt_msg_upfile, input_component, input_component_hed, uploader, cnt_state_fdata]
     
 
 
@@ -562,49 +578,62 @@ def delete_file_ant(eliminar_file, name_ant_file, data_session):
     
     return [cnt_msg_upfile_ant, input_component_ant, uploader_ant, cnt_state_fant]
     
-
+    
+    
 
 @app.callback(
     [Output('lbl_name_file',  'children'),
-     Output("url-rem-file",   "disabled"),
+     Output("url-dat-file",   "disabled"),
+     Output("url-hed-file",   "disabled"),
      Output("st-up-data",     "value"),
      Output('st-valid-data',  'value')],
     [Input('upload-file',     'contents'),
-     Input('url-rem-file',    'value')],
+     Input('url-dat-file',    'value')],
     [State('upload-file',     'filename'),
+     State("url-hed-file",    "value"),
      State("session",         "data")]
 )
-def updload_file_data(list_contents, url_file, list_nombres, data_session):
+def updload_file_data(list_contents, url_data, list_nombres, url_head, data_session):
     
     app.logger.info( "@callback: INICIO 'updload_file()'" )
-    app.logger.info( "@callback: 'updload_file() -> url_file: " + str(url_file) )    
+    app.logger.info( "@callback: 'updload_file() -> url_data: " + str(url_data) )  
+    app.logger.info( "@callback: 'updload_file() -> url_head: " + str(url_head) )
     app.logger.info( "@callback: 'updload_file() -> token_user: " + str(utils.get_session_token(data_session)) )
     
     nombre_file = None
     ruta_fichero = None
     
-    if list_contents is not None:
+    if utils.name_file_valid(url_head) and utils.name_file_valid(url_data):
+        list_nombres = [url_head, url_data]
+    
+    app.logger.info( "@callback: 'updload_file() -> list_nombres: " + str(list_nombres) )
+    
+    if list_nombres is not None:
         app.logger.info( "@callback: 'updload_file() -> Guardando fichero de DATOS ECG" )
-        app.logger.info( "@callback: 'updload_file() -> url_file: " + str(url_file) )
+        app.logger.info( "@callback: 'updload_file() -> url_data: " + str(url_data) )
         
         token_user = utils.get_session_token(data_session)
-        num_files = len(list_contents)
-        
+        num_files = len(list_nombres)
+                         
         for i in range(num_files):
-            content_file = list_contents[i]
-            file_name = list_nombres[i]
-            nombre_file, ruta_fichero = upload_file(url_file, file_name, content_file, token_user)
+            if list_contents is not None:
+                content_file = list_contents[i]
+                file_name = list_nombres[i]
+                nombre_file, ruta_fichero = upload_file(file_name, content_file, token_user)
+            else:            
+                url_data = list_nombres[i]
+                nombre_file, ruta_fichero = upload_file_by_url(url_data, token_user)
         
         ruta_abs_file = utils.dir_files + token_user + "/" + nombre_file
         fichero_valido, nombre_file = utils.is_file_soported(ruta_abs_file)
         
         app.logger.info("@callback: FIN 'update_file()'")
 
-        return [nombre_file, True, True, fichero_valido]
+        return [nombre_file, True, True, True, fichero_valido]
     
     else:    
         app.logger.info("@callback: FIN by None content 'updload_file()'")
-        return [None, False, False, None]
+        return [None, False, False, False, None]
 
 
 

@@ -86,7 +86,6 @@ def borrar_fichero(ruta_fichero):
             os.remove(filename)
 
     
-
 # Comprueba si el nombre del fichero no es nulo o vacío
 def name_file_valid(nombre_file):
     if nombre_file is not None and nombre_file != "":
@@ -95,11 +94,14 @@ def name_file_valid(nombre_file):
     return False   
 
 
+# Devuelve el nombre del fichero sin extesion
 def get_name_file(file_url):
     filename_aux, extension = os.path.splitext(file_url)
     filename_aux = filename_aux.split("/")[-1]  
     return filename_aux
 
+
+# Comprueba si el fichero es de los formatos soportados o no
 def is_file_soported(file_route):
 
     ecgFactory = ecgf.ECGFactory()    
