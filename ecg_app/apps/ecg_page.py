@@ -72,7 +72,7 @@ uploader = html.Div([
             html.Div(id="cnt-alert-format", 
                      children=[
                         dbc.Alert(
-                            "Error! El fichero no tiene un formato válido",
+                            "Error! El fichero no tiene un formato válido o está incompleto",
                             id="alert-format",
                             is_open=False,
                             color="danger"
@@ -329,15 +329,6 @@ def getTokenUser():
 def build_select_leads(nleads):
     return [ {'value': i+1, 'label': 'Derivacion '+ str(i+1)} for i in range(nleads)]
     
-
-def is_file_soported(file_name):
-    ecgFactory = ecgf.ECGFactory()
-    try:
-        ecg_data = ecgFactory.create_ECG(file_name)
-        app.logger.info( "** 'is_file_soported()' -> fileName: " + str(ecg_data.fileName) )
-        return True, ecg_data.fileName
-    except ValueError:
-        return False, None
 
 
 def get_nleads_array(file_name):
@@ -605,7 +596,7 @@ def updload_file_data(list_contents, url_file, list_nombres, data_session):
             nombre_file, ruta_fichero = upload_file(url_file, file_name, content_file, token_user)
         
         ruta_abs_file = utils.dir_files + token_user + "/" + nombre_file
-        fichero_valido, nombre_file = is_file_soported(ruta_abs_file)
+        fichero_valido, nombre_file = utils.is_file_soported(ruta_abs_file)
         
         app.logger.info("@callback: FIN 'update_file()'")
 

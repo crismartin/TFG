@@ -82,20 +82,20 @@ class ECGPhysionet(ecg.ECG):
     
     class Header():
         def __init__(self, fileRoute):           
-            self.__otherData = self._read_header(fileRoute) #Aqui tengo todos los datos de la cabecera
-            self.nLeads = self.__otherData.n_sig
-            self.samplingRate = self.__otherData.fs
+            self.otherData = self._read_header(fileRoute) #Aqui tengo todos los datos de la cabecera
+            self.nLeads = self.otherData.n_sig
+            self.samplingRate = self.otherData.fs
             
         def _read_header(self, fileRoute):
             return wfdb.rdheader(fileRoute)
         
         def printInfo(self):
-            display('[INFO] Leyendo cabecera fichero physionet %s' %self.__otherData.__dict__)
+            display('[INFO] Leyendo cabecera fichero physionet %s' %self.otherData.__dict__)
             
             
     class ECG():
-        def _read_ecg_data(self, fileRoute):
-            return wfdb.rdrecord(fileRoute, sampfrom=100, sampto=4000)
+        def _read_ecg_data(self, fileRoute, sampfrom, sampto):
+            return wfdb.rdrecord(fileRoute, sampfrom=sampfrom, sampto=sampto)
 
             
         def printInfo(self):
@@ -108,7 +108,8 @@ class ECGPhysionet(ecg.ECG):
         Function that reads Physionet files format
         """        
         self.header = self.Header(fileRoute)
-        self.__allSignal = self.ECG()._read_ecg_data(fileRoute)       
+        sig_len = self.header.otherData.sig_len
+        self.__allSignal = self.ECG()._read_ecg_data(fileRoute, 0, sig_len-1)       
         self.lenEcg = self.__allSignal.sig_len
         self.signal = []
         auxSignal = self.__allSignal.p_signal

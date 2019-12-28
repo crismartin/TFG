@@ -12,6 +12,7 @@ import os, glob
 import urllib2
 import random
 import constantes_ecg as cte
+from ecg_reader import ecg_factory as ecgf
 
 
 dir_files = os.getcwd() + cte.DIR_UPLOAD_FILES
@@ -93,3 +94,22 @@ def name_file_valid(nombre_file):
         
     return False   
 
+
+
+def is_file_soported(file_name):    
+    ecgFactory = ecgf.ECGFactory()    
+    try:
+        ecg_data = ecgFactory.create_ECG(file_name)
+        print( "** 'is_file_soported()' -> fileName: " + str(ecg_data.fileName) )    
+        return True, ecg_data.fileName
+    except ValueError:
+        print( "** 'is_file_soported()' -> Ha ocurrido un error al comprobar el fichero" + str(file_name) )
+    except IOError:
+        print( "** 'is_file_soported()' -> Ha ocurrido un error de lectura al comprobar el fichero" + str(file_name) )
+    finally:
+        filename, extension = os.path.splitext(file_name)
+        filename = filename.split("/")[-1]        
+        return False, filename
+    
+    
+    
