@@ -39,5 +39,5 @@ if __name__ == "__main__":
     #                  ./sample-data/100
     # physionet file: ../physionet/100
     #     ishne file: ../matlab_ishne/ishne.ecg
-    miECG = ECGFactory().create_ECG("/Users/cristian/TFG/datos_prueba/physionet/100_3chan")
+    miECG = ECGFactory().create_ECG("/Users/cristian/TFG/datos_prueba/physionet/100")
     miECG.printTestECG()

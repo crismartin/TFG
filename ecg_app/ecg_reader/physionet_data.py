@@ -140,7 +140,8 @@ class ECGPhysionet(ecg.ECG):
         """        
         self.header = self.Header(fileRoute)
         sig_len = self.header.otherData.sig_len
-        self.__allSignal = self.ECG()._read_ecg_data(fileRoute, 0, sig_len-1)       
+        sampto = sig_len #(sig_len / 4) - 1 #Hay que arreglar esto (con la implementacion de la lectura por tramos se solucionaría)
+        self.__allSignal = self.ECG()._read_ecg_data(fileRoute, 0, sampto)       
         self.lenEcg = self.__allSignal.sig_len
         self.signal = []
         auxSignal = self.__allSignal.p_signal
@@ -148,7 +149,7 @@ class ECGPhysionet(ecg.ECG):
         for n in range(0, nLeads):
             self.signal.append(auxSignal[:, n])
 
-        self.annt = self.Annotations(fileRoute, 0, sig_len-1)
+        self.annt = self.Annotations(fileRoute, 0, sampto)
        
 
 if __name__=="__main__":

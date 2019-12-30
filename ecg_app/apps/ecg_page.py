@@ -20,7 +20,9 @@ from app import app
 
 
 
-fig = go.Figure()
+fig = go.Figure(layout=go.Layout(hovermode = 'closest', uirevision=True, autosize=True, 
+                    xaxis=dict(gridcolor="LightPink", range=[0, 12]), 
+                    yaxis=dict(gridcolor="LightPink"),plot_bgcolor='rgb(248,248,248)') )
 
 
 spiner_loading = html.Div([

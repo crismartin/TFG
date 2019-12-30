@@ -33,6 +33,25 @@ def get_nleads_array(file_name):
     return build_select_leads(nLeads)    
     
 
+def build_data_annt(ecg, signal):
+    ant_trace = []
+    anotaciones = ecg.annt
+        
+    if anotaciones is not None:
+        fs = ecg.header.samplingRate
+        ant_ejeX = anotaciones.sample
+        ant_ejeX = ant_ejeX / float(fs)        
+        ant_ejeX = np.around(ant_ejeX, decimals=5)
+        ant_ejeX = ant_ejeX.tolist()        
+        app.logger.info("[ecg_service] - 'build_plot_by_lead() ->  ant_ejeX: " + str(len(ant_ejeX)) )        
+        ant_ejeY = signal[anotaciones.sample]
+        app.logger.info("[ecg_service] - 'build_plot_by_lead() ->  ant_ejeY: " + str(ant_ejeY) )
+        simbols = anotaciones.symbol
+        ant_trace = go.Scatter(x = ant_ejeX, y = ant_ejeY,
+                        name = 'Anotaciones', mode='markers+text', 
+                        text=simbols, textposition="top right")
+    return ant_trace
+    
 
 def build_plot_by_lead(file_name, lead):
     ecgFactory = ecgf.ECGFactory()    
@@ -55,14 +74,19 @@ def build_plot_by_lead(file_name, lead):
     layout = go.Layout(title = "Representacion de la Derivación " + str(optsLeads[lead-1]['value']),
                     hovermode = 'closest', uirevision=True, autosize=True, 
                     xaxis=dict(gridcolor="LightPink", range=[0, 12]), 
-                    yaxis=dict(gridcolor="LightPink")  
+                    yaxis=dict(gridcolor="LightPink"),
+                    plot_bgcolor='rgb(248,248,248)'
                     )
-    
-    #Objeto grafica
+        
     ecg_trace = go.Scatter(x = ejeX, y = ejeY,
-                    name = 'SF', mode='lines')
+                    name = 'ECG', mode='lines')
     
-    fig = go.Figure(data = [ecg_trace], layout = layout)
+    
+    # Datos de las anotaciones    
+    ant_trace = build_data_annt(ecg, ejeY)
+        
+    #Objeto grafica
+    fig = go.Figure(data = [ecg_trace, ant_trace], layout = layout)
     
     return fig, title
 
