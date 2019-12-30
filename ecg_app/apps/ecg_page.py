@@ -12,13 +12,13 @@ import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
+
 import utils_ecg as utils
-import constantes_ecg as cte
+import ecg_service as ecg_serv
 
-import numpy as np
-
-from ecg_reader import ecg_factory as ecgf
 from app import app
+
+
 
 fig = go.Figure()
 
@@ -323,101 +323,7 @@ footer = html.Div([
             dbc.Input(type="hidden", id="fname_process")
         ])
 
-###############################################################################
-########################## FUNCIONES AUXILIARES ###############################
-###############################################################################
 
-
-def getTokenUser():
-    token_user = utils.generateTokenSession()
-    return dbc.Input(id="token-user", type="hidden", value=token_user)
-
-
-def build_select_leads(nleads):
-    return [ {'value': i+1, 'label': 'Derivacion '+ str(i+1)} for i in range(nleads)]
-    
-
-
-def get_nleads_array(file_name):
-    # Factoria de ECG
-    ecgFactory = ecgf.ECGFactory()
-    
-    ecg = ecgFactory.create_ECG(file_name)
-    nLeads = ecg.header.nLeads    
-    
-    return build_select_leads(nLeads)    
-    
-
-
-def build_plot_by_lead(file_name, lead):
-    ecgFactory = ecgf.ECGFactory()    
-    ecg = ecgFactory.create_ECG(file_name)
-    
-    signals = ecg.signal
-    nLeads = ecg.header.nLeads
-    fs = ecg.header.samplingRate
-    title = "Formato " + ecg.typeECG
-    
-    if lead > nLeads:
-        return None    
-    
-    #Datos de la señal (Y(x))
-    ejeY = signals[lead-1]
-    ejeX = np.arange(0, len(ejeY), 1.0)/fs
-    
-    optsLeads = build_select_leads(nLeads)
-    
-    layout = go.Layout(title = "Representacion de la Derivación " + str(optsLeads[lead-1]['value']),
-                    hovermode = 'closest', uirevision=True, autosize=True, 
-                    xaxis=dict(gridcolor="LightPink", range=[0, 12]), 
-                    yaxis=dict(gridcolor="LightPink")  
-                    )
-    
-    #Objeto grafica
-    ecg_trace = go.Scatter(x = ejeX, y = ejeY,
-                    name = 'SF', mode='lines')
-    
-    fig = go.Figure(data = [ecg_trace], layout = layout)
-    
-    return fig, title
-
-
-def delete_file_system(token_user, name_file):
-    ruta_fichero = token_user + "/" + name_file
-    utils.borrar_fichero(ruta_fichero)
-    
-    
-
-def upload_file(nombre_file, content_file, token_user):
-    app.logger.info("** INICIO 'update_file()")
-        
-    if content_file is not None:
-        nombre_file = nombre_file
-        app.logger.info("** 'update_file() -> el nombre del fichero UPL es: " + str(nombre_file) )
-        app.logger.info("** 'update_file() -> el contenido del fichero UPL es None?: " + str(content_file is None) )
-        utils.save_file_proces(token_user, nombre_file, content_file)
-    
-    ruta_fichero = cte.DIR_UPLOAD_FILES + token_user + "/" + nombre_file
-    app.logger.info( "** 'update_file()' -> ruta_fichero: " + str(ruta_fichero) )
-    
-    app.logger.info("** FIN 'update_file()")
-    return nombre_file, ruta_fichero
-
-
-
-def upload_file_by_url(file_url, token_user):
-    app.logger.info("** INICIO 'upload_file_by_url()")
-    
-    if utils.name_file_valid(file_url):
-        nombre_file = file_url
-        app.logger.info("** 'upload_file_by_url() -> el nombre del fichero URL es: " + str(nombre_file) )
-        nombre_file = utils.download_file_url(token_user, nombre_file)
-        
-    ruta_fichero = cte.DIR_UPLOAD_FILES + token_user + "/" + nombre_file
-    app.logger.info( "** 'upload_file_by_url()' -> ruta_fichero: " + str(ruta_fichero) )
-    
-    app.logger.info("** FIN 'upload_file_by_url()")
-    return nombre_file, ruta_fichero    
 
 ###############################################################################
 ############################### CALLBACKS #####################################
@@ -542,7 +448,7 @@ def delete_file(eliminar_file, name_file, data_session):
     app.logger.info( "@callback: delete_file() -> token_user: " + str(token_user) )
 
     app.logger.info( "@callback: 'delete_file(): Borrando fichero datos: '" + str(name_file) )
-    delete_file_system(token_user, name_file)
+    ecg_serv.delete_file_system(token_user, name_file)
         
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
@@ -572,7 +478,7 @@ def delete_file_ant(eliminar_file, name_ant_file, data_session):
     app.logger.info( "@callback: delete_file_ant() -> token_user: " + str(token_user) )
         
     app.logger.info( "@callback: 'delete_file_ant(): Borrando fichero anotaciones: '" + str(name_ant_file) )
-    delete_file_system(token_user, name_ant_file)
+    ecg_serv.delete_file_system(token_user, name_ant_file)
     
     app.logger.info( "@callback: FIN 'delete_file_ant()'" )
     
@@ -619,10 +525,10 @@ def updload_file_data(list_contents, url_data, list_nombres, url_head, data_sess
             if list_contents is not None:
                 content_file = list_contents[i]
                 file_name = list_nombres[i]
-                nombre_file, ruta_fichero = upload_file(file_name, content_file, token_user)
+                nombre_file, ruta_fichero = ecg_serv.upload_file(file_name, content_file, token_user)
             else:            
                 url_data = list_nombres[i]
-                nombre_file, ruta_fichero = upload_file_by_url(url_data, token_user)
+                nombre_file, ruta_fichero = ecg_serv.upload_file_by_url(url_data, token_user)
         
         ruta_abs_file = utils.dir_files + token_user + "/" + nombre_file
         fichero_valido, nombre_file = utils.is_file_soported(ruta_abs_file)
@@ -658,7 +564,7 @@ def upload_file_ant(content_file, url_file, nombre_file, data_session):
         app.logger.info( "@callback: 'upload_file_ant() -> url_file: " + str(url_file) )
         
         token_user = utils.get_session_token(data_session)
-        nombre_file, ruta_fichero = upload_file(url_file, nombre_file, content_file, token_user)
+        nombre_file, ruta_fichero = ecg_serv.upload_file(url_file, nombre_file, content_file, token_user)
         
         app.logger.info( "@callback: FIN 'upload_file_ant()'" )
         return nombre_file, True, True
@@ -707,7 +613,7 @@ def select_first_lead(fname_uploaded):
         ruta_file = utils.dir_files + fname_uploaded
         app.logger.info("@callback: 'select_first_lead()' -> ruta_file: " + str(ruta_file))
         app.logger.info("@callback: 'select_first_lead()' -> Obteniendo leads...")
-        optLeads = get_nleads_array(ruta_file)
+        optLeads = ecg_serv.get_nleads_array(ruta_file)
         app.logger.info("@callback: 'select_first_lead()' -> optLeads: " + str(optLeads))
         app.logger.info("@callback: FIN 'select_first_lead()'")
         return False, optLeads, 1
@@ -742,7 +648,7 @@ def print_ecg_lead(selected_lead, fname_uploaded):
     app.logger.info("@callback: 'print_ecg()' -> ruta_file: " + str(ruta_file))
     app.logger.info("@callback: 'print_ecg()' -> Pintando datos...")
     
-    fig, title = build_plot_by_lead(ruta_file, selected_lead)
+    fig, title = ecg_serv.build_plot_by_lead(ruta_file, selected_lead)
     app.logger.info("@callback: FIN 'print_ecg()'")
     return fig, title, False
     
