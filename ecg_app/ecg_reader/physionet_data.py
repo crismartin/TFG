@@ -42,6 +42,7 @@ class ECGPhysionet(ecg.ECG):
         self.fileRoute = fileRoute
         self.header = []      
         self.signal = []
+        self.annt = []
         self.lenEcg = 0
         self.__allSignal = [] #Asi tengo todos los datos de la señal
         self.read_physionet_file(fileRoute)        
@@ -53,10 +54,16 @@ class ECGPhysionet(ecg.ECG):
         return self.typeECG
     
     ""
-    " Devuelve ls datos de cabecera de la señal "
+    " Devuelve los datos de cabecera de la señal "
     ""
     def getHeader(self):
         return self.header
+    
+    ""
+    " Devuelve los datos de anotaciones de la señal "
+    ""
+    def getAnnotations(self):
+        return self.annt
     
     ""
     " Devuelve los datos de la señal "
@@ -96,13 +103,37 @@ class ECGPhysionet(ecg.ECG):
     class ECG():
         def _read_ecg_data(self, fileRoute, sampfrom, sampto):
             return wfdb.rdrecord(fileRoute, sampfrom=sampfrom, sampto=sampto)
-
             
         def printInfo(self):
             print('[INFO] Mostrando signal physionet')
             print(self.signal)
     
     
+    class Annotations:
+        def __init__(self, fileRoute, sampfrom, sampto):
+            self.otherData = self._read_annt(fileRoute, sampfrom, sampto)
+            
+            self.ann_len = self.otherData.ann_len if self.otherData is not None else None
+            self.sample = self.otherData.sample if self.otherData is not None else None
+            self.symbol = self.otherData.symbol if self.otherData is not None else None
+            
+        def _read_annt(self, fileRoute, sampfrom, sampto):
+            data_ant = None
+            try:
+                data_ant = wfdb.rdann(fileRoute, 'atr', sampfrom=sampfrom, sampto=sampto)
+            except IOError:
+                print('[WARN] No existe fichero de anotaciones para %s' %fileRoute)
+            finally:
+                return data_ant
+
+        def printInfo(self):
+            display('[INFO] Mostrando resumen datos anotaciones physionet')
+            display('[INFO] ann_len: %s' %self.ann_len)
+            display('[INFO] samples: %s' %self.sample)
+            #display('[INFO] symbols: %s' %self.symbol)
+            #display('[INFO] Leyendo cabecera fichero physionet %s' %self.otherData.__dict__)
+
+
     def read_physionet_file(self, fileRoute):
         """
         Function that reads Physionet files format
@@ -116,11 +147,12 @@ class ECGPhysionet(ecg.ECG):
         nLeads = self.__allSignal.n_sig
         for n in range(0, nLeads):
             self.signal.append(auxSignal[:, n])
-        
+
+        self.annt = self.Annotations(fileRoute, 0, sig_len-1)
        
 
 if __name__=="__main__":
     #print(is_Ishne_file("./sample-data/a103l.hea"))
-    physioECG = ECGPhysionet("/Users/cristian/TFG/datos_prueba/physionet/100")
+    physioECG = ECGPhysionet("/Users/cristian/TFG/datos_prueba/100")
     physioECG.printECG(100, 15000)        
     display(physioECG.signal)

@@ -635,14 +635,12 @@ def print_ecg_lead(selected_lead, fname_uploaded):
     app.logger.info("@callback: INICIO 'print_ecg()'")
     
     app.logger.info("@callback: 'print_ecg()' -> selected_lead: " + str(selected_lead))
-
     app.logger.info("@callback: 'print_ecg()' -> fname_uploaded: " + str(fname_uploaded))
     
     if fname_uploaded is None or selected_lead is None:
         app.logger.info("@callback: FIN 'print_ecg()' by Exception")
         raise dash.exceptions.PreventUpdate()
-    
-    
+        
     app.logger.info("@callback: 'print_ecg()' -> Configurando parametros para pintar")
     ruta_file = utils.dir_files + fname_uploaded
     app.logger.info("@callback: 'print_ecg()' -> ruta_file: " + str(ruta_file))
