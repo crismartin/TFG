@@ -19,8 +19,11 @@ import ecg_service as ecg_serv
 from app import app
 
 
+tipos_soportados = [{"label": "ISHNE",      "value": 1}, 
+                    {"label": "Physionet",  "value": 2},
+                    ]
 
-fig = go.Figure(layout=go.Layout(hovermode = 'closest', uirevision=True, autosize=True, 
+fig_default = go.Figure(layout=go.Layout(hovermode = 'closest', uirevision=True, autosize=True, 
                     xaxis=dict(gridcolor="LightPink", range=[0, 12]), 
                     yaxis=dict(gridcolor="LightPink"),plot_bgcolor='rgb(248,248,248)') )
 
@@ -106,18 +109,26 @@ uploader_ant = html.Div([
             ])
   
 
-input_component      = dbc.Input(type="url", id="url-dat-file", placeholder="http://", value="")
 input_component_hed  = dbc.Input(type="url", id="url-hed-file", placeholder="http://", value="")
 input_component_ant  = dbc.Input(type="url", id="url-ant-file", placeholder="http://", value="")
+input_component      = dbc.Input(type="url", id="url-dat-file", placeholder="http://", value="", debounce=True)
 
 
 form_datos_ecg = html.Div([
+    
+
     html.H5("Datos Header"),
     dbc.FormGroup([
         dbc.Label("Desde url remota: ", html_for="url-hed-file"),
         html.Div(id="input-component-hed", children = input_component_hed)
     ]),
-        
+
+    html.H5("Anotaciones"),
+    dbc.FormGroup([
+        dbc.Label("Desde url remota: ", html_for="url-ant-file"),
+        html.Div(id="input-component-ant", children = input_component_ant)
+    ]),
+
     html.H5("Datos ECG"),
     dbc.FormGroup([
         dbc.Label("Desde url remota: ", html_for="url-dat-file"),
@@ -132,37 +143,10 @@ form_datos_ecg = html.Div([
 ])
 
 
-form_datos_ant = html.Div([
-    html.H5("Anotaciones"),
-    dbc.FormGroup([
-        dbc.Label("Desde url remota: ", html_for="url-ant-file"),
-        html.Div(id="input-component-ant", children = input_component_ant)
-    ]),
-
-    html.P([
-        html.Label("ó")
-    ], style={'text-align': 'center'} ),
-    
-    dbc.FormGroup(id="form-uploader-ant", children = uploader_ant),
-])
-
-
-collapse = html.Div([
-    dbc.FormGroup([ dbc.Button(id="collapse-button",
-                    className="mb-3",
-                    color="link",
-                    children=["Anotaciones (opcional)", html.I(className="fas fa-angle-down ml-2")]
-                    )
-    ]),        
-    dbc.Collapse(id="collapse",
-                 children=form_datos_ant
-                 ),
-])
-
 
 formulario = dbc.Form([
     form_datos_ecg,    
-    dbc.FormGroup(id="form-optional", children= collapse )
+    #dbc.FormGroup(id="form-optional", children= collapse )
 ])
 
 
@@ -171,7 +155,7 @@ btn_procesar = dbc.Button(id="proces-upfile", color="success",
                                 html.Span([html.I(className="fas fa-cogs ml-2"), " Procesar"])
                              ], disabled=True)
 
-btn_eliminar = dbc.Button(id="eliminar-file", n_clicks=None,
+btn_eliminar = dbc.Button(id="eliminar-file",
                           className="mr-1", color="danger", disabled=True,
                           children=[
                              html.Span([html.I(className="fas fa-trash ml-2"), " Borrar fichero/s"])
@@ -183,12 +167,12 @@ btn_cerrar_modal = dbc.Button(id="close-upfile", n_clicks=None, className="mr-1"
                              ])
 
 cnt_state_fdata = html.Div([
-        dbc.Input( id="st-up-data",   type="hidden",   value=None),        
-        dbc.Input( id="st-valid-data",  type="hidden",   value=None),
+        dbc.Input( id="st-up-data",   type="hidden"),        
+        dbc.Input( id="st-valid-data",  type="hidden"),
 ])
 
 cnt_state_fant =  html.Div([
-        dbc.Input( id="st-up-ant",    type="hidden",   value=None),        
+        dbc.Input( id="st-up-ant",    type="hidden"),        
 ])
 
 modal_component = html.Div([
@@ -205,6 +189,9 @@ modal_component = html.Div([
     ]),
 ])
 
+ecg_fig = dcc.Graph(id='ecg-fig', 
+              figure=fig_default,
+              style={'height': 600, 'width':900})
 
 
 display_ecg = dbc.FormGroup([   
@@ -217,10 +204,7 @@ display_ecg = dbc.FormGroup([
         ),
     ]),
     
-    #Agregamos la figura
-    dcc.Graph(id='cnt-ecg-fig', 
-              figure=fig,
-              style={'height': 600, 'width':900}),
+    html.Div(id="cnt-ecg-fig", children=ecg_fig)
 ])
     
         
@@ -298,13 +282,15 @@ form_controls = html.Div(id="form-controls", children=[title_controls, dropdown_
 
 cnt_form_controls = dbc.Form(id="cnt-form-controls", children=form_controls)
 
+title_format = html.H1("Formato", id="formato-title", style={'textAlign': 'center'})
+
 
 body = dbc.Container([
-    html.H1("Formato", id="formato-title", style={'textAlign': 'center'}),
+    html.Div(id="cnt-title-format", children=title_format),
     dbc.Row([
-        dbc.Col([                       
+        dbc.Col([
             dbc.Row([
-                form_controls
+                cnt_form_controls
             ]),
         ], width=2),
         dbc.Col([
@@ -383,22 +369,21 @@ def disabled_uploader_ant(name_file):
 
 @app.callback(
      Output("eliminar-file",  "disabled"),
-    [Input("st-up-data", "value"),
-     Input("st-up-ant", "value")],
+    [Input("st-up-data", "value")]
 )
-def activar_btn_delete(st_upfile_data, st_upfile_ant):
+def activar_btn_delete(st_upfile_data):
     app.logger.info("@callback: INICIO 'activar_btn_delete()'")
     
     app.logger.info( "@callback: 'activar_btn_delete()' -> st_upfile_data: " + str(st_upfile_data) )
-    app.logger.info( "@callback: 'activar_btn_delete()' -> st_upfile_ant: "  + str(st_upfile_ant) )
+    
     
     disabled_btn = True
     
-    if st_upfile_data is None and st_upfile_ant is None:
+    if st_upfile_data is None:
         app.logger.info("@callback: FIN by Exception 'activar_btn_delete()'")
         raise dash.exceptions.PreventUpdate()
         
-    if st_upfile_data is True or st_upfile_ant is True:
+    if st_upfile_data is True:
         disabled_btn = False
         
     app.logger.info( "@callback: 'activar_btn_delete()' -> disabled_btn: "  + str(disabled_btn) )
@@ -406,6 +391,7 @@ def activar_btn_delete(st_upfile_data, st_upfile_ant):
     app.logger.info("@callback: FIN 'activar_btn_delete()'")
     
     return disabled_btn
+
 
 
 @app.callback(
@@ -430,8 +416,12 @@ def activar_btn_process(is_file_valid):
     [Output('container-upfile',     'children'),
      Output("input-component",      "children"),
      Output("input-component-hed",  "children"),
+     Output("input-component-ant",  "children"),
      Output("form-uploader",        "children"),
-     Output("cnt-st-fdata",         "children")],
+     Output("cnt-st-fdata",         "children"),
+     Output("cnt-ecg-fig",          "children"),
+     Output("cnt-form-controls",    "children"),
+     Output("cnt-title-format",     "children")],
     [Input("eliminar-file",         "n_clicks")],
     [State("lbl_name_file",         "children"),
      State("session",               "data")]
@@ -442,138 +432,81 @@ def delete_file(eliminar_file, name_file, data_session):
     app.logger.info( "@callback: delete_file() -> eliminar_file: " + str(eliminar_file) )
     app.logger.info( "@callback: delete_file() -> name_file: " + str(name_file) )    
     
-    if not utils.name_file_valid(name_file):
-        app.logger.info("@callback: FIN by exception 'delete_file()'")
-        raise dash.exceptions.PreventUpdate()
+    if utils.name_file_valid(name_file):
+#        app.logger.info("@callback: FIN by exception 'delete_file()'")
+        
+        token_user = utils.get_session_token(data_session)
+        app.logger.info( "@callback: delete_file() -> token_user: " + str(token_user) )
     
-    token_user = utils.get_session_token(data_session)
-    app.logger.info( "@callback: delete_file() -> token_user: " + str(token_user) )
-
-    app.logger.info( "@callback: 'delete_file(): Borrando fichero datos: '" + str(name_file) )
-    ecg_serv.delete_file_system(token_user, name_file)
+        app.logger.info( "@callback: 'delete_file(): Borrando fichero datos: '" + str(name_file) )
+        ecg_serv.delete_file_system(token_user, name_file)
         
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
-    return [cnt_msg_upfile, input_component, input_component_hed, uploader, cnt_state_fdata]
+    return [cnt_msg_upfile, input_component, input_component_hed, input_component_ant, 
+            uploader, cnt_state_fdata, ecg_fig, cnt_form_controls, title_format]
     
 
 
-@app.callback(
-    [Output('container-upfile-ant', 'children'),
-     Output("input-component-ant",  "children"),
-     Output("form-uploader-ant",    "children"),
-     Output("cnt-st-fant",          "children")],
-    [Input("eliminar-file",         "n_clicks")],
-    [State("lbl_name_file_ant",     "children"),
-     State("session",               "data")]
-)
-def delete_file_ant(eliminar_file, name_ant_file, data_session):
+def get_list_fname( url_head, url_ant, url_data ):
+    list_nombres = []
     
-    app.logger.info("@callback: INICIO 'delete_file_ant()'")
-    app.logger.info( "@callback: delete_file_ant() -> name_ant_file: " + str(name_ant_file) )  
+    if utils.name_file_valid(url_head):
+        list_nombres.append(url_head)
     
-    if not utils.name_file_valid(name_ant_file):
-        app.logger.info("@callback: FIN by Exception 'delete_file_ant()'")
-        raise dash.exceptions.PreventUpdate()
+    if utils.name_file_valid(url_ant):
+        list_nombres.append(url_ant)
         
-    token_user = utils.get_session_token(data_session)
-    app.logger.info( "@callback: delete_file_ant() -> token_user: " + str(token_user) )
+    if utils.name_file_valid(url_data):
+        list_nombres.append(url_data)
         
-    app.logger.info( "@callback: 'delete_file_ant(): Borrando fichero anotaciones: '" + str(name_ant_file) )
-    ecg_serv.delete_file_system(token_user, name_ant_file)
+    return list_nombres
+        
     
-    app.logger.info( "@callback: FIN 'delete_file_ant()'" )
-    
-    return [cnt_msg_upfile_ant, input_component_ant, uploader_ant, cnt_state_fant]
-    
-    
-    
+
 
 @app.callback(
     [Output('lbl_name_file',  'children'),
      Output("url-dat-file",   "disabled"),
      Output("url-hed-file",   "disabled"),
+     Output("url-ant-file",   "disabled"),
      Output("st-up-data",     "value"),
-     Output('st-valid-data',  'value')],
+     Output('st-valid-data',  'value'),
+     Output("alert-format",   "children")],
     [Input('upload-file',     'contents'),
      Input('url-dat-file',    'value')],
     [State('upload-file',     'filename'),
      State("url-hed-file",    "value"),
+     State("url-ant-file",    "value"),
      State("session",         "data")]
 )
-def updload_file_data(list_contents, url_data, list_nombres, url_head, data_session):
+def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_session):
     
     app.logger.info( "@callback: INICIO 'updload_file()'" )
     app.logger.info( "@callback: 'updload_file() -> url_data: " + str(url_data) )  
     app.logger.info( "@callback: 'updload_file() -> url_head: " + str(url_head) )
+    app.logger.info( "@callback: 'updload_file() -> url_ant: "  + str(url_ant) )
     app.logger.info( "@callback: 'updload_file() -> token_user: " + str(utils.get_session_token(data_session)) )
-    
-    nombre_file = None
-    ruta_fichero = None
-    
-    if utils.name_file_valid(url_head) and utils.name_file_valid(url_data):
-        list_nombres = [url_head, url_data]
-    
     app.logger.info( "@callback: 'updload_file() -> list_nombres: " + str(list_nombres) )
     
-    if list_nombres is not None:
-        app.logger.info( "@callback: 'updload_file() -> Guardando fichero de DATOS ECG" )
-        app.logger.info( "@callback: 'updload_file() -> url_data: " + str(url_data) )
-        
-        token_user = utils.get_session_token(data_session)
-        num_files = len(list_nombres)
-                         
-        for i in range(num_files):
-            if list_contents is not None:
-                content_file = list_contents[i]
-                file_name = list_nombres[i]
-                nombre_file, ruta_fichero = ecg_serv.upload_file(file_name, content_file, token_user)
-            else:            
-                url_data = list_nombres[i]
-                nombre_file, ruta_fichero = ecg_serv.upload_file_by_url(url_data, token_user)
-        
-        ruta_abs_file = utils.dir_files + token_user + "/" + nombre_file
-        fichero_valido, nombre_file = utils.is_file_soported(ruta_abs_file)
-        
-        app.logger.info("@callback: FIN 'update_file()'")
+    list_nombres = list_nombres or get_list_fname( url_head, url_ant, url_data )
+    
+    app.logger.info( "@callback: 'updload_file() -> list_nombres definitivo: " + str(list_nombres) )
+    
+    if utils.name_file_valid(url_data) or list_contents is not None:
 
-        return [nombre_file, True, True, True, fichero_valido]
+        token_user = utils.get_session_token(data_session)                 
+        msg_error, fichero_valido, nombre_file = ecg_serv.guardar_ficheros(list_contents, list_nombres, token_user)
+        
+        if fichero_valido:
+            return [nombre_file, True, True, True, True, fichero_valido, msg_error]
+        
+        else:
+            return [None, False, False, False, True, False, msg_error]
     
     else:    
         app.logger.info("@callback: FIN by None content 'updload_file()'")
-        return [None, False, False, False, None]
-
-
-
-
-@app.callback(
-    [Output("lbl_name_file_ant", "children"),
-     Output("st-up-ant",         "value"),
-     Output("url-ant-file",      "disabled")],
-    [Input("upload-ant",         "contents"),
-     Input("url-ant-file",       "value")],
-    [State("upload-ant",         "filename"),
-     State("session",            "data")]
-)
-def upload_file_ant(content_file, url_file, nombre_file, data_session):
-    app.logger.info( "@callback: INICIO 'upload_file_ant()'" )
-    app.logger.info( "@callback: 'upload_file_ant() -> content_file is None?: " + str(content_file is None) )
-    app.logger.info( "@callback: 'upload_file_ant() -> url_file: " + str(url_file) )
-        
-    if content_file is not None or utils.name_file_valid(url_file):   
-        app.logger.info( "@callback: 'upload_file_ant() -> Guardando fichero de ANOTACIONES" )
-        app.logger.info( "@callback: 'upload_file_ant() -> nombre_file: " + str(nombre_file) )
-        app.logger.info( "@callback: 'upload_file_ant() -> url_file: " + str(url_file) )
-        
-        token_user = utils.get_session_token(data_session)
-        nombre_file, ruta_fichero = ecg_serv.upload_file(url_file, nombre_file, content_file, token_user)
-        
-        app.logger.info( "@callback: FIN 'upload_file_ant()'" )
-        return nombre_file, True, True
-    
-    else:
-        app.logger.info("@callback: FIN by None content 'upload_file_ant()'")
-        return None, False, False
+        return [None, False, False, False, False, None, None]
 
 
 
@@ -586,7 +519,7 @@ def upload_file_ant(content_file, url_file, nombre_file, data_session):
 def process_file(click_button, data_session, name_file):
     app.logger.info("@callback: INICIO 'process_file()'")
     
-    app.logger.info("@callback: 'process_file()' -> token_session: " + str(name_file) )
+    app.logger.info("@callback: 'process_file()' -> name_file: " + str(name_file) )
     
     if click_button <= 0:
         app.logger.info("@callback: FIN 'process_file()': 'click' Exception")
@@ -627,7 +560,7 @@ def select_first_lead(fname_uploaded):
 
 
 @app.callback(
-    [Output("cnt-ecg-fig", "figure"),
+    [Output("ecg-fig", "figure"),
      Output("formato-title", "children"),
      Output("point-y", "disabled")],
     [Input("optLeads", "value")],

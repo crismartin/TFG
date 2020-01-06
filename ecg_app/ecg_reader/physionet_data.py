@@ -42,10 +42,10 @@ class ECGPhysionet(ecg.ECG):
         self.fileRoute = fileRoute
         self.header = []      
         self.signal = []
-        self.annt = []
+        self.annt = None
         self.lenEcg = 0
         self.__allSignal = [] #Asi tengo todos los datos de la señal
-        self.read_physionet_file(fileRoute)        
+        self.read_physionet_file(fileRoute)
         
     ""
     " Devuelve el formato de ECG "

@@ -12,7 +12,7 @@ import os, glob
 import urllib2
 import random
 import constantes_ecg as cte
-from ecg_reader import ecg_factory as ecgf
+
 
 
 dir_files = os.getcwd() + cte.DIR_UPLOAD_FILES
@@ -41,24 +41,38 @@ def get_route_file(token_user, fname):
     
 
 # Guarda el contenido en un fichero
-def save_file_proces(token_user, nombre_file, contenido):
-    ruta_fichero = dir_files + token_user + "/" + nombre_file
-    content_type, content_string = contenido.split(',')
-    decoded = base64.b64decode(content_string)
+def save_file_proces(token_user, name_file, contenido):
+    saved = False
+    ruta_fichero = dir_files + token_user + "/" + name_file
     
-    create_new_user_dir(token_user)
-   
-    fh = open(ruta_fichero, "wb")
-    fh.write(decoded)
-    fh.close()
+    print("[utils_ecg] - save_file_proces() -> name_file: %s" %name_file)
     
-    return None
+    try:
+        content_type, content_string = contenido.split(',')
+        decoded = base64.b64decode(content_string)
+        
+        create_new_user_dir(token_user)
+       
+        fh = open(ruta_fichero, "wb")
+        fh.write(decoded)
+        fh.close()
+        saved = True
+        print("[utils_ecg] - save_file_proces() -> saved SUCCESS fichero: "+ str(name_file))
+    except:
+        print("[utils_ecg] - save_file_proces() -> ERROR al guardar el contenido del fichero: "+ str(name_file))
+        
+    finally:
+        return name_file, saved
 
 
 # Descarga un fichero desde una url
 def download_file_url(token_user, url_file):
+    saved = False
     name_file = url_file.split('/')[-1]
     save_file = dir_files + token_user + "/" + name_file
+    
+    print("[utils_ecg] - download_file_url() -> name_file: %s" %name_file)
+    print("[utils_ecg] - download_file_url() -> save_file: %s" %save_file)
     
     try:
         response = urllib2.urlopen(url_file)
@@ -69,9 +83,13 @@ def download_file_url(token_user, url_file):
         fh = open(save_file, "wb")
         fh.write(datatowrite)
         fh.close()    
-        return name_file
+        saved = True
+        print("[utils_ecg] - download_file_url() -> saved SUCCESS fichero: "+ str(name_file))
     except:
-        return None
+        print("[utils_ecg] - download_file_url() -> ERROR al descargar el fichero: " + str(name_file))
+        
+    finally:
+        return name_file, saved
 
 
 
@@ -95,32 +113,16 @@ def name_file_valid(nombre_file):
 
 
 # Devuelve el nombre del fichero sin extesion
-def get_name_file(file_url):
+def get_name_file(file_url, with_ext):
     filename_aux, extension = os.path.splitext(file_url)
-    filename_aux = filename_aux.split("/")[-1]  
+    filename_aux = filename_aux.split("/")[-1]
+    filename_aux = filename_aux + extension if with_ext else filename_aux
+                
     return filename_aux
 
 
-# Comprueba si el fichero es de los formatos soportados o no
-def is_file_soported(file_route):
+# Devuelve la extensión del fichero
+def get_ext_file(name_file):
+    filename, extension = os.path.splitext(name_file)
+    return extension
 
-    ecgFactory = ecgf.ECGFactory()    
-    
-    try:
-        ecg_data = ecgFactory.create_ECG(file_route)
-        filename = ecg_data.fileName
-        print( "** 'is_file_soported()' -> fileName: " + str(filename) )    
-        return True, filename
-    
-    except ValueError:
-        print( "** 'is_file_soported()' -> Ha ocurrido un error al comprobar el fichero" + str(file_route) )
-        filename = get_name_file(file_route)
-        return False, filename
-    
-    except IOError:
-        print( "** 'is_file_soported()' -> Ha ocurrido un error de lectura al comprobar el fichero" + str(file_route) )    
-        filename = get_name_file(file_route)
-        return False, filename
-    
-    
-    

@@ -18,7 +18,7 @@ class ECG(object):
     typeECG = ""
     header = []
     signal = []
-    annt = []
+    annt = None
     
     def __init__(self, fileRoute):        
         self.fileRoute = fileRoute

@@ -11,20 +11,29 @@ import matplotlib.pyplot as plt
 from IPython.display import display
 
 
-ISHNE_MAGIC_NUM = "ISHNE1.0"
+ISHNE_MAGIC_NUM     = "ISHNE1.0"
 LONG_MAGICNUM_ISHNE = 8
-LONG_CRC_ISHNE = 1
-LONG_FIJA_ISHNE = 512
-NUM_DERIVACIONES = 12
+LONG_CRC_ISHNE      = 1
+LONG_FIJA_ISHNE     = 512
+NUM_DERIVACIONES    = 12
+EXT_FILE_DATA       = ".ecg"
+EXT_FILE_ANN        = ".ann"
+
+
 
 """
 Function that return 0 if it has a ISHNE format
 """    
 def is_Ishne_file(fileIshne):
-    fdFile = read_file(fileIshne)
+    print("[INFO][ISHNE_DATA] - is_Ishne_file() -> fileIshne: %s" %fileIshne)
+    fileRoute = fileIshne.split(".")[0]
+    print("[INFO][ISHNE_DATA] - is_Ishne_file() -> fileRoute sin ext: %s" %fileRoute)
+    fileRoute = fileRoute + EXT_FILE_DATA
+    print("[INFO][ISHNE_DATA] - is_Ishne_file() -> fileRoute con ext: %s" %fileRoute)
+    fdFile = read_file(fileRoute)
     if(fdFile  > 0):
         magicNum = fdFile.read(LONG_MAGICNUM_ISHNE)
-        print("[INFO] MAGIC NUM: %s"  %magicNum)
+        print("[INFO] - is_Ishne_file() -> MAGIC NUM: %s"  %magicNum)
         fdFile.close()
         
         if(magicNum == ISHNE_MAGIC_NUM):
@@ -59,14 +68,19 @@ class ECGIshne(ecg.ECG):
     typeECG = ISHNE_MAGIC_NUM
     
     def __init__(self, fileRoute):
+        fileRoute = fileRoute.split(".")[0]
         self.fileRoute = fileRoute
         self.fileName = fileRoute.split("/")[-1]
         data = self._read_ishne_file(fileRoute)
-        self.header = data['header'] if data != {} else []    
+        self.header = data['header'] if data != {} else []
         self.__allSignal = data['ecg'] if data != {} else []
-        self.signal = self.__allSignal.ecg
-        self.lenEcg = self.__allSignal.lenEcg
+        self.signal = self.__allSignal.ecg if self.__allSignal.ecg != [] else None
+        self.lenEcg = self.__allSignal.lenEcg if self.__allSignal.ecg != [] else None
+        self.annt = None
+        #LECTURA DE LAS ANOTACIONES
         
+    
+    
     ""
     " Devuelve el formato de ECG "
     ""
@@ -287,6 +301,7 @@ class ECGIshne(ecg.ECG):
         
                 
     def _read_ishne_file(self, fileRoute):
+        fileRoute = fileRoute + EXT_FILE_DATA
         header = self.Header()
         ecg = self.ECG()
         crc = self.Crc()
@@ -321,12 +336,12 @@ class ECGIshne(ecg.ECG):
 
 if __name__=="__main__":
     #print(is_Ishne_file("./sample-data/a103l.hea"))
-    ishneECG = ECGIshne("./matlab_ishne_code/ishne.ecg")    
+    ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/ishne")
     ishneECG.printInfoECG()
     ishneECG.printECG(0, 150000)
     display(ishneECG.signal[0])
-    y = ishneECG.signal[0]
-    x = [{'value': 1, 'label': 'Derivacion 1'}, {'value': 2, 'label': 'Derivacion 2'}]
+    #y = ishneECG.signal[0]
+    #x = [{'value': 1, 'label': 'Derivacion 1'}, {'value': 2, 'label': 'Derivacion 2'}]
 
     
     
