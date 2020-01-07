@@ -8,6 +8,7 @@ Created on Wed Mar 14 20:13:59 2018
 import ecg
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 from IPython.display import display
 
 
@@ -40,6 +41,29 @@ def is_Ishne_file(fileIshne):
             return True
         
     return False
+
+
+"""
+Function that return True if it has a ISHNE ANN format
+"""  
+def is_ann_Ishne_file(fileAnnIshne):
+    print("[INFO][ISHNE_DATA] - is_ann_Ishne_file() -> fileAnnIshne: %s" %fileAnnIshne)
+    fileRoute = fileAnnIshne.split(".")[0]
+    print("[INFO][ISHNE_DATA] - is_ann_Ishne_file() -> fileRoute sin ext: %s" %fileAnnIshne)
+    fileRoute = fileRoute + EXT_FILE_ANN
+    print("[INFO][ISHNE_DATA] - is_ann_Ishne_file() -> fileRoute con ext: %s" %fileAnnIshne)
+    fdFile = read_file(fileRoute)
+    if(fdFile  > 0):
+        magicNum = fdFile.read(LONG_MAGICNUM_ISHNE)
+        print("[INFO] - is_ann_Ishne_file() -> MAGIC NUM ANN: '%s'"  %magicNum)
+        fdFile.close()
+        
+        if (magicNum == "ANN  1.0"):
+            return True
+        
+    return False
+
+
 
 """
 Get name file
@@ -76,7 +100,7 @@ class ECGIshne(ecg.ECG):
         self.__allSignal = data['ecg'] if data != {} else []
         self.signal = self.__allSignal.ecg if self.__allSignal.ecg != [] else None
         self.lenEcg = self.__allSignal.lenEcg if self.__allSignal.ecg != [] else None
-        self.annt = None
+        self.annt = data["ann"] if data != {} else None
         #LECTURA DE LAS ANOTACIONES
         
     
@@ -109,7 +133,10 @@ class ECGIshne(ecg.ECG):
         offset = 30 + sampleFrom
         
         plt.figure(1)        
-        numPlot = 211
+        numPlot = (self.getHeader().nLeads * 100) + 11
+        
+        print("printECG - numLeads: " + str(self.getHeader().nLeads))
+        
         for n in range(self.getHeader().nLeads):
             #lastSample = (fs * (NUM_DERIVACIONES + 1)) + offset
             #print("last sample es: " + str(lastSample))
@@ -138,6 +165,8 @@ class ECGIshne(ecg.ECG):
         display(self.__allSignal.__dict__)
     
     
+    def printAnntECG(self):
+        display(self.annt.__dict__)
     
     class Header():
         def __init__(self):
@@ -274,14 +303,14 @@ class ECGIshne(ecg.ECG):
             return crcChecksum
         
         def read_ecg(self, fdFile, nLeads):
-            ecgArrayBytes = np.fromfile(fdFile, dtype=np.int16, count=-1) 
+            ecgArrayBytes = np.fromfile(fdFile, dtype=np.int16, count=-1)
             ecgArrayBytes = np.asarray(ecgArrayBytes)            
             ecgArrayBytes = ecgArrayBytes.reshape(-1, nLeads)
             
             ecgChannels = np.hsplit(ecgArrayBytes, nLeads)
             for nChannel in range(nLeads):
                 aux = ecgChannels[nChannel].reshape(-1)
-                self.ecg.append( aux[30:100000] ) #Esto hay que cambiar
+                self.ecg.append( aux ) #Esto hay que cambiar
             
             return self.ecg       
                 
@@ -298,10 +327,92 @@ class ECGIshne(ecg.ECG):
         def getECGArray(self):
             return self.ecg
         
+    
+    class Annotations:
+        def __init__(self, fileRoute, posBytesData, sampfrom, sampto):
+            self.otherData = self._read_annt(fileRoute, posBytesData, sampfrom, sampto)
+
+            self.ann_len = self.otherData["ann_len"] if self.otherData is not None else None
+            self.sample = self.otherData["sample"] if self.otherData is not None else None
+            self.symbol = self.otherData["symbol"] if self.otherData is not None else None
+            
+            
+        def _read_annt(self, fileRoute, posBytesData, sampfrom, sampto):
+            data_ant = None
+            sample = []
+            symbol = []
+            
+            try:
+                fileRoute = fileRoute + EXT_FILE_ANN
+                
+                if is_ann_Ishne_file(fileRoute):
+                    print("[INFO][ISHNE][ANN] Leyendo anotaciones ISHNE\n")
+                    fdIshneAnn = read_file(fileRoute)
+                    fdIshneAnn.seek(posBytesData, 0)
+                    
+                    firstLoc = np.fromfile(fdIshneAnn, dtype=np.int32, count=1)[0]
+                    print("[INFO][ISHNE][ANN] firstLoc: " + str(firstLoc) )
+        
+                    # Obtenemos el numero de latidos
+                    currentPosition = fdIshneAnn.tell()
+                    fdIshneAnn.seek(0, os.SEEK_END)
+                    endPosition = fdIshneAnn.tell()
+
+                    numBeats = (endPosition - currentPosition)/4
+                    print("[INFO][ISHNE][ANN] numBeats: " + str(numBeats) )
+                    
+                    # Preparamos el puntero para leer las anotaciones
+                    fdIshneAnn.seek(currentPosition-endPosition, os.SEEK_END)
+                    actualFd = fdIshneAnn.tell()
+                    print("[INFO][ISHNE][ANN] actualFd: " + str(actualFd) )
+                    
+                    loc_sample = firstLoc
+                         
+                    # Leemos las anotaciones
+                    for i in range(numBeats):
+                        ann = fdIshneAnn.read(1).strip(' \x00')
+                        symbol.append(ann)
+                        #print("[INFO][ISHNE][ANN] ann: " + str(ann) )
+                        
+                        fdIshneAnn.read(1).strip(' \x00')
+                        #print("[INFO][ISHNE][ANN] internalUse: " + str(internalUse))
+                        
+                        sample_ecg = np.fromfile(fdIshneAnn, dtype=np.uint16, count=1)[0]
+                        loc_sample = loc_sample + sample_ecg
+                        
+                        sample.append(loc_sample)
+                        #print("[INFO][ISHNE][ANN] sample_ecg: " + str(sample_ecg) )
+                        
+                        if loc_sample > sampto:
+                            break
+                    
+                    fdIshneAnn.close()
+
+                    data_ant = dict()
+                    data_ant["sample"] = np.array(sample)
+                    data_ant["ann_len"] = len(sample)
+                    data_ant["symbol"] = np.array(symbol)
+                    
+                    print("\nData_annt leidos es")
+                    print(data_ant)
+                                        
+            except IOError:
+                print('[WARN] No existe fichero de anotaciones para %s' %fileRoute)
+            finally:
+                return data_ant
+            
+
+        def printInfo(self):
+            display('[INFO] Mostrando resumen datos anotaciones ISHNE')
+            display('[INFO] ann_len: %s' %self.ann_len)
+            display('[INFO] samples: %s' %self.sample)
+            #display('[INFO] symbols: %s' %self.symbol)
+            #display('[INFO] Leyendo cabecera fichero physionet %s' %self.otherData.__dict__)
+            
         
                 
-    def _read_ishne_file(self, fileRoute):
-        fileRoute = fileRoute + EXT_FILE_DATA
+    def _read_ishne_file(self, fileName):
+        fileRoute = fileName + EXT_FILE_DATA
         header = self.Header()
         ecg = self.ECG()
         crc = self.Crc()
@@ -325,21 +436,30 @@ class ECGIshne(ecg.ECG):
             header.readHeaderISHNE(fdIshne)
             header.varBlock = ecg.readVarBlock(fdIshne, header.varLenBlockSize)
             crc.joinCrc(header.varBlock)
+            
+            posBytesData = fdIshne.tell() # para no leer de nuevo la cabecera al sacar las annotations
+            
             ecg.read_ecg(fdIshne, header.nLeads)
             
             fdIshne.close() #Close file 
+                        
+            annt = self.Annotations(fileName, posBytesData, 30, 100000)
             
-            return {'header': header, 'ecg' : ecg}
+            return {'header': header, 'ecg' : ecg, "ann": annt}
         
         return {};
         
 
 if __name__=="__main__":
     #print(is_Ishne_file("./sample-data/a103l.hea"))
-    ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/ishne")
+  
+    ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m")
     ishneECG.printInfoECG()
-    ishneECG.printECG(0, 150000)
-    display(ishneECG.signal[0])
+    #ishneECG.printAnntECG()
+    #ishneECG.printECG(0, 150000)
+    #display(ishneECG.signal[0])
+  
+    #ann_Ishne_file("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m")
     #y = ishneECG.signal[0]
     #x = [{'value': 1, 'label': 'Derivacion 1'}, {'value': 2, 'label': 'Derivacion 2'}]
 
