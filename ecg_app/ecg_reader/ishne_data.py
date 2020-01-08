@@ -81,7 +81,7 @@ def read_file(urlFile):
         myFile = open(urlFile, 'rb')
         return myFile
     except IOError:
-        print("[ERROR][ishne_data] File with url '%s' doesn't exist or hasn't ISHNE format." 
+        print("[ERROR][ishne] - read_file() -> File with url '%s' doesn't exist or hasn't ISHNE format." 
               %urlFile)
         return -1;
     
@@ -100,7 +100,8 @@ class ECGIshne(ecg.ECG):
         self.__allSignal = data['ecg'] if data != {} else []
         self.signal = self.__allSignal.ecg if self.__allSignal.ecg != [] else None
         self.lenEcg = self.__allSignal.lenEcg if self.__allSignal.ecg != [] else None
-        self.annt = data["ann"] if data != {} else None
+        print("data ann: " + str(data["ann"]))
+        self.annt = data["ann"] if (data != {} and data["ann"] is not None) else None
         #LECTURA DE LAS ANOTACIONES
         
     
@@ -310,6 +311,7 @@ class ECGIshne(ecg.ECG):
             ecgChannels = np.hsplit(ecgArrayBytes, nLeads)
             for nChannel in range(nLeads):
                 aux = ecgChannels[nChannel].reshape(-1)
+                print("aux len de la señal ecg: " + str(len(aux)))
                 self.ecg.append( aux ) #Esto hay que cambiar
             
             return self.ecg       
@@ -443,8 +445,8 @@ class ECGIshne(ecg.ECG):
             
             fdIshne.close() #Close file 
                         
-            annt = self.Annotations(fileName, posBytesData, 30, 100000)
-            
+            annt = self.Annotations(fileName, posBytesData, 30, 50000)
+            print("annt es: " + str(annt))
             return {'header': header, 'ecg' : ecg, "ann": annt}
         
         return {};

@@ -39,7 +39,7 @@ def build_data_annt(ecg, signal):
     anotaciones = ecg.annt
         
     app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  anotaciones: " + str(anotaciones))
-    if anotaciones is not None:
+    if anotaciones.ann_len is not None:
         fs = ecg.header.samplingRate
         ant_ejeX = anotaciones.sample
         ant_ejeX = ant_ejeX / float(fs)        
@@ -84,11 +84,12 @@ def build_plot_by_lead(file_name, lead):
         
     ecg_trace = go.Scatter(x = ejeX, y = ejeY,
                     name = 'ECG', mode='lines')
-
+    
+    data_fig.append(ecg_trace)
+    
     # Datos de las anotaciones    
     ant_trace = build_data_annt(ecg, ejeY)
-    data_fig.append(ecg_trace)
-
+    
     if ant_trace is not None:
         data_fig.append(ant_trace)
     
@@ -298,7 +299,8 @@ def guardar_ficheros(list_contents, list_nombres, token_user):
     if fichero_valido :
         if not hay_anotaciones:
             app.logger.info( "[ecg_service] - 'guardar_ficheros()' -> no hay_anotaciones ")
-            return "Warning: El fichero de anotaciones no se ha leído correctamente o no es válido", True, nombre_file
+            msg_error = "Warning: El fichero de anotaciones no existe, no se ha leído correctamente o no es válido"
+            return msg_error, True, nombre_file
         
         return None, True, nombre_file
     
@@ -319,17 +321,17 @@ def is_file_soported(file_route):
         ecg_data = ecgFactory.create_ECG(file_route)
         filename = ecg_data.fileName
         print( "[ecg_service] - 'is_file_soported()' -> fileName: " + str(filename) )
-        return True, filename, ecg_data.annt is None
+        return True, filename, ecg_data.annt.ann_len is not None
     
     except ValueError:
         print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error al comprobar el fichero" + str(file_route) )
-        return False, filename_aux, None
+        return False, filename_aux, False
     
     except IOError:
         print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error de lectura al comprobar el fichero" + str(file_route) )    
-        return False, filename_aux, None
+        return False, filename_aux, False
     
     except:
         print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error interno al leer datos del fichero" + str(file_route) )
-        return False, filename_aux, None
+        return False, filename_aux, False
     

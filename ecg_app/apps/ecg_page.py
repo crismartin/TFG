@@ -77,10 +77,10 @@ uploader = html.Div([
             html.Div(id="cnt-alert-format", 
                      children=[
                         dbc.Alert(
-                            "Error! El fichero no tiene un formato válido o está incompleto",
                             id="alert-format",
+                            color="light",
                             is_open=False,
-                            color="danger"
+                            fade=True                            
                         )
                     ])
             ])
@@ -169,10 +169,11 @@ btn_cerrar_modal = dbc.Button(id="close-upfile", n_clicks=None, className="mr-1"
 cnt_state_fdata = html.Div([
         dbc.Input( id="st-up-data",   type="hidden"),        
         dbc.Input( id="st-valid-data",  type="hidden"),
+        dbc.Input( id="st-valid-ant",  type="hidden"),
 ])
 
 cnt_state_fant =  html.Div([
-        dbc.Input( id="st-up-ant",    type="hidden"),        
+        dbc.Input( id="st-up-ant",    type="hidden"),
 ])
 
 modal_component = html.Div([
@@ -396,19 +397,27 @@ def activar_btn_delete(st_upfile_data):
 
 @app.callback(
     [Output("proces-upfile",    "disabled"),
-     Output("alert-format",     "is_open")],
+     Output("alert-format",     "is_open"),
+     Output("alert-format",     "color")],
     [Input("st-valid-data",     "value")],
 )
-def activar_btn_process(is_file_valid):
+def activar_btn_process(result_upfile):
     app.logger.info("@callback: INICIO 'activar_btn_process()'")
     
-    if is_file_valid is None:
-        app.logger.info( "@callback: FIN 'activar_btn_process()'" )
-        return True, False
+    if result_upfile is None:
+        app.logger.info( "@callback: FIN by None result 'activar_btn_process()'" )
+        return True, False, "light"
+    
+    is_file_valid, has_annt = result_upfile.split(",")
     
     app.logger.info( "@callback: 'activar_btn_process()' -> is_file_valid: " + str(is_file_valid) )
+    app.logger.info( "@callback: 'activar_btn_process()' -> has_annt: " + str(has_annt) )
+    if is_file_valid == "True" and (has_annt is not None and has_annt == "False"):
+        return False, True, "warning"
+    
+    
     app.logger.info( "@callback: FIN 'activar_btn_process()'" )
-    return not is_file_valid, not is_file_valid
+    return not is_file_valid, not is_file_valid, "danger"
     
 
 
@@ -470,8 +479,8 @@ def get_list_fname( url_head, url_ant, url_data ):
      Output("url-dat-file",   "disabled"),
      Output("url-hed-file",   "disabled"),
      Output("url-ant-file",   "disabled"),
-     Output("st-up-data",     "value"),
-     Output('st-valid-data',  'value'),
+     Output("st-up-data",     "value"),     
+     Output('st-valid-data',  'value'),     
      Output("alert-format",   "children")],
     [Input('upload-file',     'contents'),
      Input('url-dat-file',    'value')],
@@ -495,16 +504,23 @@ def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_
     
     if utils.name_file_valid(url_data) or list_contents is not None:
 
-        token_user = utils.get_session_token(data_session)                 
+        token_user = utils.get_session_token(data_session)
         msg_error, fichero_valido, nombre_file = ecg_serv.guardar_ficheros(list_contents, list_nombres, token_user)
         
+        app.logger.info( "@callback: 'updload_file() -> msg_error: " + str(msg_error) )
+        app.logger.info( "@callback: 'updload_file() -> fichero_valido: " + str(fichero_valido) )
+        
         if fichero_valido:
-            return [nombre_file, True, True, True, True, fichero_valido, msg_error]
+            hay_annt = msg_error is None
+            app.logger.info( "@callback: 'updload_file() -> hay_annt: " + str(hay_annt) )
+            st_val_data = str(fichero_valido) + "," + str(hay_annt)
+            return [nombre_file, True, True, True, True, st_val_data, msg_error]
         
         else:
+            st_val_data = str(fichero_valido) + "," + str(None)
             return [None, False, False, False, True, False, msg_error]
     
-    else:    
+    else:
         app.logger.info("@callback: FIN by None content 'updload_file()'")
         return [None, False, False, False, False, None, None]
 
