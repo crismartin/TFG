@@ -79,8 +79,7 @@ uploader = html.Div([
                         dbc.Alert(
                             id="alert-format",
                             color="light",
-                            is_open=False,
-                            fade=True                            
+                            is_open=False
                         )
                     ])
             ])
@@ -409,10 +408,12 @@ def activar_btn_process(result_upfile):
         return True, False, "light"
     
     is_file_valid, has_annt = result_upfile.split(",")
+    is_file_valid = utils.str_to_bool(is_file_valid)
+    has_annt = utils.str_to_bool(has_annt)
     
     app.logger.info( "@callback: 'activar_btn_process()' -> is_file_valid: " + str(is_file_valid) )
     app.logger.info( "@callback: 'activar_btn_process()' -> has_annt: " + str(has_annt) )
-    if is_file_valid == "True" and (has_annt is not None and has_annt == "False"):
+    if is_file_valid and (has_annt is not None and not has_annt):
         return False, True, "warning"
     
     
@@ -518,7 +519,7 @@ def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_
         
         else:
             st_val_data = str(fichero_valido) + "," + str(None)
-            return [None, False, False, False, True, False, msg_error]
+            return [None, False, False, False, True, st_val_data, msg_error]
     
     else:
         app.logger.info("@callback: FIN by None content 'updload_file()'")

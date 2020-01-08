@@ -92,6 +92,15 @@ def download_file_url(token_user, url_file):
         return name_file, saved
 
 
+def str_to_bool(s):
+    if s == 'True':
+         return True
+    elif s == 'False':
+         return False
+    else:
+         return None
+
+
 
 # Borrar un fichero subido
 def borrar_fichero(ruta_fichero):    
