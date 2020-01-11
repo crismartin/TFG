@@ -17,7 +17,7 @@ class ECG(object):
     fileName = ""
     typeECG = ""
     header = []
-    signal = []
+    signal = None
     annt = None
     
     def __init__(self, fileRoute):        
@@ -35,12 +35,16 @@ class ECG(object):
     
     def getSignal(self):
         return self.signal
+        
+    def read_signal(self, sampleFrom, sampleTo):
+        return self.readsignal(self.fileName, sampleTo, sampleFrom)
     
     def getAnnotations(self):
         return self.annt
     
     def printECG(self, sampleFrom, sampleTo):
         return self.printECG(sampleFrom, sampleTo)
+    
     
     ""
     " Imprime la informacion de los datos de la señal "
@@ -56,15 +60,24 @@ class ECG(object):
         print("[TEST][ECG] - fileName: %s" %self.fileName)
         print("[TEST][ECG] - fileRoute: %s" %self.fileRoute)
         print("[TEST][ECG] - typeECG : %s\n" %self.typeECG)
-        print("[TEST][ECG] - header - printInfo method called\n")
+        print("[TEST][ECG] - header - printInfo method START\n")
         self.header.printInfo()
-        print("\n[TEST][ECG] - header - printInfo method ended\n")
-        print("\n[TEST][ECG] - annotations - printInfo method called\n")
-        self.annt.printInfo()
-        print("\n[TEST][ECG] - annotations - printInfo method ended\n")
-        print("\n[TEST][ECG] - signal - printInfo method called\n")
-        self.printInfoECG()
-        print("\n[TEST][ECG] - header - printInfo method ended\n")
+        print("\n[TEST][ECG] - header - printInfo method END\n")
+        
+        if self.annt is not None:
+            print("\n[TEST][ECG] - annotations - printInfo method START\n")
+            self.annt.printInfo() 
+            print("\n[TEST][ECG] - annotations - printInfo method END\n")
+        else:
+            print("\n[TEST][ECG] - annotations - annt: %s\n" %str(self.annt))
+            
+        if self.signal is not None:
+            print("\n[TEST][ECG] - signal - printSignalData method START\n")        
+            self.printSignalData()
+            print("\n[TEST][ECG] - signal - printSignalData method END\n")
+        else:
+            print("\n[TEST][ECG] - signal - annt: %s\n" %str(self.signal))
+        
         print("********************************************************\n")
         print("************** T E S T - E C G - E N D *****************\n")
         print("********************************************************\n")

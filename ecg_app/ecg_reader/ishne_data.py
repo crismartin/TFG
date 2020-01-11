@@ -92,9 +92,18 @@ class ECGIshne(ecg.ECG):
     typeECG = ISHNE_MAGIC_NUM
     
     def __init__(self, fileRoute):
+        self.header = []      
+        self.signal = []
+        self.annt = None
+        self.__allSignal = []
+        
         fileRoute = fileRoute.split(".")[0]
         self.fileRoute = fileRoute
         self.fileName = fileRoute.split("/")[-1]
+        
+        self.read_ishne_file(fileRoute)
+        
+        """
         data = self._read_ishne_file(fileRoute)
         self.header = data['header'] if data != {} else []
         self.__allSignal = data['ecg'] if data != {} else []
@@ -102,10 +111,10 @@ class ECGIshne(ecg.ECG):
         self.lenEcg = self.__allSignal.lenEcg if self.__allSignal.ecg != [] else None
         print("data ann: " + str(data["ann"]))
         self.annt = data["ann"] if (data != {} and data["ann"] is not None) else None
+        """
         #LECTURA DE LAS ANOTACIONES
         
-    
-    
+        
     ""
     " Devuelve el formato de ECG "
     ""
@@ -159,6 +168,7 @@ class ECGIshne(ecg.ECG):
             #print("size Channel: %d" %len(ecg[n]))
         plt.show()
     
+    
     ""
     " Imprime la informacion de los datos de la señal "
     ""
@@ -166,13 +176,19 @@ class ECGIshne(ecg.ECG):
         display(self.__allSignal.__dict__)
     
     
+    def printSignalData(self):
+        print("[INFO][ISHNE] Signal - len:  %s" %str(len(self.signal)))
+        print("[INFO][ISHNE] Signal - data: %s" %str(self.signal))
+    
+    
     def printAnntECG(self):
         display(self.annt.__dict__)
+        
     
     class Header():
-        def __init__(self):
+        def __init__(self, fileFd):
             self.varLenBlockSize = ''
-            self.sampleSizeECG = np.dtype(np.int32)
+            self.signal_len = np.dtype(np.int32)
             self.offsetVarLengthBlock = ''
             self.offsetECGBlock = ''
             self.fileVersion = ''
@@ -185,7 +201,7 @@ class ECGIshne(ecg.ECG):
             self.recordDate = []
             self.fileDate = []            
             self.startDate = []
-            self.nLeads = ''
+            self.nLeads = 0
             self.leadSpec = []
             self.leadQual = []
             self.resolution = []
@@ -195,6 +211,7 @@ class ECGIshne(ecg.ECG):
             self.propierty = ''
             self.copyright = ''
             self.reserverd = ''
+            self.readHeaderISHNE(fileFd)
             
         def _parseDateISHNE(self, date):
             dia = str(date[0]) if (int(date[0]) > 9) else ( "0" + str(date[0]) )
@@ -203,10 +220,11 @@ class ECGIshne(ecg.ECG):
             fecha = dia + "-" + mes + "-" + anio
             return fecha
         
+        
         def readHeaderISHNE(self, fileFd):
                                       
             self.varLenBlockSize = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
-            self.sampleSizeECG = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
+            self.signal_len = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
             self.offsetVarLengthBlock = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
             self.offsetECGBlock = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
             self.fileVersion = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
@@ -238,35 +256,36 @@ class ECGIshne(ecg.ECG):
         
         
         def printInfo(self):
-            print("\n[INFO] ******* HEADER ********")                             
-            print("[INFO] length block variable: %s" %self.varLenBlockSize)
-            print("[INFO] sampleSizeECG: %s" %self.sampleSizeECG)
-            print("[INFO] offsetVarLengthBlock: %s" %self.offsetVarLengthBlock)
-            print("[INFO] offsetECGBlock: %s" %self.offsetECGBlock)
-            print("[INFO] fileVersion: %s" %self.fileVersion)
-            print("[INFO] First_Name: %s" %self.firstName)
-            print("[INFO] secondName: %s" %self.secondName)
-            print("[INFO] ID: %s" %self.id)
-            print("[INFO] sex: %s" %self.sex)
+            print("[INFO][ISHNE] ******* HEADER ********")                             
+            print("[INFO][ISHNE] length block variable: %s" %self.varLenBlockSize)
+            
+            print("[INFO][ISHNE] offsetVarLengthBlock: %s" %self.offsetVarLengthBlock)
+            print("[INFO][ISHNE] offsetECGBlock: %s" %self.offsetECGBlock)
+            print("[INFO][ISHNE] fileVersion: %s" %self.fileVersion)
+            print("[INFO][ISHNE] First_Name: %s" %self.firstName)
+            print("[INFO][ISHNE] secondName: %s" %self.secondName)
+            print("[INFO][ISHNE] ID: %s" %self.id)
+            print("[INFO][ISHNE] sex: %s" %self.sex)
                  
-            print("[INFO] race: %s" %self.race)
-            print("[INFO] birthDate: %s" %self.birthDate )
-            print("[INFO] recordDate: %s" %self.recordDate)
-            print("[INFO] fileDate: %s" %self.fileDate)
-            print("[INFO] startDate: %s" %self.startDate)
-            print("[INFO] nLeads: %s" %self.nLeads)
-            print("[INFO] leadSpec: %s" %self.leadSpec)
-            print("[INFO] leadQual: %s" %self.leadQual)
-            print("[INFO] resolution: %s" %self.resolution)
+            print("[INFO][ISHNE] race: %s" %self.race)
+            print("[INFO][ISHNE] birthDate: %s" %self.birthDate )
+            print("[INFO][ISHNE] recordDate: %s" %self.recordDate)
+            print("[INFO][ISHNE] fileDate: %s" %self.fileDate)
+            print("[INFO][ISHNE] startDate: %s" %self.startDate)            
+            print("[INFO][ISHNE] leadSpec: %s" %self.leadSpec)
+            print("[INFO][ISHNE] leadQual: %s" %self.leadQual)
+            print("[INFO][ISHNE] resolution: %s" %self.resolution)
             
-            print("[INFO] paceMaker: %s" %self.paceMaker)
-            print("[INFO] recorder: %s" %self.recorder)
-            print("[INFO] samplingRate: %s" %self.samplingRate)
-            print("[INFO] propierty: %s" %self.propierty)
-            print("[INFO] selfCopyright: %s" %self.copyright)
-            print("[INFO] reserverd: %s" %self.reserverd)
+            print("[INFO][ISHNE] paceMaker: %s" %self.paceMaker)
+            print("[INFO][ISHNE] recorder: %s" %self.recorder)
             
-     
+            print("[INFO][ISHNE] propierty: %s" %self.propierty)
+            print("[INFO][ISHNE] selfCopyright: %s" %self.copyright)
+            print("[INFO][ISHNE] reserverd: %s" %self.reserverd)
+            
+            print("[INFO][ISHNE] Header - nLeads: %s" %self.nLeads)
+            print("[INFO][ISHNE] Header - samplingRate: %s" %self.samplingRate)
+            print("[INFO][ISHNE] Header - signal_len: %s" %self.signal_len)
     
         
     class Crc():
@@ -303,7 +322,7 @@ class ECGIshne(ecg.ECG):
             #print("[INFO] CRC CHECKSUM: %s" %crcChecksum)
             return crcChecksum
         
-        def read_ecg(self, fdFile, nLeads):
+        def read_ecg(self, fdFile, nLeads, sampFrom, sampTo):
             ecgArrayBytes = np.fromfile(fdFile, dtype=np.int16, count=-1)
             ecgArrayBytes = np.asarray(ecgArrayBytes)            
             ecgArrayBytes = ecgArrayBytes.reshape(-1, nLeads)
@@ -311,8 +330,10 @@ class ECGIshne(ecg.ECG):
             ecgChannels = np.hsplit(ecgArrayBytes, nLeads)
             for nChannel in range(nLeads):
                 aux = ecgChannels[nChannel].reshape(-1)
+                len_aux = len(aux)
+                sampTo = len_aux if sampTo > len_aux else sampTo
                 print("aux len de la señal ecg: " + str(len(aux)))
-                self.ecg.append( aux ) #Esto hay que cambiar
+                self.ecg.append( aux[sampFrom:sampTo] )
             
             return self.ecg       
                 
@@ -334,7 +355,7 @@ class ECGIshne(ecg.ECG):
         def __init__(self, fileRoute, posBytesData, sampfrom, sampto):
             self.otherData = self._read_annt(fileRoute, posBytesData, sampfrom, sampto)
 
-            self.ann_len = self.otherData["ann_len"] if self.otherData is not None else None
+            self.ann_len = self.otherData["ann_len"] if self.otherData is not None else 0
             self.sample = self.otherData["sample"] if self.otherData is not None else None
             self.symbol = self.otherData["symbol"] if self.otherData is not None else None
             
@@ -346,6 +367,7 @@ class ECGIshne(ecg.ECG):
             
             try:
                 fileRoute = fileRoute + EXT_FILE_ANN
+                print("fileRoute es: " + str(fileRoute))
                 
                 if is_ann_Ishne_file(fileRoute):
                     print("[INFO][ISHNE][ANN] Leyendo anotaciones ISHNE\n")
@@ -372,31 +394,35 @@ class ECGIshne(ecg.ECG):
                          
                     # Leemos las anotaciones
                     for i in range(numBeats):
-                        ann = fdIshneAnn.read(1).strip(' \x00')
-                        symbol.append(ann)
+                        ann = fdIshneAnn.read(1).strip(' \x00')                        
                         #print("[INFO][ISHNE][ANN] ann: " + str(ann) )
                         
                         fdIshneAnn.read(1).strip(' \x00')
                         #print("[INFO][ISHNE][ANN] internalUse: " + str(internalUse))
                         
                         sample_ecg = np.fromfile(fdIshneAnn, dtype=np.uint16, count=1)[0]
-                        loc_sample = loc_sample + sample_ecg
+                        loc_sample = loc_sample + sample_ecg                       
                         
-                        sample.append(loc_sample)
                         #print("[INFO][ISHNE][ANN] sample_ecg: " + str(sample_ecg) )
+                        
+                        if loc_sample < sampfrom:
+                            continue
                         
                         if loc_sample > sampto:
                             break
+                        
+                        symbol.append(ann)
+                        sample.append(loc_sample)
                     
                     fdIshneAnn.close()
 
                     data_ant = dict()
-                    data_ant["sample"] = np.array(sample)
-                    data_ant["ann_len"] = len(sample)
-                    data_ant["symbol"] = np.array(symbol)
+                    data_ant["sample"] = np.array(sample) if sample != [] else None
+                    data_ant["ann_len"] = len(sample) if sample != [] else 0
+                    data_ant["symbol"] = np.array(symbol) if symbol != [] else None
                     
-                    print("\nData_annt leidos es")
-                    print(data_ant)
+                    #print("\nData_annt leidos es")
+                    #print(data_ant)
                                         
             except IOError:
                 print('[WARN] No existe fichero de anotaciones para %s' %fileRoute)
@@ -406,57 +432,93 @@ class ECGIshne(ecg.ECG):
 
         def printInfo(self):
             display('[INFO] Mostrando resumen datos anotaciones ISHNE')
-            display('[INFO] ann_len: %s' %self.ann_len)
-            display('[INFO] samples: %s' %self.sample)
+            display('[INFO][ISHNE] Annt - ann_len: %s' %self.ann_len)
+            display('[INFO][ISHNE] Annt - samples: %s' %self.sample)
             #display('[INFO] symbols: %s' %self.symbol)
-            #display('[INFO] Leyendo cabecera fichero physionet %s' %self.otherData.__dict__)
             
-        
-                
-    def _read_ishne_file(self, fileName):
-        fileRoute = fileName + EXT_FILE_DATA
-        header = self.Header()
+
+    """
+    Function that reads ECG ISHNE format
+    
+    References:
+    http://thew-project.org/papers/Badilini.ISHNE.Holter.Standard.pdf
+    https://github.com/panrobot/ishneECGviewer/blob/master/ecgViewer.py
+    https://bitbucket.org/atpage/ishneholterlib
+    """           
+    def read_ishne_file(self, fileName):
+        fileRoute = fileName + EXT_FILE_DATA        
         ecg = self.ECG()
         crc = self.Crc()
-        
-        """
-        Function that reads ECG ISHNE format
-        
-        References:
-        http://thew-project.org/papers/Badilini.ISHNE.Holter.Standard.pdf
-        https://github.com/panrobot/ishneECGviewer/blob/master/ecgViewer.py
-        https://bitbucket.org/atpage/ishneholterlib
-        """
-        "Read file."
-       
+                
         fdIshne = read_file(fileRoute) #Open File 'r' mode
         if(fdIshne > -1):
+            
             fdIshne.read(LONG_MAGICNUM_ISHNE)
             
             ecg.crc = ecg.read_checksum(fdIshne)
             crc.crcCabecera = crc.crc_cabecera(fdIshne)
-            header.readHeaderISHNE(fdIshne)
+            
+            header = self.Header(fdIshne)
             header.varBlock = ecg.readVarBlock(fdIshne, header.varLenBlockSize)
             crc.joinCrc(header.varBlock)
+
+            fdIshne.close() #Close file
             
-            posBytesData = fdIshne.tell() # para no leer de nuevo la cabecera al sacar las annotations
-            
-            ecg.read_ecg(fdIshne, header.nLeads)
-            
-            fdIshne.close() #Close file 
+            self.header = header
                         
-            annt = self.Annotations(fileName, posBytesData, 30, 50000)
-            print("annt es: " + str(annt))
-            return {'header': header, 'ecg' : ecg, "ann": annt}
+            
         
-        return {};
+    def read_signal(self, sampleFrom, sampleTo):
+        fileRoute = self.fileRoute + EXT_FILE_DATA
+        ecg = self.ECG()
+        
+        if self.header == []:
+            print('[ERROR][ISHNE] No se puede leer datos. Cabecera errónea para fichero "%s"' %self.fileRoute)
+            return
+                
+        fdIshne = read_file(fileRoute) #Open File 'r' mode
+        if(fdIshne < 0):
+            print('[ERROR][ISHNE] No se puede leer datos de la señal. Error al abrir fichero')
+            return
+        
+        byteStartSignal = self.header.offsetECGBlock
+        sig_len = self.header.signal_len
+        
+        fdIshne.seek(byteStartSignal, 0)
+        
+        if(sampleTo >= 0 and sampleTo <= sig_len) and (sampleFrom < sampleTo):
+            self.signal = ecg.read_ecg(fdIshne, self.header.nLeads, sampleFrom, sampleTo)
+        else:
+            print('[ERROR][ISHNE] No se puede leer datos de la señal. Intervalo de muestras erróneo')
+        
+        fdIshne.close() #Close file 
+        
+             
+             
+       
+    def read_annotations(self, sampleFrom, sampleTo):
+        if self.header == []:
+            print('[ERROR][ISHNE] No se puede leer anotaciones. Cabecera errónea (vacía) para fichero "%s"' %self.fileRoute)
+            return
+        
+        posBytesData = self.header.offsetECGBlock
+        sig_len = self.header.signal_len
+    
+        if(sampleTo >= 0 and sampleTo <= sig_len) and (sampleFrom < sampleTo):
+            self.annt = self.Annotations(self.fileRoute, posBytesData, sampleFrom, sampleTo)
+        else:
+            print('[ERROR][ISHNE] No se puede leer anotaciones. Intervalo de muestras erróneo')
         
 
+
 if __name__=="__main__":
-    #print(is_Ishne_file("./sample-data/a103l.hea"))
-  
+
     ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m")
-    ishneECG.printInfoECG()
+    ishneECG.read_signal(3000, 100000)
+    ishneECG.read_annotations(3000, 100000)
+    ishneECG.printTestECG()
+    
+
     #ishneECG.printAnntECG()
     #ishneECG.printECG(0, 150000)
     #display(ishneECG.signal[0])
@@ -465,5 +527,9 @@ if __name__=="__main__":
     #y = ishneECG.signal[0]
     #x = [{'value': 1, 'label': 'Derivacion 1'}, {'value': 2, 'label': 'Derivacion 2'}]
 
-    
-    
+    x1 = np.zeros(10)
+    x2 = ishneECG.signal[0][0:10]
+    print("x1 es :" + str(x1))
+    print("x2 es :" + str(x2))
+    x = np.concatenate((x1, x2))
+    print("x es :" + str(x))

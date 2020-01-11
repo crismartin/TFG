@@ -34,20 +34,30 @@ def get_nleads_array(file_name):
     
 
 
-def build_data_annt(ecg, signal):
+def build_data_annt(ecg, signal_y, sampFrom, sampTo):
+    ecg.read_annotations(sampFrom, sampTo)
     ant_trace = None
     anotaciones = ecg.annt
+    
+    app.logger.info("[ecg_service] - 'build_data_annt()' ->  signal_y: " + str(len(signal_y)) )
         
-    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  anotaciones: " + str(anotaciones))
-    if anotaciones.ann_len is not None:
+    anotaciones.printInfo()
+    
+    if anotaciones is not None and anotaciones.ann_len is not None and anotaciones.ann_len > 0:
         fs = ecg.header.samplingRate
         ant_ejeX = anotaciones.sample
-        ant_ejeX = ant_ejeX / float(fs)        
-        ant_ejeX = np.around(ant_ejeX, decimals=5)
+        ant_ejeX = ant_ejeX / float(fs)
+        ant_ejeX = np.around(ant_ejeX, decimals=6)
         ant_ejeX = ant_ejeX.tolist()        
-        app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  ant_ejeX: " + str(len(ant_ejeX)) )        
-        ant_ejeY = signal[anotaciones.sample]
-        app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  ant_ejeY: " + str(ant_ejeY) )
+        app.logger.info("[ecg_service] - 'build_data_annt()' ->  ant_ejeX: " + str(ant_ejeX) )    
+        
+        if sampFrom > 0:
+            zeros_array = np.zeros(sampFrom)
+            signal_y = np.concatenate((zeros_array, signal_y))
+            app.logger.info("[ecg_service] - 'build_data_annt()' ->  signal_y: " + str(signal_y))
+            
+        ant_ejeY = signal_y[anotaciones.sample]
+        app.logger.info("[ecg_service] - 'build_data_annt()' ->  ant_ejeY: " + str(ant_ejeY) )
         simbols = anotaciones.symbol
         ant_trace = go.Scatter(x = ant_ejeX, y = ant_ejeY,
                         name = 'Anotaciones', mode='markers+text', 
@@ -60,6 +70,12 @@ def build_plot_by_lead(file_name, lead):
     data_fig = []
     ecgFactory = ecgf.ECGFactory()    
     ecg = ecgFactory.create_ECG(file_name)
+    signal_len = ecg.header.signal_len
+    
+    sampFrom = 3000
+    sampTo = 100000 if signal_len > 100000 else signal_len #Pinto los primeros 100k de muestras
+    
+    ecg.read_signal(sampFrom, sampTo)
     
     signals = ecg.signal
     nLeads = ecg.header.nLeads
@@ -71,7 +87,7 @@ def build_plot_by_lead(file_name, lead):
     
     #Datos de la señal (Y(x))
     ejeY = signals[lead-1]
-    ejeX = np.arange(0, len(ejeY), 1.0)/fs
+    ejeX = np.arange(sampFrom, len(ejeY), 1.0)/fs
     
     optsLeads = build_select_leads(nLeads)
     
@@ -88,7 +104,7 @@ def build_plot_by_lead(file_name, lead):
     data_fig.append(ecg_trace)
     
     # Datos de las anotaciones    
-    ant_trace = build_data_annt(ecg, ejeY)
+    ant_trace = build_data_annt(ecg, ejeY, sampFrom, sampTo)
     
     if ant_trace is not None:
         data_fig.append(ant_trace)
@@ -319,19 +335,33 @@ def is_file_soported(file_route):
     
     try:
         ecg_data = ecgFactory.create_ECG(file_route)
+        header = ecg_data.header
+        if header is None or header == []:
+            print( "[ecg_service] - 'is_file_soported()' -> Cabecera vacía para el fichero " + str(file_route) )    
+            return False, filename_aux, False
+        
+        sig_len = ecg_data.header.signal_len
+        if sig_len is None or sig_len <= 0:
+            print( "[ecg_service] - 'is_file_soported()' -> No hay datos de señal ECG para fichero " + str(file_route) )    
+            return False, filename_aux, False
+        
+        app.logger.info( "[ecg_service] - 'is_file_soported()' -> sig_len: " + str(sig_len))
         filename = ecg_data.fileName
+        ecg_data.read_annotations(0, sig_len)
+        annt = ecg_data.annt
+        app.logger.info( "[ecg_service] - 'guardar_ficheros()' -> annt: " + str(annt))
         print( "[ecg_service] - 'is_file_soported()' -> fileName: " + str(filename) )
-        return True, filename, ecg_data.annt.ann_len is not None
+        return True, filename, annt is not None and annt.ann_len > 0
     
     except ValueError:
-        print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error al comprobar el fichero" + str(file_route) )
+        print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error al comprobar el fichero " + str(file_route) )
         return False, filename_aux, False
     
     except IOError:
-        print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error de lectura al comprobar el fichero" + str(file_route) )    
+        print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error de lectura al comprobar el fichero " + str(file_route) )    
         return False, filename_aux, False
     
     except:
-        print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error interno al leer datos del fichero" + str(file_route) )
+        print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error interno al leer datos del fichero " + str(file_route) )
         return False, filename_aux, False
     

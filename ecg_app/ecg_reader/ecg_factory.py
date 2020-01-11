@@ -40,4 +40,6 @@ if __name__ == "__main__":
     # physionet file: ../physionet/100
     #     ishne file: ../matlab_ishne/ishne.ecg
     miECG = ECGFactory().create_ECG("/Users/cristian/TFG/datos_prueba/physionet/100")
+    sig_len = miECG.header.signal_len
+    miECG.read_annotations(0, sig_len)
     miECG.printTestECG()
