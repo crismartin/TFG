@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Wed Dec 18 23:47:58 2019
@@ -13,8 +13,10 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 
+
 import utils_ecg as utils
-import ecg_service as ecg_serv
+import apps.ecg_service as ecg_serv
+
 
 from app import app
 

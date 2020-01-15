@@ -1,11 +1,11 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Wed Mar 14 20:13:59 2018
 
 @author: cristian
 """
-import ecg
+from . import ecg
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -32,8 +32,8 @@ def is_Ishne_file(fileIshne):
     fileRoute = fileRoute + EXT_FILE_DATA
     print("[INFO][ISHNE_DATA] - is_Ishne_file() -> fileRoute con ext: %s" %fileRoute)
     fdFile = read_file(fileRoute)
-    if(fdFile  > 0):
-        magicNum = fdFile.read(LONG_MAGICNUM_ISHNE)
+    if fdFile  is not None:
+        magicNum = fdFile.read(LONG_MAGICNUM_ISHNE).decode("utf8")
         print("[INFO] - is_Ishne_file() -> MAGIC NUM: %s"  %magicNum)
         fdFile.close()
         
@@ -53,8 +53,8 @@ def is_ann_Ishne_file(fileAnnIshne):
     fileRoute = fileRoute + EXT_FILE_ANN
     print("[INFO][ISHNE_DATA] - is_ann_Ishne_file() -> fileRoute con ext: %s" %fileAnnIshne)
     fdFile = read_file(fileRoute)
-    if(fdFile  > 0):
-        magicNum = fdFile.read(LONG_MAGICNUM_ISHNE)
+    if fdFile  is not None:
+        magicNum = fdFile.read(LONG_MAGICNUM_ISHNE).decode("utf8")
         print("[INFO] - is_ann_Ishne_file() -> MAGIC NUM ANN: '%s'"  %magicNum)
         fdFile.close()
         
@@ -83,7 +83,7 @@ def read_file(urlFile):
     except IOError:
         print("[ERROR][ishne] - read_file() -> File with url '%s' doesn't exist or hasn't ISHNE format." 
               %urlFile)
-        return -1;
+        return None;
     
     
 # Clase principal ECG_ISHNE
@@ -228,9 +228,9 @@ class ECGIshne(ecg.ECG):
             self.offsetVarLengthBlock = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
             self.offsetECGBlock = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
             self.fileVersion = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
-            self.firstName = fileFd.read(40).strip(' \x00')
-            self.secondName = fileFd.read(40).strip(' \x00')
-            self.id = fileFd.read(20).strip(' \x00')
+            self.firstName = fileFd.read(40).decode("utf8")
+            self.secondName = fileFd.read(40).decode("utf8")
+            self.id = fileFd.read(20).decode("utf8")
             self.sex = np.fromfile(fileFd, dtype=np.int16, count=1)[0] ##0 Male, 1 Female
             self.race = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
             self.birthDate = np.fromfile(fileFd, dtype=np.int16, count=3)
@@ -246,11 +246,11 @@ class ECGIshne(ecg.ECG):
             self.resolution = np.fromfile(fileFd, dtype=np.int16, count=12)
             #
             self.paceMaker = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
-            self.recorder = fileFd.read(40).strip(' \x00')
+            self.recorder = fileFd.read(40).decode("utf8")
             self.samplingRate = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
-            self.propierty = fileFd.read(80).strip(' \x00')
-            self.copyright = fileFd.read(80).strip(' \x00')
-            self.reserverd = fileFd.read(88).strip(' \x00')
+            self.propierty = fileFd.read(80).decode("utf8")
+            self.copyright = fileFd.read(80).decode("utf8")
+            self.reserverd = fileFd.read(88).decode("utf8")
              
             return self
         
@@ -451,7 +451,7 @@ class ECGIshne(ecg.ECG):
         crc = self.Crc()
                 
         fdIshne = read_file(fileRoute) #Open File 'r' mode
-        if(fdIshne > -1):
+        if fdIshne is not None:
             
             fdIshne.read(LONG_MAGICNUM_ISHNE)
             
@@ -477,7 +477,7 @@ class ECGIshne(ecg.ECG):
             return
                 
         fdIshne = read_file(fileRoute) #Open File 'r' mode
-        if(fdIshne < 0):
+        if fdIshne is None:
             print('[ERROR][ISHNE] No se puede leer datos de la señal. Error al abrir fichero')
             return
         
@@ -526,10 +526,3 @@ if __name__=="__main__":
     #ann_Ishne_file("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m")
     #y = ishneECG.signal[0]
     #x = [{'value': 1, 'label': 'Derivacion 1'}, {'value': 2, 'label': 'Derivacion 2'}]
-
-    x1 = np.zeros(10)
-    x2 = ishneECG.signal[0][0:10]
-    print("x1 es :" + str(x1))
-    print("x2 es :" + str(x2))
-    x = np.concatenate((x1, x2))
-    print("x es :" + str(x))

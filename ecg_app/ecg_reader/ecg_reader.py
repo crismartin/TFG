@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Wed Feb 21 18:24:24 2018
@@ -9,7 +9,7 @@ Module with differente ECG read options
 """
 
 
-import ecg_factory as ecgf
+import ecg_reader.ecg_factory as ecgf
 
 
     

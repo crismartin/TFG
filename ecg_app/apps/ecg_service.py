@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon Dec 30 13:29:20 2019
@@ -6,11 +6,11 @@ Created on Mon Dec 30 13:29:20 2019
 @author: cristian
 """
 
-
 import utils_ecg as utils
 import constantes_ecg as cte
 import numpy as np
-from ecg_reader import ecg_factory as ecgf
+import ecg_reader.ecg_factory as ecgf
+
 
 import plotly.graph_objs as go
 

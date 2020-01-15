@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon Dec 16 23:08:13 2019
@@ -9,7 +9,7 @@ Created on Mon Dec 16 23:08:13 2019
 
 import base64
 import os, glob
-import urllib2
+from urllib.request import urlopen
 import random
 import constantes_ecg as cte
 
@@ -75,7 +75,7 @@ def download_file_url(token_user, url_file):
     print("[utils_ecg] - download_file_url() -> save_file: %s" %save_file)
     
     try:
-        response = urllib2.urlopen(url_file)
+        response = urlopen(url_file)
         datatowrite = response.read()
         
         create_new_user_dir(token_user)
