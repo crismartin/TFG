@@ -513,10 +513,11 @@ class ECGIshne(ecg.ECG):
 
 if __name__=="__main__":
 
-    ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m")
+    #ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m")
+    ishneECG = ECGIshne("1-300m.ecg")
     ishneECG.read_signal(3000, 100000)
     ishneECG.read_annotations(3000, 100000)
-    ishneECG.printTestECG()
+   # ishneECG.printTestECG()
     
 
     #ishneECG.printAnntECG()
