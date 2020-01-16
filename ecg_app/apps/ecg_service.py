@@ -11,6 +11,8 @@ import constantes_ecg as cte
 import numpy as np
 import ecg_reader.ecg_factory as ecgf
 
+import WTdelineator.WTdelineator as wav
+
 
 import plotly.graph_objs as go
 
@@ -65,6 +67,55 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo):
     return ant_trace
     
 
+def get_delineator_graph(signal, fs):
+    ondas = []
+    #Delineador de la señal
+    Pwav, QRS, Twav = wav.signalDelineation(signal,fs)
+    app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  Q: " + str(len(QRS[:,1])) )
+    #app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  R: " + str(QRS[:,2]) )
+    #app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  S: " + str(QRS[:,3]) )
+    
+    ondaQ = get_qrs_wave(QRS, signal, fs, 1)
+    if ondaQ is not None:
+        ondas.append(ondaQ)
+        
+    ondaR = get_qrs_wave(QRS, signal, fs, 2)
+    if ondaR is not None: 
+        ondas.append(ondaR)
+    
+    ondaS = get_qrs_wave(QRS, signal, fs, 3)
+    if ondaS is not None:
+        ondas.append(ondaS)
+        
+    return ondas
+    
+
+def get_qrs_wave(qrs, signal, fs, wave):
+    simbolo_onda = ''
+    if wave == 1:
+        simbolo_onda = 'Q'
+    elif wave == 2:
+        simbolo_onda = 'R'
+    elif wave == 3:
+        simbolo_onda = 'S'
+    
+    if simbolo_onda != '':
+        qWave = qrs[:,wave]
+        ejeX = qWave/float(fs)
+        ejeX = np.around(ejeX, decimals=6)
+        ejeX = ejeX.tolist()
+        ejeY = signal[qWave]
+        simbols = [simbolo_onda for i in range(len(ejeX))]
+
+        name_wave = 'Onda ' + str(simbolo_onda)
+        q_trace = go.Scatter(x = ejeX, y = ejeY,
+                            name = name_wave, mode='markers+text',
+                            text=simbols, textposition="top right")
+        return q_trace
+    else:
+        return None
+    
+
 
 def build_plot_by_lead(file_name, lead):
     data_fig = []
@@ -72,8 +123,8 @@ def build_plot_by_lead(file_name, lead):
     ecg = ecgFactory.create_ECG(file_name)
     signal_len = ecg.header.signal_len
     
-    sampFrom = 3000
-    sampTo = 100000 if signal_len > 100000 else signal_len #Pinto los primeros 100k de muestras
+    sampFrom = 0
+    sampTo = 30000 if signal_len > 100000 else signal_len #Pinto los primeros 100k de muestras
     
     ecg.read_signal(sampFrom, sampTo)
     
@@ -82,6 +133,7 @@ def build_plot_by_lead(file_name, lead):
     fs = ecg.header.samplingRate
     title = "Formato " + ecg.typeECG
     
+    
     if lead > nLeads:
         return None    
     
@@ -89,6 +141,7 @@ def build_plot_by_lead(file_name, lead):
     ejeY = signals[lead-1]
     ejeX = np.arange(sampFrom, len(ejeY), 1.0)/fs
     
+ 
     optsLeads = build_select_leads(nLeads)
     
     layout = go.Layout(title = "Representacion de la Derivación " + str(optsLeads[lead-1]['value']),
@@ -108,6 +161,12 @@ def build_plot_by_lead(file_name, lead):
     
     if ant_trace is not None:
         data_fig.append(ant_trace)
+        
+    #Datos de QRS    
+    qrs_wave = get_delineator_graph(ejeY, fs)
+    if qrs_wave != []:   
+        for wave in qrs_wave:
+            data_fig.append(wave) 
     
     #Objeto grafica
     fig = go.Figure(data = data_fig, layout = layout)
