@@ -67,6 +67,7 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo):
     return ant_trace
     
 
+
 def get_delineator_graph(signal, fs):
     ondas = []
     #Delineador de la señal
@@ -86,34 +87,97 @@ def get_delineator_graph(signal, fs):
     ondaS = get_qrs_wave(QRS, signal, fs, 3)
     if ondaS is not None:
         ondas.append(ondaS)
-        
-    return ondas
     
+    if Pwav != []:
+        pWaves = get_p_wave(Pwav, signal, fs)
+        for p_wave in pWaves:
+            ondas.append(p_wave) 
+
+    return ondas
+
+
+
+def get_simbol_P(num_sample):
+    simbol = None
+    text_pos = None
+    name = None
+    
+    if num_sample == 0:
+        simbol = '(P'
+        text_pos = 'top left'
+        name = "P Start"
+    elif num_sample == 1:
+        simbol = 'P1'
+        text_pos = 'top center'
+        name = "Peak 1"
+    elif num_sample == 2:
+        simbol = 'P2'
+        text_pos = 'top center'
+        name = "Peak 2"
+    elif num_sample == 3:
+        simbol = ')P'
+        text_pos = 'top right'
+        name = "P End"
+        
+    return simbol, text_pos, name
+
+
+
+def get_p_wave(pWav, signal, fs):
+    traces = []
+    
+    app.logger.info("[ecg_service] - 'get_p_wave()' ->  PWave: " + str(pWav) )
+    n_wave = [i for i in (range(4))]
+    
+    for i in n_wave:
+        p_i = pWav[:,i]
+        if p_i != []:        
+            ejeX = p_i/float(fs)
+            ejeX = np.around(ejeX, decimals=6)
+            ejeX = ejeX.tolist()
+            app.logger.info("[ecg_service] - 'get_p_wave()' ->  p_i: " + str(p_i) )
+            ejeY = signal[p_i]
+            simbolo_onda, text_position, name_wave = get_simbol_P(i)
+            simbols = [simbolo_onda for i in range(len(ejeX))]
+            
+            p_trace = go.Scatter(x = ejeX, y = ejeY,
+                                 name = name_wave, mode='markers+text',
+                                 text=simbols, textposition=text_position)
+            traces.append(p_trace)
+    
+    return traces
+    
+
 
 def get_qrs_wave(qrs, signal, fs, wave):
     simbolo_onda = ''
+    text_position = 'top left'
     if wave == 1:
         simbolo_onda = 'Q'
+        text_position = 'bottom left'
     elif wave == 2:
         simbolo_onda = 'R'
     elif wave == 3:
         simbolo_onda = 'S'
+        text_position = 'bottom right'
     
     if simbolo_onda != '':
         qWave = qrs[:,wave]
-        ejeX = qWave/float(fs)
-        ejeX = np.around(ejeX, decimals=6)
-        ejeX = ejeX.tolist()
-        ejeY = signal[qWave]
-        simbols = [simbolo_onda for i in range(len(ejeX))]
-
-        name_wave = 'Onda ' + str(simbolo_onda)
-        q_trace = go.Scatter(x = ejeX, y = ejeY,
-                            name = name_wave, mode='markers+text',
-                            text=simbols, textposition="top right")
-        return q_trace
-    else:
-        return None
+        if qWave != []:            
+            ejeX = qWave/float(fs)
+            ejeX = np.around(ejeX, decimals=6)
+            ejeX = ejeX.tolist()
+            app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  qwave: " + str(qWave) )
+            ejeY = signal[qWave]
+            simbols = [simbolo_onda for i in range(len(ejeX))]
+    
+            name_wave = 'Onda ' + str(simbolo_onda)
+            q_trace = go.Scatter(x = ejeX, y = ejeY,
+                                name = name_wave, mode='markers+text',
+                                text=simbols, textposition=text_position)
+            return q_trace
+    
+    return None
     
 
 
@@ -133,14 +197,12 @@ def build_plot_by_lead(file_name, lead):
     fs = ecg.header.samplingRate
     title = "Formato " + ecg.typeECG
     
-    
     if lead > nLeads:
         return None    
     
     #Datos de la señal (Y(x))
     ejeY = signals[lead-1]
-    ejeX = np.arange(sampFrom, len(ejeY), 1.0)/fs
-    
+    ejeX = np.arange(sampFrom, len(ejeY), 1.0)/fs    
  
     optsLeads = build_select_leads(nLeads)
     
