@@ -38,23 +38,17 @@ spiner_loading = html.Div([
     )
 ])
 
+
 msg_file = html.Div([
                     html.Span("Fichero seleccionado: "),
                     dbc.Badge(id="lbl_name_file", color="info", className="mr-1")
                 ])
 
+
 cnt_msg_upfile = html.Div([
                         html.Div(id="msg-upfile", children=msg_file)
                     ])
-
-msg_file_ant = html.Div([
-                        html.Span("Fichero seleccionado: "),
-                        dbc.Badge(id="lbl_name_file_ant", color="info", className="mr-1")]               
-                    )
-
-cnt_msg_upfile_ant = html.Div([
-                        html.Div(id="msg-upfile-ant", children=msg_file_ant)
-                    ])                        
+                       
 
 cnt_uploader = html.Div([dcc.Upload(id="upload-file",
                 children=html.Div([
@@ -87,28 +81,6 @@ cnt_uploader = html.Div([dcc.Upload(id="upload-file",
 
 uploader = html.Div(id="cnt-uploader", children=cnt_uploader)
                         
-                        
-uploader_ant = html.Div([
-                dcc.Upload(id="upload-ant",
-                    children=html.Div([
-                        'Arrastra y suelta o ',
-                        html.A('selecciona un archivo')
-                    ]),
-                    style={
-                        'width': '100%',
-                        'height': '60px',
-                        'lineHeight': '60px',
-                        'borderWidth': '1px',
-                        'borderStyle': 'dashed',
-                        'borderRadius': '5px',
-                        'textAlign': 'center'
-                    },
-                    multiple=False
-                ),
-                html.Div(id='container-upfile-ant',
-                         children=[cnt_msg_upfile_ant]
-                         )
-            ])
   
 
 input_component_hed  = dbc.Input(type="url", id="url-hed-file", placeholder="http://", value="")
@@ -118,7 +90,6 @@ input_component      = dbc.Input(type="url", id="url-dat-file", placeholder="htt
 
 form_datos_ecg = html.Div([
     
-
     html.H5("Datos Header"),
     dbc.FormGroup([
         dbc.Label("Desde url remota: ", html_for="url-hed-file"),
@@ -141,14 +112,12 @@ form_datos_ecg = html.Div([
         html.Label("ó")
     ], style={'text-align': 'center'} ),
         
-    dbc.FormGroup(id="form-uploader", children = uploader),
+    dbc.FormGroup(children = uploader)
 ])
 
 
-
-formulario = dbc.Form([
-    form_datos_ecg,    
-    #dbc.FormGroup(id="form-optional", children= collapse )
+formulario = dbc.Form(id="form-uploader", children=[
+    form_datos_ecg
 ])
 
 
@@ -359,15 +328,6 @@ def disabled_uploader(head_file, data_file):
         return False
 
 
-@app.callback(
-    Output("upload-ant", "disabled"),
-    [Input("url-ant-file","value")]       
-)
-def disabled_uploader_ant(name_file):
-    if utils.name_file_valid(name_file):
-        return True
-    else:
-        return False
 
 
 @app.callback(
@@ -426,11 +386,7 @@ def activar_btn_process(result_upfile):
 
 
 @app.callback(
-    [Output('cnt-uploader',     'children'),
-     Output("input-component",      "children"),
-     Output("input-component-hed",  "children"),
-     Output("input-component-ant",  "children"),
-     Output("form-uploader",        "children"),
+    [Output("form-uploader",        "children"),
      Output("cnt-st-fdata",         "children"),
      Output("cnt-ecg-fig",          "children"),
      Output("cnt-form-controls",    "children"),
@@ -456,8 +412,7 @@ def delete_file(eliminar_file, name_file, data_session):
         
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
-    return [cnt_uploader, input_component, input_component_hed, input_component_ant, 
-            uploader, cnt_state_fdata, ecg_fig, cnt_form_controls, title_format]
+    return [form_datos_ecg, cnt_state_fdata, ecg_fig, cnt_form_controls, title_format]
     
 
 

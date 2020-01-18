@@ -373,7 +373,7 @@ class ECGIshne(ecg.ECG):
                     print("[INFO][ISHNE][ANN] Leyendo anotaciones ISHNE\n")
                     fdIshneAnn = read_file(fileRoute)
                     fdIshneAnn.seek(posBytesData, 0)
-                    
+                
                     firstLoc = np.fromfile(fdIshneAnn, dtype=np.int32, count=1)[0]
                     print("[INFO][ISHNE][ANN] firstLoc: " + str(firstLoc) )
         
@@ -382,7 +382,7 @@ class ECGIshne(ecg.ECG):
                     fdIshneAnn.seek(0, os.SEEK_END)
                     endPosition = fdIshneAnn.tell()
 
-                    numBeats = (endPosition - currentPosition)/4
+                    numBeats = (endPosition - currentPosition)//4
                     print("[INFO][ISHNE][ANN] numBeats: " + str(numBeats) )
                     
                     # Preparamos el puntero para leer las anotaciones
@@ -391,13 +391,14 @@ class ECGIshne(ecg.ECG):
                     print("[INFO][ISHNE][ANN] actualFd: " + str(actualFd) )
                     
                     loc_sample = firstLoc
-                         
+                    
                     # Leemos las anotaciones
                     for i in range(numBeats):
-                        ann = fdIshneAnn.read(1).strip(' \x00')                        
+                        
+                        ann = fdIshneAnn.read(1).decode("utf8")                     
                         #print("[INFO][ISHNE][ANN] ann: " + str(ann) )
                         
-                        fdIshneAnn.read(1).strip(' \x00')
+                        fdIshneAnn.read(1).decode("utf8")
                         #print("[INFO][ISHNE][ANN] internalUse: " + str(internalUse))
                         
                         sample_ecg = np.fromfile(fdIshneAnn, dtype=np.uint16, count=1)[0]
@@ -514,10 +515,10 @@ class ECGIshne(ecg.ECG):
 if __name__=="__main__":
 
     #ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m")
-    ishneECG = ECGIshne("1-300m.ecg")
+    ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m.ecg")
     ishneECG.read_signal(3000, 100000)
     ishneECG.read_annotations(3000, 100000)
-   # ishneECG.printTestECG()
+    ishneECG.printTestECG()
     
 
     #ishneECG.printAnntECG()
