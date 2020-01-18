@@ -56,8 +56,7 @@ cnt_msg_upfile_ant = html.Div([
                         html.Div(id="msg-upfile-ant", children=msg_file_ant)
                     ])                        
 
-uploader = html.Div([
-            dcc.Upload(id="upload-file",
+cnt_uploader = html.Div([dcc.Upload(id="upload-file",
                 children=html.Div([
                     'Arrastra y suelta o ',
                     html.A('selecciona el/los archivo/s')
@@ -85,6 +84,8 @@ uploader = html.Div([
                         )
                     ])
             ])
+
+uploader = html.Div(id="cnt-uploader", children=cnt_uploader)
                         
                         
 uploader_ant = html.Div([
@@ -425,7 +426,7 @@ def activar_btn_process(result_upfile):
 
 
 @app.callback(
-    [Output('container-upfile',     'children'),
+    [Output('cnt-uploader',     'children'),
      Output("input-component",      "children"),
      Output("input-component-hed",  "children"),
      Output("input-component-ant",  "children"),
@@ -455,7 +456,7 @@ def delete_file(eliminar_file, name_file, data_session):
         
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
-    return [cnt_msg_upfile, input_component, input_component_hed, input_component_ant, 
+    return [cnt_uploader, input_component, input_component_hed, input_component_ant, 
             uploader, cnt_state_fdata, ecg_fig, cnt_form_controls, title_format]
     
 
