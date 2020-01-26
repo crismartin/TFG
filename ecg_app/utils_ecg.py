@@ -135,3 +135,24 @@ def get_ext_file(name_file):
     filename, extension = os.path.splitext(name_file)
     return extension
 
+
+# Devuelve las horas y minutos de acuerdo a un número de segundos
+def convert_seg_to_hhmm(num_sec):
+    result = ""
+    hor=(int(num_sec/3600))
+    minu=int((num_sec-(hor*3600))/60)
+    if hor != 0:
+        result += str(hor)+" horas "
+        
+    if minu != 0:
+        result += str(minu)+" min "
+
+    return result
+
+# Transforma minutos a segundos
+def min_to_sec(num_min):
+    if num_min > 0:
+        return num_min * 60
+    return None
+
+    

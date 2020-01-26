@@ -25,14 +25,21 @@ def build_select_leads(nleads):
     
 
 
-def get_nleads_array(file_name):
+def get_nleads_and_duration(file_name):
+    duration = 0
     # Factoria de ECG
-    ecgFactory = ecgf.ECGFactory()
-    
+    ecgFactory = ecgf.ECGFactory()    
     ecg = ecgFactory.create_ECG(file_name)
+
+    if ecg.header.signal_len > 0:
+        tamanio = ecg.header.signal_len // ecg.header.samplingRate
+        duration = utils.convert_seg_to_hhmm(tamanio)
+       
+    app.logger.info("[ecg_service] - 'get_nleads_array()' ->  duration: " + str(duration) )
+    
     nLeads = ecg.header.nLeads    
     
-    return build_select_leads(nLeads)    
+    return build_select_leads(nLeads), duration 
     
 
 
@@ -72,7 +79,7 @@ def get_delineator_graph(signal, fs):
     ondas = []
     #Delineador de la señal
     Pwav, QRS, Twav = wav.signalDelineation(signal,fs)
-    app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  Q: " + str(len(QRS[:,1])) )
+    #app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  Q: " + str(len(QRS[:,1])) )
     #app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  R: " + str(QRS[:,2]) )
     #app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  S: " + str(QRS[:,3]) )
     
@@ -103,7 +110,7 @@ def get_simbol_P(num_sample):
     name = None
     
     if num_sample == 0:
-        simbol = '(P'
+        simbol = 'P('
         text_pos = 'top left'
         name = "P Start"
     elif num_sample == 1:
@@ -126,7 +133,7 @@ def get_simbol_P(num_sample):
 def get_p_wave(pWav, signal, fs):
     traces = []
     
-    app.logger.info("[ecg_service] - 'get_p_wave()' ->  PWave: " + str(pWav) )
+    #app.logger.info("[ecg_service] - 'get_p_wave()' ->  PWave: " + str(pWav) )
     n_wave = [i for i in (range(4))]
     
     for i in n_wave:
@@ -135,14 +142,15 @@ def get_p_wave(pWav, signal, fs):
             ejeX = p_i/float(fs)
             ejeX = np.around(ejeX, decimals=6)
             ejeX = ejeX.tolist()
-            app.logger.info("[ecg_service] - 'get_p_wave()' ->  p_i: " + str(p_i) )
+            #app.logger.info("[ecg_service] - 'get_p_wave()' ->  p_i: " + str(p_i) )
             ejeY = signal[p_i]
             simbolo_onda, text_position, name_wave = get_simbol_P(i)
             simbols = [simbolo_onda for i in range(len(ejeX))]
             
             p_trace = go.Scatter(x = ejeX, y = ejeY,
                                  name = name_wave, mode='markers+text',
-                                 text=simbols, textposition=text_position)
+                                 text=simbols, textposition=text_position,
+                                 visible='legendonly')
             traces.append(p_trace)
     
     return traces
@@ -167,55 +175,115 @@ def get_qrs_wave(qrs, signal, fs, wave):
             ejeX = qWave/float(fs)
             ejeX = np.around(ejeX, decimals=6)
             ejeX = ejeX.tolist()
-            app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  qwave: " + str(qWave) )
+            # app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  qwave: " + str(qWave) )
             ejeY = signal[qWave]
             simbols = [simbolo_onda for i in range(len(ejeX))]
     
             name_wave = 'Onda ' + str(simbolo_onda)
             q_trace = go.Scatter(x = ejeX, y = ejeY,
                                 name = name_wave, mode='markers+text',
-                                text=simbols, textposition=text_position)
+                                text=simbols, textposition=text_position,
+                                visible='legendonly')
             return q_trace
     
     return None
     
 
 
-def build_plot_by_lead(file_name, lead):
-    data_fig = []
-    ecgFactory = ecgf.ECGFactory()    
-    ecg = ecgFactory.create_ECG(file_name)
-    signal_len = ecg.header.signal_len
+def build_ecg_trace(ejeX, ejeY, nLead, range_min):
     
-    sampFrom = 0
-    sampTo = 30000 if signal_len > 100000 else signal_len #Pinto los primeros 100k de muestras
-    
-    ecg.read_signal(sampFrom, sampTo)
-    
-    signals = ecg.signal
-    nLeads = ecg.header.nLeads
-    fs = ecg.header.samplingRate
-    title = "Formato " + ecg.typeECG
-    
-    if lead > nLeads:
-        return None    
-    
-    #Datos de la señal (Y(x))
-    ejeY = signals[lead-1]
-    ejeX = np.arange(sampFrom, len(ejeY), 1.0)/fs    
- 
-    optsLeads = build_select_leads(nLeads)
-    
-    layout = go.Layout(title = "Representacion de la Derivación " + str(optsLeads[lead-1]['value']),
+    layout = go.Layout(title = "Representacion de la Derivación " + str(nLead),
                     hovermode = 'closest', uirevision=True, autosize=True, 
-                    xaxis=dict(gridcolor="LightPink", range=[0, 12]), 
+                    xaxis=go.layout.XAxis(
+                                rangeselector=dict(
+                                    
+                                ),
+                                rangeslider=dict(
+                                    visible=True
+                                ),
+                                range=[range_min, range_min+12]
+                            ),
                     yaxis=dict(gridcolor="LightPink"),
                     plot_bgcolor='rgb(248,248,248)'
                     )
         
     ecg_trace = go.Scatter(x = ejeX, y = ejeY,
                     name = 'ECG', mode='lines')
+    return layout, ecg_trace
     
+
+
+# Comprueba si el intervalo introducido es correcto o no
+def is_interv_valid(interv_ini, interv_fin):
+    if (interv_ini is not None and interv_fin is not None):
+        num_ini = int(interv_ini)
+        num_fin = int(interv_fin)
+        
+        if num_fin > num_ini:
+            return num_ini, num_fin
+        
+    return None, None
+
+
+def get_interval_samples(interv_ini, interv_fin, signal_len, fs):
+
+    num_ini, num_fin = is_interv_valid(interv_ini, interv_fin)
+    
+    if num_ini is not None and num_fin is not None:
+        sampFrom = utils.min_to_sec(num_ini) * fs
+        sampTo = utils.min_to_sec(num_fin) * fs
+        
+        if sampFrom < signal_len and sampTo > sampFrom and sampTo <= signal_len:
+            return sampFrom, sampTo
+        
+    
+    return 0, 10000 if signal_len > 100000 else signal_len
+        
+    
+
+# Contruye la grafica para el lead correspondiente
+def build_plot_by_lead(file_name, lead, interv_ini, interv_fin):
+    app.logger.info("\n[ecg_service] - INICIO 'build_plot_by_lead()'")
+    data_fig = []
+    ecgFactory = ecgf.ECGFactory()    
+    ecg = ecgFactory.create_ECG(file_name)
+    
+    signal_len = ecg.header.signal_len
+    nLeads = ecg.header.nLeads
+    fs = ecg.header.samplingRate
+    
+    sampFrom, sampTo = get_interval_samples(interv_ini, interv_fin, signal_len, fs)
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  sampFrom: " + str(sampFrom) )
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  sampTo: " + str(sampTo) )
+    
+    ecg.read_signal(sampFrom, sampTo)
+    
+    signals = ecg.signal
+    
+    title = "Formato " + ecg.typeECG
+    
+    
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  nLeads: " + str(nLeads) )
+    if lead > nLeads:
+        app.logger.info("[ecg_service] - 'build_plot_by_lead()' -> return None, no hay leads: " + str(nLeads) )
+        return None    
+    
+    #Datos de la señal (Y(x))
+    ejeY = signals[lead-1]
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  ejeY: " + str(ejeY) )
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  len(ejeY): " + str(len(ejeY)) )
+    
+    ejeX = np.arange(sampFrom, sampTo, 1.0)/fs
+    
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  ejeX: " + str(ejeX) )
+ 
+    optsLeads = build_select_leads(nLeads)
+    lead_value = optsLeads[lead-1]['value']
+        
+    range_min = 0 if interv_ini is None else utils.min_to_sec(interv_ini)
+    
+    #Devuelve el gráfico principal (el ECG)
+    layout, ecg_trace = build_ecg_trace(ejeX, ejeY, lead_value, range_min)    
     data_fig.append(ecg_trace)
     
     # Datos de las anotaciones    

@@ -150,7 +150,7 @@ cnt_state_fant =  html.Div([
 modal_component = html.Div([
     dbc.ModalHeader("Cargar Fichero"),
     dbc.ModalBody([
-        formulario
+        formulario        
     ]),
     dbc.ModalFooter([
         html.Div( id="cnt-eliminar-file",   children=[btn_eliminar] ),
@@ -172,7 +172,8 @@ display_ecg = dbc.FormGroup([
         dbc.Modal(
             children = modal_component,
             id = "modal",
-            size = "lg"
+            size = "lg",
+            backdrop = "static"
         ),
     ]),
     
@@ -208,7 +209,7 @@ dropdown_leads = dbc.FormGroup([
     ])
 ])
 
-edit_point_input = dbc.FormGroup([
+edit_point_input = dbc.Row(dbc.FormGroup([
         
     dbc.Row([
         html.H6("Editar Punto"),    
@@ -245,12 +246,88 @@ edit_point_input = dbc.FormGroup([
         
     ], className="float-right", row=True)
 ])
+)
+
+load_intervals_inputs = dbc.Row(dbc.FormGroup([
+    dbc.Row([
+        html.H6("Intervalos señal"),  
+    ]),
+    
+    dbc.FormGroup([
+        html.Div(
+            children=[
+                 html.P(id="duracion-señal", children=["Duración total aprox: "])
+            ]
+        )
+    ], row=True),
+    
+    dbc.Row([
+        html.H6("Ver señal:"),  
+    ]),
+    dbc.FormGroup([
+        dbc.Label("desde ", html_for="interv_ini", width=3),
+        dbc.Col(
+            dbc.InputGroup([
+                dbc.InputGroupAddon("min", addon_type="prepend"),
+                dbc.Input(
+                    type="number", id="interv_ini", disabled=True
+                ),
+            ]),
+            width=8,
+        ),
+        
+    ], row=True),
+    
+    dbc.FormGroup([
+        dbc.Label("hasta ", html_for="interv_fin", width=3),
+        dbc.Col(
+            dbc.InputGroup([
+                dbc.InputGroupAddon("min", addon_type="prepend"),
+                dbc.Input(
+                    type="number", id="interv_fin", disabled=True
+                ),
+            ]),
+            width=8,
+        ),
+    ], row=True),
+    
+    dbc.FormGroup([
+        dbc.Col([
+            dbc.Button(id="ver-intervalo", color="success", disabled=True,
+               children=[
+                   html.Span([html.I(className="fas fa-play ml-2"), " Cargar"])
+                  ]
+            )
+        ]),
+    ], className="float-center", row=True)
+])
+)
+
+btn_next_interval = dbc.Button(id="btn-next-interval", outline=True, color="dark",
+                       children=[
+                           html.Span([html.I(className="fas fa-step-forward mr-1"), " Next"])
+                          ]
+                    )
+
+btn_prev_interval = dbc.Button(id="btn-prev-interval", outline=True, color="dark",
+                       children=[
+                           html.Span([html.I(className="fas fa-step-backward mr-1"), " Prev"])
+                          ]
+                    )
+
+move_controls = dbc.Row(id="move-controls", 
+                         children=[
+                                 dbc.Col(btn_prev_interval, width={"size": 2, "order": 1, "offset": 4}),
+                                 dbc.Col(btn_next_interval, width={"size": 2, "order": "last"})
+                         ])
+
+
 
 title_controls =  dbc.FormGroup([
                     html.H2("Controles", id="controles-title", style={'text-align': 'left'})
                   ], row=True)
 
-form_controls = html.Div(id="form-controls", children=[title_controls, dropdown_leads, edit_point_input])
+form_controls = html.Div(id="form-controls", children=[title_controls, dropdown_leads, load_intervals_inputs, edit_point_input])
 
 cnt_form_controls = dbc.Form(id="cnt-form-controls", children=form_controls)
 
@@ -264,18 +341,17 @@ body = dbc.Container([
             dbc.Row([
                 cnt_form_controls
             ]),
-        ], width=2),
+        ], width=3),
         dbc.Col([
             dbc.Row(
-                display_ecg,
-                className="float-right"
-            ),
-            dbc.Row(
-                menu_ecg, className="float-right"
-            )
-        ], width=10)  
-    ])    
-    
+                display_ecg
+            ),            
+            move_controls
+        ], width={"size": 9}, className="float-right")  
+    ]),
+    dbc.Row(
+        menu_ecg, className="float-right"
+    )
 ])
 
 
@@ -505,6 +581,8 @@ def process_file(click_button, data_session, name_file):
     app.logger.info("@callback: FIN 'process_file()'")
     ruta_file = token_user + "/" + name_file
     
+    app.logger.info("@callback: 'process_file()' -> ruta_file: " + str(ruta_file))
+    
     return ruta_file
 
 
@@ -512,7 +590,9 @@ def process_file(click_button, data_session, name_file):
 @app.callback(
     [Output("optLeads","disabled"),
      Output("optLeads","options"),
-     Output("optLeads","value")],
+     Output("optLeads","value"),
+     Output("duracion-señal", "children"),
+     Output("ver-intervalo", "disabled")],
     [Input("fname_process", "value")]
 )
 def select_first_lead(fname_uploaded):
@@ -523,26 +603,32 @@ def select_first_lead(fname_uploaded):
         ruta_file = utils.dir_files + fname_uploaded
         app.logger.info("@callback: 'select_first_lead()' -> ruta_file: " + str(ruta_file))
         app.logger.info("@callback: 'select_first_lead()' -> Obteniendo leads...")
-        optLeads = ecg_serv.get_nleads_array(ruta_file)
+        optLeads, duracion = ecg_serv.get_nleads_and_duration(ruta_file)
         app.logger.info("@callback: 'select_first_lead()' -> optLeads: " + str(optLeads))
         app.logger.info("@callback: FIN 'select_first_lead()'")
-        return False, optLeads, 1
+        text_duracion = "Duración total aprox: " + duracion
+        return False, optLeads, 1, text_duracion, False
     
     app.logger.info("@callback: FIN 'select_first_lead()'")
 
-    return True, None, None
+    return True, None, None, None, True
 
 
 
 @app.callback(
     [Output("ecg-fig", "figure"),
-     Output("formato-title", "children"),
-     Output("point-y", "disabled")],
-    [Input("optLeads", "value")],
-    [State("fname_process", "value")]
+     Output("formato-title", "children"),     
+     Output("point-y", "disabled"),
+     Output("interv_ini", "disabled"),
+     Output("interv_fin", "disabled")],
+    [Input("optLeads", "value"),
+     Input("ver-intervalo", "n_clicks")],
+    [State("fname_process", "value"),
+     State("interv_ini", "value"),
+     State("interv_fin", "value")]
 )
-def print_ecg_lead(selected_lead, fname_uploaded):
-    app.logger.info("@callback: INICIO 'print_ecg()'")
+def print_ecg_lead(selected_lead, ver_intervalo, fname_uploaded, interv_ini, interv_fin):
+    app.logger.info("\n@callback: INICIO 'print_ecg()'")
     
     app.logger.info("@callback: 'print_ecg()' -> selected_lead: " + str(selected_lead))
     app.logger.info("@callback: 'print_ecg()' -> fname_uploaded: " + str(fname_uploaded))
@@ -556,11 +642,29 @@ def print_ecg_lead(selected_lead, fname_uploaded):
     app.logger.info("@callback: 'print_ecg()' -> ruta_file: " + str(ruta_file))
     app.logger.info("@callback: 'print_ecg()' -> Pintando datos...")
     
-    fig, title = ecg_serv.build_plot_by_lead(ruta_file, selected_lead)
+    fig, title = ecg_serv.build_plot_by_lead(ruta_file, selected_lead, interv_ini, interv_fin)
     app.logger.info("@callback: FIN 'print_ecg()'")
-    return fig, title, False
+    return fig, title, False, False, False
     
 
+
+@app.callback(
+    Output('ecg-fig', 'figure.layout'),
+    [Input("btn-next-interval", "n_clicks")]
+)
+def change_interval_graph(btn_next):
+    app.logger.info("@callback: INICIO 'change_interval_graph()'")
+    new_xaxis = go.Layout(title = "Representacion de la Derivación " + str(0),
+                    hovermode = 'closest', uirevision=True, autosize=True, 
+                    xaxis=dict(gridcolor="LightPink", range=[12, 24]), 
+                    yaxis=dict(gridcolor="LightPink"),
+                    plot_bgcolor='rgb(248,248,248)'
+                    )
+    if btn_next is None or btn_next <= 0:
+        raise dash.exceptions.PreventUpdate()
+        
+    app.logger.info("@callback: FIN 'change_interval_graph()'")
+    return new_xaxis
 
 ###############################################################################
 ############################## Main layout ####################################
