@@ -270,7 +270,7 @@ load_intervals_inputs = dbc.Row(dbc.FormGroup([
             dbc.InputGroup([
                 dbc.InputGroupAddon("min", addon_type="prepend"),
                 dbc.Input(
-                    type="number", id="interv_ini", disabled=True
+                    type="number", id="interv_ini", disabled=True, debounce=True
                 ),
             ]),
             width=8,
@@ -284,7 +284,7 @@ load_intervals_inputs = dbc.Row(dbc.FormGroup([
             dbc.InputGroup([
                 dbc.InputGroupAddon("min", addon_type="prepend"),
                 dbc.Input(
-                    type="number", id="interv_fin", disabled=True
+                    type="number", id="interv_fin", disabled=True, debounce=True
                 ),
             ]),
             width=8,
@@ -295,9 +295,10 @@ load_intervals_inputs = dbc.Row(dbc.FormGroup([
         dbc.Col([
             dbc.Button(id="ver-intervalo", color="success", disabled=True,
                children=[
-                   html.Span([html.I(className="fas fa-play ml-2"), " Cargar"])
+                   html.Span([html.I(className="fas fa-play ml-2"), " Cargar"])                   
                   ]
-            )
+            ),
+            dbc.Input(type="hidden", id="diff_interv")
         ]),
     ], className="float-center", row=True)
 ])
@@ -306,13 +307,15 @@ load_intervals_inputs = dbc.Row(dbc.FormGroup([
 btn_next_interval = dbc.Button(id="btn-next-interval", outline=True, color="dark",
                        children=[
                            html.Span([html.I(className="fas fa-step-forward mr-1"), " Next"])
-                          ]
+                          ],
+                       n_clicks_timestamp='0'
                     )
 
 btn_prev_interval = dbc.Button(id="btn-prev-interval", outline=True, color="dark",
                        children=[
                            html.Span([html.I(className="fas fa-step-backward mr-1"), " Prev"])
-                          ]
+                          ],
+                       n_clicks_timestamp='0'
                     )
 
 move_controls = dbc.Row(id="move-controls", 
@@ -649,22 +652,57 @@ def print_ecg_lead(selected_lead, ver_intervalo, fname_uploaded, interv_ini, int
 
 
 @app.callback(
-    Output('ecg-fig', 'figure.layout'),
-    [Input("btn-next-interval", "n_clicks")]
+    Output('diff_interv', 'value'),
+    [Input("interv_ini", "value"),
+     Input("interv_fin", "value")]
 )
-def change_interval_graph(btn_next):
-    app.logger.info("@callback: INICIO 'change_interval_graph()'")
-    new_xaxis = go.Layout(title = "Representacion de la Derivación " + str(0),
-                    hovermode = 'closest', uirevision=True, autosize=True, 
-                    xaxis=dict(gridcolor="LightPink", range=[12, 24]), 
-                    yaxis=dict(gridcolor="LightPink"),
-                    plot_bgcolor='rgb(248,248,248)'
-                    )
-    if btn_next is None or btn_next <= 0:
+def change_diff_interv(ini_value, fin_value):
+    app.logger.info("@callback: INICIO 'change_diff_interv()'")
+    
+    if ini_value is None or fin_value is None:
+        app.logger.info("@callback: FIN 'change_diff_interv()' by Exception: None value")
         raise dash.exceptions.PreventUpdate()
+    
+    if fin_value > ini_value:
+        diff = fin_value - ini_value
+    else:        
+        diff = ""
+    
+    app.logger.info("@callback: 'change_diff_interv()': diff: " + str(diff))
+    app.logger.info("@callback: FIN 'change_diff_interv()'")
+    
+    return diff
+
+
+
+@app.callback(
+    [Output("interv_ini", "value"),
+     Output("interv_fin", "value"),
+     Output("ver-intervalo", "n_clicks")],
+    [Input("btn-next-interval", "n_clicks_timestamp"),
+     Input("btn-prev-interval", "n_clicks_timestamp")],
+    [State("diff_interv", "value"),
+     State("interv_ini", "value"),
+     State("interv_fin", "value"),
+     State("ver-intervalo", "n_clicks")]
+    
+)
+def next_interval_signal(next_btn, prev_btn, diff_interv, interv_ini, interv_fin, click_ver_interv):
+    app.logger.info("@callback: INICIO 'next_interval_signal()'")
+    
+    next_btn = int(next_btn)
+    prev_btn = int(prev_btn)
+    
+    if prev_btn > next_btn:
+        diff_interv = (-1)*diff_interv
+    
+    new_interv_ini = interv_ini + diff_interv
+    new_interv_fin = interv_fin + diff_interv
         
-    app.logger.info("@callback: FIN 'change_interval_graph()'")
-    return new_xaxis
+    app.logger.info("@callback: INICIO 'next_interval_signal()'")
+    
+    return [new_interv_ini, new_interv_fin, click_ver_interv+1]
+    
 
 ###############################################################################
 ############################## Main layout ####################################

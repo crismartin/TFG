@@ -153,6 +153,9 @@ def convert_seg_to_hhmm(num_sec):
 def min_to_sec(num_min):
     if num_min > 0:
         return num_min * 60
+    elif num_min == 0:
+        return 0
+    
     return None
 
     
