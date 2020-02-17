@@ -272,10 +272,13 @@ load_intervals_inputs = dbc.Row(dbc.FormGroup([
                 dbc.Input(
                     type="number", id="interv_ini", disabled=True, debounce=True
                 ),
+                dbc.FormFeedback(
+                    "Número no válido",
+                    valid=False,
+                ),
             ]),
             width=8,
-        ),
-        
+        ),    
     ], row=True),
     
     dbc.FormGroup([
@@ -285,6 +288,10 @@ load_intervals_inputs = dbc.Row(dbc.FormGroup([
                 dbc.InputGroupAddon("min", addon_type="prepend"),
                 dbc.Input(
                     type="number", id="interv_fin", disabled=True, debounce=True
+                ),
+                dbc.FormFeedback(
+                    "Número no válido",
+                    valid=False,
                 ),
             ]),
             width=8,
@@ -308,21 +315,25 @@ btn_next_interval = dbc.Button(id="btn-next-interval", outline=True, color="dark
                        children=[
                            html.Span([html.I(className="fas fa-step-forward mr-1"), " Next"])
                           ],
-                       n_clicks_timestamp='0'
+                       n_clicks_timestamp='0',
+                       disabled=True
                     )
 
 btn_prev_interval = dbc.Button(id="btn-prev-interval", outline=True, color="dark",
                        children=[
                            html.Span([html.I(className="fas fa-step-backward mr-1"), " Prev"])
                           ],
-                       n_clicks_timestamp='0'
+                       n_clicks_timestamp='0',
+                       disabled=True
                     )
 
-move_controls = dbc.Row(id="move-controls", 
-                         children=[
-                                 dbc.Col(btn_prev_interval, width={"size": 2, "order": 1, "offset": 4}),
-                                 dbc.Col(btn_next_interval, width={"size": 2, "order": "last"})
-                         ])
+
+move_controls = [dbc.Col(btn_prev_interval, width={"size": 2, "order": 1, "offset": 4}),
+                    dbc.Col(btn_next_interval, width={"size": 2, "order": "last"}) ]
+
+cnt_move_controls = dbc.Row(id="cnt-move-controls", 
+                         children=move_controls 
+                         )
 
 
 
@@ -349,7 +360,7 @@ body = dbc.Container([
             dbc.Row(
                 display_ecg
             ),            
-            move_controls
+            cnt_move_controls
         ], width={"size": 9}, className="float-right")  
     ]),
     dbc.Row(
@@ -367,6 +378,53 @@ footer = html.Div([
 ###############################################################################
 ############################### CALLBACKS #####################################
 ###############################################################################
+
+# Validaciones de campos
+
+@app.callback(
+    Output("interv_ini", "invalid"),
+    [Input("interv_ini", "value")],
+    [State("interv_fin", "value")]
+)
+def check_valid_desde(num_desde, num_hasta):
+    app.logger.info("@callback: INICIO 'check_valid_desde()'")
+    app.logger.info("@callback: INICIO 'check_valid_hasta()' -> num_desde: " + str(num_desde))
+    if num_desde is not None:
+        is_valid = int(num_desde) >= 0 and (int(num_desde) < int(num_hasta) if num_hasta is not None else True)
+        app.logger.info("@callback: INICIO 'check_valid_desde()' -> is_valid: " + str(is_valid))
+        return not is_valid
+    return False
+
+
+@app.callback(
+    Output("interv_fin", "invalid"),
+    [Input("interv_fin", "value")],
+    [State("interv_ini", "value")],
+)
+def check_valid_hasta(num_hasta, num_desde):
+    app.logger.info("@callback: INICIO 'check_valid_hasta()'")
+    app.logger.info("@callback: INICIO 'check_valid_hasta()' -> num_hasta: " + str(num_hasta))
+    if num_hasta is not None:        
+        is_valid = num_hasta > num_desde
+        app.logger.info("@callback: INICIO 'check_valid_desde()' -> is_valid: " + str(is_valid))
+        return not is_valid
+    return False
+
+
+
+@app.callback(
+    Output("ver-intervalo", "disabled"),
+    [Input("interv_ini", "invalid"),
+     Input("interv_fin", "invalid")]
+)
+def enable_btn_cargar(invalid_desde, invalid_hasta):
+    app.logger.info("@callback: INICIO 'enable_btn_cargar()'")
+    
+    if (invalid_desde is False) and (invalid_hasta is False):
+        app.logger.info("@callback: INICIO 'enable_btn_cargar()' -> valid_desde: " + str(invalid_desde))
+        app.logger.info("@callback: INICIO 'enable_btn_cargar()' -> valid_hasta: " + str(invalid_hasta))
+        return False
+    return True
 
 
 @app.callback(
@@ -469,6 +527,7 @@ def activar_btn_process(result_upfile):
      Output("cnt-st-fdata",         "children"),
      Output("cnt-ecg-fig",          "children"),
      Output("cnt-form-controls",    "children"),
+     Output("cnt-move-controls",    "children"),     
      Output("cnt-title-format",     "children")],
     [Input("eliminar-file",         "n_clicks")],
     [State("lbl_name_file",         "children"),
@@ -491,7 +550,7 @@ def delete_file(eliminar_file, name_file, data_session):
         
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
-    return [form_datos_ecg, cnt_state_fdata, ecg_fig, cnt_form_controls, title_format]
+    return [form_datos_ecg, cnt_state_fdata, ecg_fig, cnt_form_controls, move_controls, title_format]
     
 
 
@@ -594,8 +653,7 @@ def process_file(click_button, data_session, name_file):
     [Output("optLeads","disabled"),
      Output("optLeads","options"),
      Output("optLeads","value"),
-     Output("duracion-señal", "children"),
-     Output("ver-intervalo", "disabled")],
+     Output("duracion-señal", "children")],
     [Input("fname_process", "value")]
 )
 def select_first_lead(fname_uploaded):
@@ -610,11 +668,11 @@ def select_first_lead(fname_uploaded):
         app.logger.info("@callback: 'select_first_lead()' -> optLeads: " + str(optLeads))
         app.logger.info("@callback: FIN 'select_first_lead()'")
         text_duracion = "Duración total aprox: " + duracion
-        return False, optLeads, 1, text_duracion, False
+        return False, optLeads, 1, text_duracion
     
     app.logger.info("@callback: FIN 'select_first_lead()'")
 
-    return True, None, None, None, True
+    return True, None, None, None
 
 
 
@@ -623,7 +681,9 @@ def select_first_lead(fname_uploaded):
      Output("formato-title", "children"),     
      Output("point-y", "disabled"),
      Output("interv_ini", "disabled"),
-     Output("interv_fin", "disabled")],
+     Output("interv_fin", "disabled"),
+     Output("btn-prev-interval", "disabled"),
+     Output("btn-next-interval", "disabled")],
     [Input("optLeads", "value"),
      Input("ver-intervalo", "n_clicks")],
     [State("fname_process", "value"),
@@ -647,7 +707,7 @@ def print_ecg_lead(selected_lead, ver_intervalo, fname_uploaded, interv_ini, int
     
     fig, title = ecg_serv.build_plot_by_lead(ruta_file, selected_lead, interv_ini, interv_fin)
     app.logger.info("@callback: FIN 'print_ecg()'")
-    return fig, title, False, False, False
+    return fig, title, False, False, False, False, False
     
 
 
