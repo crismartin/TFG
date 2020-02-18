@@ -26,20 +26,21 @@ def build_select_leads(nleads):
 
 
 def get_nleads_and_duration(file_name):
-    duration = 0
+    duration_in_min = 0
     # Factoria de ECG
     ecgFactory = ecgf.ECGFactory()    
     ecg = ecgFactory.create_ECG(file_name)
 
     if ecg.header.signal_len > 0:
         tamanio = ecg.header.signal_len // ecg.header.samplingRate
-        duration = utils.convert_seg_to_hhmm(tamanio)
+        msg_duration = utils.convert_seg_to_hhmm(tamanio)
+        duration_in_min = utils.sec_to_min(tamanio)
        
-    app.logger.info("[ecg_service] - 'get_nleads_array()' ->  duration: " + str(duration) )
+    app.logger.info("[ecg_service] - 'get_nleads_array()' ->  duration: " + str(duration_in_min) )
     
     nLeads = ecg.header.nLeads    
     
-    return build_select_leads(nLeads), duration 
+    return build_select_leads(nLeads), msg_duration, duration_in_min
     
 
 

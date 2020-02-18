@@ -137,7 +137,7 @@ def get_ext_file(name_file):
 
 
 # Devuelve las horas y minutos de acuerdo a un número de segundos
-def convert_seg_to_hhmm(num_sec):
+def convert_seg_to_hhmm(num_sec):    
     result = ""
     hor=(int(num_sec/3600))
     minu=int((num_sec-(hor*3600))/60)
@@ -146,8 +146,18 @@ def convert_seg_to_hhmm(num_sec):
         
     if minu != 0:
         result += str(minu)+" min "
-
+    
     return result
+
+
+def sec_to_min(num_sec):
+    if(num_sec > 0):
+        return (num_sec // 60)
+    elif num_sec == 0:
+        return 0
+    
+    return None
+
 
 # Transforma minutos a segundos
 def min_to_sec(num_min):

@@ -248,67 +248,74 @@ edit_point_input = dbc.Row(dbc.FormGroup([
 ])
 )
 
-load_intervals_inputs = dbc.Row(dbc.FormGroup([
-    dbc.Row([
-        html.H6("Intervalos señal"),  
-    ]),
-    
+load_intervals_inputs = dbc.Row(
     dbc.FormGroup([
-        html.Div(
-            children=[
-                 html.P(id="duracion-señal", children=["Duración total aprox: "])
-            ]
-        )
-    ], row=True),
-    
-    dbc.Row([
-        html.H6("Ver señal:"),  
-    ]),
-    dbc.FormGroup([
-        dbc.Label("desde ", html_for="interv_ini", width=3),
-        dbc.Col(
-            dbc.InputGroup([
-                dbc.InputGroupAddon("min", addon_type="prepend"),
-                dbc.Input(
-                    type="number", id="interv_ini", disabled=True, debounce=True
-                ),
-                dbc.FormFeedback(
-                    "Número no válido",
-                    valid=False,
-                ),
-            ]),
-            width=8,
-        ),    
-    ], row=True),
-    
-    dbc.FormGroup([
-        dbc.Label("hasta ", html_for="interv_fin", width=3),
-        dbc.Col(
-            dbc.InputGroup([
-                dbc.InputGroupAddon("min", addon_type="prepend"),
-                dbc.Input(
-                    type="number", id="interv_fin", disabled=True, debounce=True
-                ),
-                dbc.FormFeedback(
-                    "Número no válido",
-                    valid=False,
-                ),
-            ]),
-            width=8,
-        ),
-    ], row=True),
-    
-    dbc.FormGroup([
-        dbc.Col([
-            dbc.Button(id="ver-intervalo", color="success", disabled=True,
-               children=[
-                   html.Span([html.I(className="fas fa-play ml-2"), " Cargar"])                   
-                  ]
-            ),
-            dbc.Input(type="hidden", id="diff_interv")
+        dbc.Row([
+            html.H6("Intervalos señal"),  
         ]),
-    ], className="float-center", row=True)
-])
+        
+        dbc.FormGroup([
+            html.Div(
+                children=[
+                     html.P(id="msg-duracion", children=["Duración total aprox: "])
+                ]
+            )
+        ], row=True),
+        
+        dbc.Row([
+            html.H6("Ver señal:"),  
+        ]),
+        dbc.FormGroup([
+            dbc.Label("desde ", html_for="interv_ini", width=3),
+            dbc.Col(
+                dbc.InputGroup([
+                    dbc.InputGroupAddon("min", addon_type="prepend"),
+                    dbc.Input(
+                        type="number", id="interv_ini", disabled=True, debounce=True
+                    ),
+                    dbc.FormFeedback(
+                        "Número no válido",
+                        valid=False,
+                    ),
+                ]),
+                width=8,
+            ),    
+        ], row=True),
+        
+        dbc.FormGroup([
+            dbc.Label("hasta ", html_for="interv_fin", width=3),
+            dbc.Col(
+                dbc.InputGroup([
+                    dbc.InputGroupAddon("min", addon_type="prepend"),
+                    dbc.Input(
+                        type="number", id="interv_fin", disabled=True, debounce=True
+                    ),
+                    dbc.FormFeedback(
+                        "Número no válido",
+                        valid=False,
+                    ),
+                ]),
+                width=8,
+            ),
+        ], row=True),
+        
+        dbc.FormGroup([
+            dbc.Col([
+                dbc.Button(id="ver-intervalo", color="success", disabled=True,
+                   children=[
+                       html.Span([html.I(className="fas fa-play ml-2"), " Cargar"])                   
+                      ]
+                ),
+                dbc.Input(type="hidden", id="diff_interv")
+            ]),
+        ], className="float-center", row=True),
+        
+        dbc.FormGroup([
+            dbc.Input(
+                type="hidden", id="duracion-total", disabled=True
+            )
+        ])
+    ])
 )
 
 btn_next_interval = dbc.Button(id="btn-next-interval", outline=True, color="dark",
@@ -384,36 +391,41 @@ footer = html.Div([
 @app.callback(
     Output("interv_ini", "invalid"),
     [Input("interv_ini", "value")],
-    [State("interv_fin", "value")]
+    [State("interv_fin", "value"),
+     State("duracion-total", "value")]
 )
-def check_valid_desde(num_desde, num_hasta):
+def check_valid_desde(num_desde, num_hasta, duracion_total):
     app.logger.info("@callback: INICIO 'check_valid_desde()'")
     app.logger.info("@callback: INICIO 'check_valid_hasta()' -> num_desde: " + str(num_desde))
     if num_desde is not None:
         is_valid = int(num_desde) >= 0 and (int(num_desde) < int(num_hasta) if num_hasta is not None else True)
+        is_valid = (int(num_desde) < int(duracion_total) ) and is_valid
         app.logger.info("@callback: INICIO 'check_valid_desde()' -> is_valid: " + str(is_valid))
         return not is_valid
-    return False
+    return True
 
 
 @app.callback(
     Output("interv_fin", "invalid"),
     [Input("interv_fin", "value")],
-    [State("interv_ini", "value")],
+    [State("interv_ini", "value"),
+     State("duracion-total", "value")],
 )
-def check_valid_hasta(num_hasta, num_desde):
+def check_valid_hasta(num_hasta, num_desde, duracion_total):
     app.logger.info("@callback: INICIO 'check_valid_hasta()'")
     app.logger.info("@callback: INICIO 'check_valid_hasta()' -> num_hasta: " + str(num_hasta))
     if num_hasta is not None:        
-        is_valid = num_hasta > num_desde
+        is_valid = int(num_hasta) > int(num_desde) and int(num_hasta) <= int(duracion_total)
         app.logger.info("@callback: INICIO 'check_valid_desde()' -> is_valid: " + str(is_valid))
         return not is_valid
-    return False
+    return True
 
 
 
 @app.callback(
-    Output("ver-intervalo", "disabled"),
+    [Output("ver-intervalo", "disabled"),
+     Output("btn-prev-interval", "disabled"),
+     Output("btn-next-interval", "disabled")],
     [Input("interv_ini", "invalid"),
      Input("interv_fin", "invalid")]
 )
@@ -423,8 +435,8 @@ def enable_btn_cargar(invalid_desde, invalid_hasta):
     if (invalid_desde is False) and (invalid_hasta is False):
         app.logger.info("@callback: INICIO 'enable_btn_cargar()' -> valid_desde: " + str(invalid_desde))
         app.logger.info("@callback: INICIO 'enable_btn_cargar()' -> valid_hasta: " + str(invalid_hasta))
-        return False
-    return True
+        return False, False, False
+    return True, True, True
 
 
 @app.callback(
@@ -653,7 +665,8 @@ def process_file(click_button, data_session, name_file):
     [Output("optLeads","disabled"),
      Output("optLeads","options"),
      Output("optLeads","value"),
-     Output("duracion-señal", "children")],
+     Output("msg-duracion", "children"),
+     Output("duracion-total", "value")],
     [Input("fname_process", "value")]
 )
 def select_first_lead(fname_uploaded):
@@ -664,15 +677,16 @@ def select_first_lead(fname_uploaded):
         ruta_file = utils.dir_files + fname_uploaded
         app.logger.info("@callback: 'select_first_lead()' -> ruta_file: " + str(ruta_file))
         app.logger.info("@callback: 'select_first_lead()' -> Obteniendo leads...")
-        optLeads, duracion = ecg_serv.get_nleads_and_duration(ruta_file)
+        optLeads, msg_duration, duration_min = ecg_serv.get_nleads_and_duration(ruta_file)
+        
         app.logger.info("@callback: 'select_first_lead()' -> optLeads: " + str(optLeads))
         app.logger.info("@callback: FIN 'select_first_lead()'")
-        text_duracion = "Duración total aprox: " + duracion
-        return False, optLeads, 1, text_duracion
+        text_duracion = "Duración total aprox: " + msg_duration
+        return False, optLeads, 1, text_duracion, duration_min
     
     app.logger.info("@callback: FIN 'select_first_lead()'")
 
-    return True, None, None, None
+    return True, None, None, None, ""
 
 
 
@@ -681,9 +695,7 @@ def select_first_lead(fname_uploaded):
      Output("formato-title", "children"),     
      Output("point-y", "disabled"),
      Output("interv_ini", "disabled"),
-     Output("interv_fin", "disabled"),
-     Output("btn-prev-interval", "disabled"),
-     Output("btn-next-interval", "disabled")],
+     Output("interv_fin", "disabled")],
     [Input("optLeads", "value"),
      Input("ver-intervalo", "n_clicks")],
     [State("fname_process", "value"),
@@ -707,8 +719,7 @@ def print_ecg_lead(selected_lead, ver_intervalo, fname_uploaded, interv_ini, int
     
     fig, title = ecg_serv.build_plot_by_lead(ruta_file, selected_lead, interv_ini, interv_fin)
     app.logger.info("@callback: FIN 'print_ecg()'")
-    return fig, title, False, False, False, False, False
-    
+    return fig, title, False, False, False
 
 
 @app.callback(
@@ -749,6 +760,9 @@ def change_diff_interv(ini_value, fin_value):
 )
 def next_interval_signal(next_btn, prev_btn, diff_interv, interv_ini, interv_fin, click_ver_interv):
     app.logger.info("@callback: INICIO 'next_interval_signal()'")
+    if interv_ini is None and interv_fin is None:
+        app.logger.info("@callback: FIN 'next_interval_signal()' by Exception: None values")
+        raise dash.exceptions.PreventUpdate()
     
     next_btn = int(next_btn)
     prev_btn = int(prev_btn)
