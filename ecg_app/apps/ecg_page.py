@@ -424,8 +424,7 @@ def check_valid_hasta(num_hasta, num_desde, duracion_total):
 
 @app.callback(
     [Output("ver-intervalo", "disabled"),
-     Output("btn-prev-interval", "disabled"),
-     Output("btn-next-interval", "disabled")],
+     Output("btn-prev-interval", "disabled")],
     [Input("interv_ini", "invalid"),
      Input("interv_fin", "invalid")]
 )
@@ -435,9 +434,25 @@ def enable_btn_cargar(invalid_desde, invalid_hasta):
     if (invalid_desde is False) and (invalid_hasta is False):
         app.logger.info("@callback: INICIO 'enable_btn_cargar()' -> valid_desde: " + str(invalid_desde))
         app.logger.info("@callback: INICIO 'enable_btn_cargar()' -> valid_hasta: " + str(invalid_hasta))
-        return False, False, False
-    return True, True, True
+        return False, False
+    return True, True
 
+
+
+@app.callback(
+    Output("btn-next-interval", "disabled"),
+    [Input("interv_ini", "invalid"),
+     Input("interv_fin", "invalid"),
+     Input("interv_fin", "value")],
+    [State("duracion-total", "value")]
+)
+def enable_btn_next(invalid_desde, invalid_hasta, interv_fin, duracion_total):
+    app.logger.info("@callback: INICIO 'enable_btn_next()'")
+    
+    if invalid_desde is False and invalid_hasta is False and interv_fin < duracion_total:
+        return False
+    return True
+    
 
 @app.callback(
     Output("modal", "is_open"),
@@ -747,8 +762,8 @@ def change_diff_interv(ini_value, fin_value):
 
 
 @app.callback(
-    [Output("interv_ini", "value"),
-     Output("interv_fin", "value"),
+    [Output("interv_fin", "value"),
+     Output("interv_ini", "value"),
      Output("ver-intervalo", "n_clicks")],
     [Input("btn-next-interval", "n_clicks_timestamp"),
      Input("btn-prev-interval", "n_clicks_timestamp")],
@@ -775,7 +790,7 @@ def next_interval_signal(next_btn, prev_btn, diff_interv, interv_ini, interv_fin
         
     app.logger.info("@callback: INICIO 'next_interval_signal()'")
     
-    return [new_interv_ini, new_interv_fin, click_ver_interv+1]
+    return [new_interv_fin, new_interv_ini, click_ver_interv+1]
     
 
 ###############################################################################

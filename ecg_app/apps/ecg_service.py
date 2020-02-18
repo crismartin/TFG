@@ -76,7 +76,7 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo):
     
 
 
-def get_delineator_graph(signal, fs):
+def get_delineator_graph(signal, fs, sampFrom):
     ondas = []
     #Delineador de la señal
     Pwav, QRS, Twav = wav.signalDelineation(signal,fs)
@@ -84,23 +84,24 @@ def get_delineator_graph(signal, fs):
     #app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  R: " + str(QRS[:,2]) )
     #app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  S: " + str(QRS[:,3]) )
     
-    ondaQ = get_qrs_wave(QRS, signal, fs, 1)
+    ondaQ = get_qrs_wave(QRS, signal, fs, sampFrom, 1)
     if ondaQ is not None:
         ondas.append(ondaQ)
-        
-    ondaR = get_qrs_wave(QRS, signal, fs, 2)
+    
+      
+    ondaR = get_qrs_wave(QRS, signal, fs, sampFrom, 2)
     if ondaR is not None: 
         ondas.append(ondaR)
     
-    ondaS = get_qrs_wave(QRS, signal, fs, 3)
+    ondaS = get_qrs_wave(QRS, signal, fs, sampFrom, 3)
     if ondaS is not None:
         ondas.append(ondaS)
     
     if Pwav != []:
-        pWaves = get_p_wave(Pwav, signal, fs)
+        pWaves = get_p_wave(Pwav, signal, sampFrom, fs)
         for p_wave in pWaves:
             ondas.append(p_wave) 
-
+    
     return ondas
 
 
@@ -131,7 +132,7 @@ def get_simbol_P(num_sample):
 
 
 
-def get_p_wave(pWav, signal, fs):
+def get_p_wave(pWav, signal, sampFrom, fs):
     traces = []
     
     #app.logger.info("[ecg_service] - 'get_p_wave()' ->  PWave: " + str(pWav) )
@@ -140,11 +141,16 @@ def get_p_wave(pWav, signal, fs):
     for i in n_wave:
         p_i = pWav[:,i]
         if p_i != []:        
+            ejeY = signal[p_i]
+            if sampFrom > 0:                
+                p_i = [sample + sampFrom for sample in p_i]
+                p_i = np.asarray(p_i)
+            
             ejeX = p_i/float(fs)
             ejeX = np.around(ejeX, decimals=6)
             ejeX = ejeX.tolist()
             #app.logger.info("[ecg_service] - 'get_p_wave()' ->  p_i: " + str(p_i) )
-            ejeY = signal[p_i]
+            
             simbolo_onda, text_position, name_wave = get_simbol_P(i)
             simbols = [simbolo_onda for i in range(len(ejeX))]
             
@@ -158,7 +164,10 @@ def get_p_wave(pWav, signal, fs):
     
 
 
-def get_qrs_wave(qrs, signal, fs, wave):
+def get_qrs_wave(qrs, signal, fs, sampFrom, wave):
+    
+    app.logger.info("[ecg_service] - 'get_qrs_wave()' ->  signal: " + str(signal) )
+    
     simbolo_onda = ''
     text_position = 'top left'
     if wave == 1:
@@ -172,12 +181,20 @@ def get_qrs_wave(qrs, signal, fs, wave):
     
     if simbolo_onda != '':
         qWave = qrs[:,wave]
-        if qWave != []:            
+        if qWave != []:                        
+            app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  qwave: " + str(qWave) )
+            ejeY = signal[qWave]
+            if sampFrom > 0:                
+                qWave = [sample + sampFrom for sample in qWave]
+                qWave = np.asarray(qWave)
+            
+            app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  qwave final: " + str(qWave) )
             ejeX = qWave/float(fs)
             ejeX = np.around(ejeX, decimals=6)
             ejeX = ejeX.tolist()
-            # app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  qwave: " + str(qWave) )
-            ejeY = signal[qWave]
+            
+            app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  ejeX: " + str(ejeX) )
+            
             simbols = [simbolo_onda for i in range(len(ejeX))]
     
             name_wave = 'Onda ' + str(simbolo_onda)
@@ -294,7 +311,7 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin):
         data_fig.append(ant_trace)
         
     #Datos de QRS    
-    qrs_wave = get_delineator_graph(ejeY, fs)
+    qrs_wave = get_delineator_graph(ejeY, fs, sampFrom)
     if qrs_wave != []:   
         for wave in qrs_wave:
             data_fig.append(wave) 
