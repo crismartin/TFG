@@ -271,12 +271,11 @@ load_intervals_inputs = dbc.Row(
                 dbc.InputGroup([
                     dbc.InputGroupAddon("min", addon_type="prepend"),
                     dbc.Input(
-                        type="number", id="interv_ini", disabled=True, debounce=True
-                    ),
-                    dbc.FormFeedback(
-                        "Número no válido",
-                        valid=False,
-                    ),
+                        type="number", id="interv_ini", 
+                        disabled=True, debounce=True,
+                        min=0,
+                        pattern="^[0-9]\d*$"
+                    ),                  
                 ]),
                 width=8,
             ),    
@@ -288,18 +287,27 @@ load_intervals_inputs = dbc.Row(
                 dbc.InputGroup([
                     dbc.InputGroupAddon("min", addon_type="prepend"),
                     dbc.Input(
-                        type="number", id="interv_fin", disabled=True, debounce=True
+                        type="number", id="interv_fin", 
+                        disabled=True, debounce=True,
+                        min=0,
+                        pattern="^[0-9]\d*$"
                     ),
-                    dbc.FormFeedback(
-                        "Número no válido",
-                        valid=False,
-                    ),
+                    
                 ]),
                 width=8,
             ),
         ], row=True),
         
         dbc.FormGroup([
+            dbc.Col([
+                dbc.Alert(
+                    "Intervalo incorrecto",
+                    id="alert-interval",
+                    color="danger",
+                    is_open=False,
+                    
+                )            
+            ],width=6),
             dbc.Col([
                 dbc.Button(id="ver-intervalo", color="success", disabled=True,
                    children=[
@@ -308,7 +316,7 @@ load_intervals_inputs = dbc.Row(
                 ),
                 dbc.Input(type="hidden", id="diff_interv")
             ]),
-        ], className="float-center", row=True),
+        ], row=True),
         
         dbc.FormGroup([
             dbc.Input(
@@ -339,8 +347,9 @@ move_controls = [dbc.Col(btn_prev_interval, width={"size": 2, "order": 1, "offse
                     dbc.Col(btn_next_interval, width={"size": 2, "order": "last"}) ]
 
 cnt_move_controls = dbc.Row(id="cnt-move-controls", 
-                         children=move_controls 
-                         )
+                         children=move_controls,
+                         style={"visibility":"hidden"}                         
+                    )
 
 
 
@@ -389,70 +398,21 @@ footer = html.Div([
 # Validaciones de campos
 
 @app.callback(
-    Output("interv_ini", "invalid"),
-    [Input("interv_ini", "value")],
-    [State("interv_fin", "value"),
-     State("duracion-total", "value")]
+    [Output("alert-interval", "is_open"),
+     Output("ver-intervalo", "disabled"),
+     Output("cnt-move-controls", "style")],
+    [Input("diff_interv", "value")]
 )
-def check_valid_desde(num_desde, num_hasta, duracion_total):
-    app.logger.info("@callback: INICIO 'check_valid_desde()'")
-    app.logger.info("@callback: INICIO 'check_valid_hasta()' -> num_desde: " + str(num_desde))
-    if num_desde is not None:
-        is_valid = int(num_desde) >= 0 and (int(num_desde) < int(num_hasta) if num_hasta is not None else True)
-        is_valid = (int(num_desde) < int(duracion_total) ) and is_valid
-        app.logger.info("@callback: INICIO 'check_valid_desde()' -> is_valid: " + str(is_valid))
-        return not is_valid
-    return True
-
-
-@app.callback(
-    Output("interv_fin", "invalid"),
-    [Input("interv_fin", "value")],
-    [State("interv_ini", "value"),
-     State("duracion-total", "value")],
-)
-def check_valid_hasta(num_hasta, num_desde, duracion_total):
-    app.logger.info("@callback: INICIO 'check_valid_hasta()'")
-    app.logger.info("@callback: INICIO 'check_valid_hasta()' -> num_hasta: " + str(num_hasta))
-    if num_hasta is not None:        
-        is_valid = int(num_hasta) > int(num_desde) and int(num_hasta) <= int(duracion_total)
-        app.logger.info("@callback: INICIO 'check_valid_desde()' -> is_valid: " + str(is_valid))
-        return not is_valid
-    return True
-
-
-
-@app.callback(
-    [Output("ver-intervalo", "disabled"),
-     Output("btn-prev-interval", "disabled")],
-    [Input("interv_ini", "invalid"),
-     Input("interv_fin", "invalid")]
-)
-def enable_btn_cargar(invalid_desde, invalid_hasta):
-    app.logger.info("@callback: INICIO 'enable_btn_cargar()'")
+def validar_intervalo(diff_interv):
+    app.logger.info("@callback: INICIO 'validar_intervalo()'")
+    if diff_interv == "" :
+        style = {"visibility":"hidden"}
+        return True, True, style
     
-    if (invalid_desde is False) and (invalid_hasta is False):
-        app.logger.info("@callback: INICIO 'enable_btn_cargar()' -> valid_desde: " + str(invalid_desde))
-        app.logger.info("@callback: INICIO 'enable_btn_cargar()' -> valid_hasta: " + str(invalid_hasta))
-        return False, False
-    return True, True
+    style = {"visibility":"visible"}
+    return False, False, style
 
 
-
-@app.callback(
-    Output("btn-next-interval", "disabled"),
-    [Input("interv_ini", "invalid"),
-     Input("interv_fin", "invalid"),
-     Input("interv_fin", "value")],
-    [State("duracion-total", "value")]
-)
-def enable_btn_next(invalid_desde, invalid_hasta, interv_fin, duracion_total):
-    app.logger.info("@callback: INICIO 'enable_btn_next()'")
-    
-    if invalid_desde is False and invalid_hasta is False and interv_fin < duracion_total:
-        return False
-    return True
-    
 
 @app.callback(
     Output("modal", "is_open"),
@@ -619,7 +579,7 @@ def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_
     app.logger.info( "@callback: 'updload_file() -> url_data: " + str(url_data) )  
     app.logger.info( "@callback: 'updload_file() -> url_head: " + str(url_head) )
     app.logger.info( "@callback: 'updload_file() -> url_ant: "  + str(url_ant) )
-    app.logger.info( "@callback: 'updload_file() -> token_user: " + str(utils.get_session_token(data_session)) )
+    #app.logger.info( "@callback: 'updload_file() -> token_user: " + str(utils.get_session_token(data_session)) )
     app.logger.info( "@callback: 'updload_file() -> list_nombres: " + str(list_nombres) )
     
     list_nombres = list_nombres or get_list_fname( url_head, url_ant, url_data )
@@ -681,7 +641,10 @@ def process_file(click_button, data_session, name_file):
      Output("optLeads","options"),
      Output("optLeads","value"),
      Output("msg-duracion", "children"),
-     Output("duracion-total", "value")],
+     Output("duracion-total", "value"),
+     Output("interv_ini", "max"),
+     Output("interv_fin", "max")
+     ],
     [Input("fname_process", "value")]
 )
 def select_first_lead(fname_uploaded):
@@ -697,11 +660,12 @@ def select_first_lead(fname_uploaded):
         app.logger.info("@callback: 'select_first_lead()' -> optLeads: " + str(optLeads))
         app.logger.info("@callback: FIN 'select_first_lead()'")
         text_duracion = "Duración total aprox: " + msg_duration
-        return False, optLeads, 1, text_duracion, duration_min
+        return False, optLeads, 1, text_duracion, duration_min, duration_min, duration_min
     
     app.logger.info("@callback: FIN 'select_first_lead()'")
 
-    return True, None, None, None, ""
+    return True, None, None, None, "", "", ""
+
 
 
 
@@ -761,6 +725,39 @@ def change_diff_interv(ini_value, fin_value):
 
 
 
+@app.callback(    
+     Output("btn-next-interval", "disabled"),
+    [Input("ver-intervalo", "n_clicks"),
+     Input("interv_fin", "value")],
+    [State("duracion-total", "value")]
+)
+def enable_btn_next(btn_cargar, interv_fin, duracion):
+    app.logger.info("@callback: INICIO 'enable_btn_next()'")
+    if btn_cargar and (int(interv_fin) < int(duracion)):
+        app.logger.info("@callback: INICIO 'enable_btn_next()' -> return True")
+        return False
+
+    app.logger.info("@callback: INICIO 'enable_btn_next()' -> return False")
+    return True
+
+
+@app.callback(    
+     Output("btn-prev-interval", "disabled"),
+    [Input("ver-intervalo", "n_clicks"),
+     Input("interv_ini", "value")],
+)
+def enable_btn_prev(btn_cargar, interv_ini):
+    app.logger.info("@callback: INICIO 'enable_btn_prev()'")
+        
+    if btn_cargar and (int(interv_ini) > 0):
+        app.logger.info("@callback: INICIO 'enable_btn_prev()' -> return True")
+        return False
+
+    app.logger.info("@callback: INICIO 'enable_btn_prev()' -> return False")
+    return True
+
+
+
 @app.callback(
     [Output("interv_fin", "value"),
      Output("interv_ini", "value"),
@@ -770,10 +767,11 @@ def change_diff_interv(ini_value, fin_value):
     [State("diff_interv", "value"),
      State("interv_ini", "value"),
      State("interv_fin", "value"),
-     State("ver-intervalo", "n_clicks")]
+     State("ver-intervalo", "n_clicks"),
+     State("duracion-total", "value")]
     
 )
-def next_interval_signal(next_btn, prev_btn, diff_interv, interv_ini, interv_fin, click_ver_interv):
+def next_interval_signal(next_btn, prev_btn, diff_interv, interv_ini, interv_fin, click_ver_interv, duracion):
     app.logger.info("@callback: INICIO 'next_interval_signal()'")
     if interv_ini is None and interv_fin is None:
         app.logger.info("@callback: FIN 'next_interval_signal()' by Exception: None values")
@@ -787,6 +785,13 @@ def next_interval_signal(next_btn, prev_btn, diff_interv, interv_ini, interv_fin
     
     new_interv_ini = interv_ini + diff_interv
     new_interv_fin = interv_fin + diff_interv
+    duracion = int(duracion)
+    
+    if new_interv_ini < 0:
+        new_interv_ini = 0
+    
+    if new_interv_fin > duracion:
+        new_interv_fin = duracion
         
     app.logger.info("@callback: INICIO 'next_interval_signal()'")
     
