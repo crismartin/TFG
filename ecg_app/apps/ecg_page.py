@@ -161,6 +161,65 @@ modal_component = html.Div([
     ]),
 ])
 
+
+##############################################################################
+## Modal historico de ficheros
+table_header = [
+    html.Thead(html.Tr([html.Th("Nombre Fichero"), html.Th("Formato"), html.Th() ]))
+]
+
+row1 = html.Tr([html.Td("100"), 
+                html.Td("Physionet"), 
+                html.Td(
+                     dbc.Button(n_clicks=None, className="mr-1", color="success",
+                                children=[
+                                    html.Span(["Cargar ",html.I(className="fas fa-play ml-2")])
+                                 ])
+                     )                
+                ])
+
+row2 = html.Tr([html.Td("ishne"), 
+                html.Td("ISHNE"),
+                html.Td(
+                    dbc.Button(n_clicks=None, className="mr-1", color="success",
+                                children=[
+                                    html.Span(["Cargar ",html.I(className="fas fa-play ml-2")])
+                                 ])                    
+                    )
+                ])
+
+row3 = html.Tr([html.Td("1-300m"), 
+                html.Td("ISHNE"),
+                html.Td(
+                    dbc.Button(n_clicks=None, className="mr-1", color="success",
+                                children=[
+                                    html.Span(["Cargar ", html.I(className="fas fa-play ml-2")])
+                                 ])
+                    )
+                ])
+
+
+table_body = [html.Tbody([row1, row2, row3])]
+
+table = dbc.Table(table_header + table_body, bordered=True, style={'textAlign': 'center'})
+
+
+btn_cerrar_modal_hist = dbc.Button(id="close-hist", n_clicks=None, className="mr-1",
+                              children=[
+                                html.Span([html.I(className="fas fa-times ml-2"), " Cerrar"])
+                             ])
+
+modal_historial = html.Div([
+    dbc.ModalHeader("Historial de ficheros"),
+    dbc.ModalBody([
+        table
+    ]),
+    dbc.ModalFooter([
+        html.Div( id="cnt-cerrar-hist",    children=[btn_cerrar_modal_hist] )
+    ]),
+])
+##############################################################################
+
 ecg_fig = dcc.Graph(id='ecg-fig', 
               figure=fig_default,
               style={'height': 600, 'width':900})
@@ -175,6 +234,12 @@ display_ecg = dbc.FormGroup([
             size = "lg",
             backdrop = "static"
         ),
+        dbc.Modal(
+            children = modal_historial,
+            id = "modal-historico",
+            size = "lg",
+            backdrop = "static"
+        ),
     ]),
     
     html.Div(id="cnt-ecg-fig", children=ecg_fig)
@@ -183,7 +248,11 @@ display_ecg = dbc.FormGroup([
         
 menu_ecg = html.Div([
     dbc.Button("HRV", id="hrvGraph", outline=True, color="danger", className="mr-1"),
-    dbc.Button("Otro",id="otroGraph", outline=True, color="secondary", className="mr-1"),
+    dbc.Button(id="otroGraph", outline=True, color="secondary", className="mr-1",
+               children=[
+                       html.Span([html.I(className="fas fa-folder ml-2"), " Historial de ficheros"])
+                       ]
+               ),
     dbc.Button(id="open-upfile",
                color="primary", 
                children=[
@@ -426,6 +495,20 @@ def toggle_modal(n1, n2, n3, is_open):
     if (n1 or n2 or n3):
         return not is_open    
     return is_open
+
+
+
+@app.callback(
+    Output("modal-historico",   "is_open"),
+    [Input("otroGraph",         "n_clicks"),
+     Input("close-hist",        "n_clicks")],
+    [State("modal-historico",   "is_open")],
+)
+def toggle_modal_hist(n1, n2, is_open):
+    if (n1 or n2):
+        return not is_open
+    return is_open
+
 
 
 @app.callback(
