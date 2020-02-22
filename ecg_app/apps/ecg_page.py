@@ -480,20 +480,20 @@ def toggle_modal(n1, n2, n3, is_open):
     Output('tblHistFiles',      "selected_rows"),
     Output('tblHistFiles',      "data")],
     [Input("otroGraph",         "n_clicks"),
-     Input("close-hist",        "n_clicks")],
+     Input("close-hist",        "n_clicks"),
+     Input("load-file-hist",    "n_clicks")],
     [State("modal-historico",   "is_open"),
      State("session",           "data")],
 )
-def toggle_modal_hist(open_click, close_click, is_open, session):
+def toggle_modal_hist(open_click, close_click, load_click, is_open, session):
     historial_files = []
-    if (open_click or close_click):
+    if (open_click or close_click or load_click):
         app.logger.info("@callback: INICIO 'toggle_modal_hist()' -> aqui")
         if(open_click):            
             token_session = session["token_session"]
             app.logger.info("@callback: INICIO 'toggle_modal_hist()' -> token_session: " + str(token_session))
             historial_files = ecg_serv.get_list_files_user(token_session)
-            
-        
+                    
         return not is_open, [], historial_files
     
     app.logger.info("@callback: INICIO 'toggle_modal_hist()' -> aca")
@@ -684,26 +684,35 @@ def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_
 
 
 @app.callback(
-    Output("fname_process", "value"),
-    [Input("proces-upfile", "n_clicks")],
-    [State("session", "data"),
-     State("lbl_name_file", "children")]
+    Output("fname_process",     "value"),
+    [Input("proces-upfile",     "n_clicks"),
+     Input("load-file-hist",    "n_clicks")],
+    [State("session",           "data"),
+     State("lbl_name_file",     "children"),
+     State("tblHistFiles",      "derived_virtual_data"),
+     State("tblHistFiles",      "derived_virtual_selected_rows")]
 )
-def process_file(click_button, data_session, name_file):
+def process_file(click_process, click_load, data_session, name_file, rows, row_select):
     app.logger.info("@callback: INICIO 'process_file()'")
     
     app.logger.info("@callback: 'process_file()' -> name_file: " + str(name_file) )
+    app.logger.info("@callback: 'process_file()' -> row_select: " + str(row_select) )
     
-    if click_button <= 0:
+    if (click_process is None or click_process <= 0) and (click_load is None or click_load <= 0):
         app.logger.info("@callback: FIN 'process_file()': 'click' Exception")
         raise dash.exceptions.PreventUpdate()
-
+    
     token_user = utils.get_session_token(data_session)
-
-    app.logger.info("@callback: FIN 'process_file()'")
-    ruta_file = token_user + "/" + name_file
+    ruta_file = token_user + "/"
+    
+    if row_select != []:
+        index_element = row_select[0]
+        name_file = rows[index_element]["Nombre"]    
+    
+    ruta_file += name_file
     
     app.logger.info("@callback: 'process_file()' -> ruta_file: " + str(ruta_file))
+    app.logger.info("@callback: FIN 'process_file()'")
     
     return ruta_file
 
@@ -738,7 +747,6 @@ def select_first_lead(fname_uploaded):
     app.logger.info("@callback: FIN 'select_first_lead()'")
 
     return True, None, None, None, "", "", ""
-
 
 
 
@@ -894,8 +902,6 @@ def tbl_hist_row_selected(rows, derived_virtual_selected_rows):
     
     
 
-    
-    
 ###############################################################################
 ############################## Main layout ####################################
 ###############################################################################
