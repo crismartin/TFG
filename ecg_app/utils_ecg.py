@@ -21,7 +21,7 @@ dir_files = os.getcwd() + cte.DIR_UPLOAD_FILES
 # Para obtener token de session
 def generateNewTokenSession():
     token_user = random.randint(cte.MIN_RANDOM_SESSION, cte.MAX_RANDOM_SESSION)
-    return "user_"+str(token_user)    
+    return "session_"+str(token_user)    
 
 # Obtener el valor de la session
 def get_session_token(data_session):    

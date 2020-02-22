@@ -15,6 +15,8 @@ from apps import ecg_page
 import os
 from flask import send_from_directory
 import utils_ecg as utils
+from database import db
+
 
 
 navbar = dbc.NavbarSimple(
@@ -47,17 +49,7 @@ app.layout=html.Div([
 ])
 
 
-def set_token_session(data_session):
-    app.logger.info("'set_token_session()' -> data_session: " + str(data_session ) )
-    
-    if data_session is None:        
-        app.logger.info("'set_token_session()' -> llamando a 'generateNewTokenSession'" )
-        token_session = utils.generateNewTokenSession()
-        data_session = {"token_session": token_session}
-    else:
-        app.logger.info("'set_token_session()' -> return value in storage" )      
-   
-    return data_session
+
 
 
 @app.callback([Output("page-content", "children"),
@@ -67,9 +59,19 @@ def set_token_session(data_session):
 )
 def display_page(pathname, data):
     if pathname == '/ecg':
-        data = set_token_session(data)
+        data = db.set_token_session(data)
+        #app.logger.info("'set_token_session()' -> data:"  + str(data["token_session"]) )
+        
+        # guardo el token del usuario
+        #usuarios = ecgDB.db.Usuarios
+        #usuarios.insert({"token" : str(data["token_session"]), "nick" : "cristian"})
+        
         return [ecg_page.layout(), data]
+
     return [None, data]
+
+
+
 
 @app.server.route('/static/<path:path>')
 def static_file(path):
