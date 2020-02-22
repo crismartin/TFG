@@ -45,3 +45,57 @@ Instalacion WFDB
 
 Instalacion WGET
 - conda install -c anaconda wget
+
+Instalacion Flask
+- 
+
+Instalacion MongoDB
+- conda install -c anaconda mongodb
+
+Instalacion Pymongo
+- conda install -c anaconda pymongo
+
+Instalacion Flask PyMongo
+- pip install Flask-PyMongo
+
+Tenemos dos instancias: mongod y mongo
+- mongod -> proceso que se ejecuta para lanzar el servidor de mongo
+- mongo  -> proceso que se ejecuta para lanzar el cliente de mongo
+
+Para configurar mongodb
+	- Crear el directorio "/data/db"
+	- Darle permisos de solo lectura al directorio: "sudo chown -R $USER /data/db"
+	- Para hacer andar el server de la bbdd: mongod
+	- Para realizar peticiones a la BBDD, en otra terminal introducir: mongo 
+
+	Ahora, hay que crear un usuario para realizar con autenticación las conexiones desde Flask
+	
+	Para crear el usuario:
+		- Iniciamos mongoDB sin control de acceso:
+			mongod --port 27017 --dbpath
+
+		- Conectamos desde el cliente al servidor:
+			mongo --port 27017
+
+		- Creamos el usuario administrador:
+			use admin
+			db.createUser({user:"hexxa", pwd:"1708bilens",roles:[{role:"userAdminAnyDatabase",db: "admin"}], mechanisms: [ "SCRAM-SHA-1","SCRAM-SHA-256"]})
+
+		- Reiniciamos el servidor de mongo, pero ahora con control de acceso:
+			mongod --auth --port 27017 --dbpath /data/db1
+
+		- Entramos desde el cliente indicando nuestras credenciales:
+			mongo -u "hexxa" -p "1708bilens" --authenticationDatabase "admin"	
+
+		- Creamos la BBDD para nuestra aplicacion:
+			use EcgDB
+
+		- Salimos, ahora entramos en la BBDD para agregar usuarios:
+			mongo EcgDB -u "hexxa" -p "1708bilens" --authenticationDatabase "admin"
+
+		- Creamos el usuario con roles de escritura/lectura para la BBDD "EcgDB"
+			db.createUser({user:"hexxa", pwd:"1708bilens",roles:[{role:"userAdminAnyDatabase",db: "admin"}], mechanisms: [ "SCRAM-SHA-1","SCRAM-SHA-256"]})
+
+		- En el servidor de Flask, realizamos la configuración para poder acceder a la BBDD:
+			(mirar el fichero app.py, en server.config)
+		

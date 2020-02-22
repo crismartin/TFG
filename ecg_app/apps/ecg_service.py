@@ -13,6 +13,7 @@ import ecg_reader.ecg_factory as ecgf
 
 import WTdelineator.WTdelineator as wav
 
+from database import db
 
 import plotly.graph_objs as go
 
@@ -572,3 +573,14 @@ def is_file_soported(file_route):
         print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error interno al leer datos del fichero " + str(file_route) )
         return False, filename_aux, False
     
+    
+
+def set_token_session(data_session):
+    return db.set_token_session(data_session)  
+
+def get_list_files_user(token_session):
+    return db.get_list_files_user(token_session)
+
+def insert_file_session(token_session):
+    return db.insert_file_session(token_session)
+

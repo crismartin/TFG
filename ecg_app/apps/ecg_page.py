@@ -10,6 +10,7 @@ import dash
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_table
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 
@@ -164,45 +165,20 @@ modal_component = html.Div([
 
 ##############################################################################
 ## Modal historico de ficheros
-table_header = [
-    html.Thead(html.Tr([html.Th("Nombre Fichero"), html.Th("Formato"), html.Th() ]))
-]
 
-row1 = html.Tr([html.Td("100"), 
-                html.Td("Physionet"), 
-                html.Td(
-                     dbc.Button(n_clicks=None, className="mr-1", color="success",
+table = dash_table.DataTable(
+    id="tblHistFiles",
+    columns=[{"name": i, "id": i, "hidden": True if i=="Id" else False } for i in ["Id", "Nombre", "Formato"]
+             ],    
+    row_selectable="single"
+)
+
+
+btn_cargar_modal_hist = dbc.Button(id="load-file-hist", n_clicks=None, className="mr-1", color="success",
                                 children=[
                                     html.Span(["Cargar ",html.I(className="fas fa-play ml-2")])
-                                 ])
-                     )                
-                ])
-
-row2 = html.Tr([html.Td("ishne"), 
-                html.Td("ISHNE"),
-                html.Td(
-                    dbc.Button(n_clicks=None, className="mr-1", color="success",
-                                children=[
-                                    html.Span(["Cargar ",html.I(className="fas fa-play ml-2")])
-                                 ])                    
-                    )
-                ])
-
-row3 = html.Tr([html.Td("1-300m"), 
-                html.Td("ISHNE"),
-                html.Td(
-                    dbc.Button(n_clicks=None, className="mr-1", color="success",
-                                children=[
-                                    html.Span(["Cargar ", html.I(className="fas fa-play ml-2")])
-                                 ])
-                    )
-                ])
-
-
-table_body = [html.Tbody([row1, row2, row3])]
-
-table = dbc.Table(table_header + table_body, bordered=True, style={'textAlign': 'center'})
-
+                                 ], disabled=True                    
+                        )
 
 btn_cerrar_modal_hist = dbc.Button(id="close-hist", n_clicks=None, className="mr-1",
                               children=[
@@ -215,7 +191,8 @@ modal_historial = html.Div([
         table
     ]),
     dbc.ModalFooter([
-        html.Div( id="cnt-cerrar-hist",    children=[btn_cerrar_modal_hist] )
+        html.Div( id="cnt-cerrar-hist",    children=[btn_cerrar_modal_hist] ),
+        html.Div( id="cnt-load-hist",    children=[btn_cargar_modal_hist] )        
     ]),
 ])
 ##############################################################################
@@ -499,15 +476,28 @@ def toggle_modal(n1, n2, n3, is_open):
 
 
 @app.callback(
-    Output("modal-historico",   "is_open"),
+    [Output("modal-historico",  "is_open"),
+    Output('tblHistFiles',      "selected_rows"),
+    Output('tblHistFiles',      "data")],
     [Input("otroGraph",         "n_clicks"),
      Input("close-hist",        "n_clicks")],
-    [State("modal-historico",   "is_open")],
+    [State("modal-historico",   "is_open"),
+     State("session",           "data")],
 )
-def toggle_modal_hist(n1, n2, is_open):
-    if (n1 or n2):
-        return not is_open
-    return is_open
+def toggle_modal_hist(open_click, close_click, is_open, session):
+    historial_files = []
+    if (open_click or close_click):
+        app.logger.info("@callback: INICIO 'toggle_modal_hist()' -> aqui")
+        if(open_click):            
+            token_session = session["token_session"]
+            app.logger.info("@callback: INICIO 'toggle_modal_hist()' -> token_session: " + str(token_session))
+            historial_files = ecg_serv.get_list_files_user(token_session)
+            
+        
+        return not is_open, [], historial_files
+    
+    app.logger.info("@callback: INICIO 'toggle_modal_hist()' -> aca")
+    return is_open, [], historial_files
 
 
 
@@ -881,6 +871,31 @@ def next_interval_signal(next_btn, prev_btn, diff_interv, interv_ini, interv_fin
     return [new_interv_fin, new_interv_ini, click_ver_interv+1]
     
 
+
+###############################################################################
+#### CALLBACK DE TABLAS    
+###############################################################################
+
+@app.callback(
+    Output('load-file-hist',    "disabled"),
+    [Input('tblHistFiles',      "derived_virtual_data"),
+     Input('tblHistFiles',      "derived_virtual_selected_rows")])
+def tbl_hist_row_selected(rows, derived_virtual_selected_rows):
+    app.logger.info("@callback: INICIO 'tbl_hist_row_selected()'")
+    
+    app.logger.info("@callback: INICIO 'tbl_hist_row_selected()' -> rows: " + str(rows))
+    app.logger.info("@callback: INICIO 'tbl_hist_row_selected()' -> derived_virtual_selected_rows: " + str(derived_virtual_selected_rows))
+    
+    if derived_virtual_selected_rows is None or derived_virtual_selected_rows == []:
+        return True
+    
+    return False
+
+    
+    
+
+    
+    
 ###############################################################################
 ############################## Main layout ####################################
 ###############################################################################

@@ -15,7 +15,7 @@ from apps import ecg_page
 import os
 from flask import send_from_directory
 import utils_ecg as utils
-from database import db
+import apps.ecg_service as ecg_serv
 
 
 
@@ -59,7 +59,7 @@ app.layout=html.Div([
 )
 def display_page(pathname, data):
     if pathname == '/ecg':
-        data = db.set_token_session(data)
+        data = ecg_serv.set_token_session(data)
         #app.logger.info("'set_token_session()' -> data:"  + str(data["token_session"]) )
         
         # guardo el token del usuario
