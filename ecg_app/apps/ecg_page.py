@@ -705,7 +705,7 @@ def process_file(click_process, click_load, data_session, name_file, rows, row_s
     token_user = utils.get_session_token(data_session)
     ruta_file = token_user + "/"
     
-    if row_select != []:
+    if row_select is not None and row_select != []:
         index_element = row_select[0]
         name_file = rows[index_element]["Nombre"]    
     

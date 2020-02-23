@@ -34,6 +34,7 @@ def get_nleads_and_duration(file_name):
 
     if ecg.header.signal_len > 0:
         tamanio = ecg.header.signal_len // ecg.header.samplingRate
+        app.logger.info("[ecg_service] - 'get_nleads_array()' ->  tamanio: " + str(tamanio) )
         msg_duration = utils.convert_seg_to_hhmm(tamanio)
         duration_in_min = utils.sec_to_min(tamanio)
        
@@ -279,7 +280,7 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin):
     
     signals = ecg.signal
     
-    title = "Formato " + ecg.typeECG
+    title = ecg.fileName + " | Formato " + ecg.typeECG
     
     
     app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  nLeads: " + str(nLeads) )
@@ -324,9 +325,11 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin):
 
 
 
-def delete_file_system(token_user, name_file):
-    ruta_fichero = token_user + "/" + name_file
+def delete_file_system(token_session, name_file):
+    app.logger.info( "[ecg_service] - 'delete_file_system()' -> name_file: " + str(name_file))
+    ruta_fichero = token_session + "/" + name_file
     utils.borrar_fichero(ruta_fichero)
+    borrado = delete_file_session(name_file, token_session)
     
 
 
@@ -495,7 +498,7 @@ def check_save_files(list_files):
 
 
 # guardar ficheros
-def guardar_ficheros(list_contents, list_nombres, token_user):
+def guardar_ficheros(list_contents, list_nombres, token_session):
     
     num_files = len(list_nombres)
 
@@ -504,16 +507,27 @@ def guardar_ficheros(list_contents, list_nombres, token_user):
     if msg_error is not None:
         return msg_error, False, None
     
+    #Paso 2.9 Compruebo si el nombre raiz del fichero no existe en BBDD para esta sesion
+    nom_raiz_fichero = utils.get_name_file(list_nombres[0], False)
+    es_fichero_repetido = exist_file_user_by_name(nom_raiz_fichero, token_session)
+    if es_fichero_repetido is not None and es_fichero_repetido == True:
+        msg_error = "Error: El fichero ya existe. Utilice el historial de ficheros para cargarlo, "
+        msg_error += "cambie el nombre del archivo a subir o borre los ficheros antiguos y suba los nuevos"
+        return msg_error, False, None
+    
+    elif es_fichero_repetido is None:
+        msg_error = "Warning: Se ha encontrado un error de sesion. Vuelva a cargar la página"
+        return msg_error, False, None
+    
     #Paso 3
-    list_err_files = upload_files(num_files, list_contents, list_nombres, token_user)
+    list_err_files = upload_files(num_files, list_contents, list_nombres, token_session)
     msg_error = check_save_files(list_err_files)
     if msg_error is not None:
         return msg_error, False, None
     
-    #Paso 4, si todo ha ido bien, compruebo si el fichero es de un formato valido
-    nom_raiz_fichero = utils.get_name_file(list_nombres[0], False)
-    ruta_abs_file = utils.dir_files + token_user + "/" + nom_raiz_fichero
-    fichero_valido, nombre_file, hay_anotaciones  = is_file_soported(ruta_abs_file)
+    #Paso 4, si todo ha ido bien, compruebo si el fichero es de un formato valido    
+    ruta_abs_file = utils.dir_files + token_session + "/" + nom_raiz_fichero
+    fichero_valido, nombre_file, hay_anotaciones, formato  = is_file_soported(ruta_abs_file)
     
     app.logger.info( "[ecg_service] - 'guardar_ficheros()' -> INICIO PASO 4. Comprobar si tiene un formato soportado" )
     app.logger.info( "[ecg_service] - 'guardar_ficheros()' -> fichero_valido: " + str(fichero_valido) )
@@ -521,11 +535,14 @@ def guardar_ficheros(list_contents, list_nombres, token_user):
     app.logger.info( "[ecg_service] - 'guardar_ficheros()' -> hay_anotaciones: " + str(hay_anotaciones) )
     
     if fichero_valido :
+        # creo un registro del fichero en la BBDD
+        insert_file_session(nombre_file, formato, token_session)
+        
         if not hay_anotaciones:
             app.logger.info( "[ecg_service] - 'guardar_ficheros()' -> no hay_anotaciones ")
             msg_error = "Warning: El fichero de anotaciones no existe, no se ha leído correctamente o no es válido"
             return msg_error, True, nombre_file
-        
+
         return None, True, nombre_file
     
     msg_error = "Error! El fichero de datos no se ha podido leer correctamente."
@@ -537,7 +554,7 @@ def guardar_ficheros(list_contents, list_nombres, token_user):
 
 # Comprueba si el fichero es de los formatos soportados o no
 def is_file_soported(file_route):
-
+    formato = ""
     ecgFactory = ecgf.ECGFactory()
     filename_aux = utils.get_name_file(file_route, False)
     
@@ -546,41 +563,97 @@ def is_file_soported(file_route):
         header = ecg_data.header
         if header is None or header == []:
             print( "[ecg_service] - 'is_file_soported()' -> Cabecera vacía para el fichero " + str(file_route) )    
-            return False, filename_aux, False
+            return False, filename_aux, False, formato
         
         sig_len = ecg_data.header.signal_len
         if sig_len is None or sig_len <= 0:
             print( "[ecg_service] - 'is_file_soported()' -> No hay datos de señal ECG para fichero " + str(file_route) )    
-            return False, filename_aux, False
+            return False, filename_aux, False, formato
         
         app.logger.info( "[ecg_service] - 'is_file_soported()' -> sig_len: " + str(sig_len))
         filename = ecg_data.fileName
+        formato = ecg_data.typeECG
         ecg_data.read_annotations(0, sig_len)
-        annt = ecg_data.annt
+        annt = ecg_data.annt        
         app.logger.info( "[ecg_service] - 'guardar_ficheros()' -> annt: " + str(annt))
         print( "[ecg_service] - 'is_file_soported()' -> fileName: " + str(filename) )
-        return True, filename, annt is not None and annt.ann_len > 0
+        return True, filename, annt is not None and annt.ann_len > 0, formato
     
     except ValueError:
         print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error al comprobar el fichero " + str(file_route) )
-        return False, filename_aux, False
+        return False, filename_aux, False, formato
     
     except IOError:
         print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error de lectura al comprobar el fichero " + str(file_route) )    
-        return False, filename_aux, False
+        return False, filename_aux, False, formato
     
     except:
         print( "[ecg_service] - 'is_file_soported()' -> Ha ocurrido un error interno al leer datos del fichero " + str(file_route) )
-        return False, filename_aux, False
+        return False, filename_aux, False, formato
     
     
+
+
 
 def set_token_session(data_session):
     return db.set_token_session(data_session)  
 
-def get_list_files_user(token_session):
-    return db.get_list_files_user(token_session)
 
-def insert_file_session(token_session):
-    return db.insert_file_session(token_session)
+# Devuelve la lista de ficheros asociados a una sesion de usuario
+def get_list_files_user(token_session):    
+    try:
+        return db.get_list_files_user(token_session)
+    except RuntimeError:
+        app.logger.info("[ecg_service] - 'insert_file_session()' -> Token de session incorrecto" )
+    
+    return None        
 
+
+# Devuelve el fichero de nombre "filename" asociado a una sesion de usuario 
+def get_file_user_by_name(filename, token_session):
+    try:
+        return db.get_file_user_by_name(filename, token_session)
+    except RuntimeError:
+        app.logger.info("[ecg_service] - 'insert_file_session()' -> Token de session incorrecto" )
+    
+    return None
+
+
+# Compruebo si existe o no el fichero de nombre "filename" asociado una sesion de usuario
+def exist_file_user_by_name(filename, token_session):
+    try:
+        app.logger.info("[ecg_service] - 'exist_file_user_by_name()' -> filename: " + str(filename) )
+        fichero = db.get_file_user_by_name(filename, token_session)
+        return fichero is not None
+    except RuntimeError:
+        app.logger.info("[ecg_service] - 'insert_file_session()' -> Token de session incorrecto" )
+    
+    return None
+
+
+# Inserto el fichero en la BBDD, siempre que el fichero no tenga un nombre repetido
+def insert_file_session(nombre_file, formato, token_session):
+    try:
+        app.logger.info("[ecg_service] - 'insert_file_session()' -> filename: " + str(nombre_file) )
+        app.logger.info("[ecg_service] - 'insert_file_session()' -> formato: " + str(formato) )
+        id_file = db.insert_file_session(nombre_file, formato, token_session)
+        return id_file
+    except RuntimeError:
+        app.logger.info("[ecg_service] - 'insert_file_session()' -> Token de session incorrecto")
+    
+    return None
+
+
+# Elimina el fichero de nombre "nombre_file" asociado a una sesion de usuario
+def delete_file_session(nombre_file, token_session):
+    try:
+        app.logger.info("[ecg_service] - 'delete_file_session()' -> filename: " + str(nombre_file) )
+        borrado = db.delete_file_session(nombre_file, token_session)
+        if borrado is True:
+            msg = "El fichero con nombre '"+ str(nombre_file) + "' no se ha borrado correctamente en BBDD"
+            app.logger.info( "[ecg_service] - 'delete_file_system()' -> " + str(msg))
+        
+    except RuntimeError:
+        app.logger.info("[ecg_service] - 'delete_file_session()' -> Token de session incorrecto")
+    
+    
