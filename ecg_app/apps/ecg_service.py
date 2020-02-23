@@ -36,6 +36,7 @@ def get_nleads_and_duration(file_name):
         tamanio = ecg.header.signal_len // ecg.header.samplingRate
         app.logger.info("[ecg_service] - 'get_nleads_array()' ->  tamanio: " + str(tamanio) )
         msg_duration = utils.convert_seg_to_hhmm(tamanio)
+        app.logger.info("[ecg_service] - 'get_nleads_array()' ->  msg_duration: " + str(msg_duration) )
         duration_in_min = utils.sec_to_min(tamanio)
        
     app.logger.info("[ecg_service] - 'get_nleads_array()' ->  duration: " + str(duration_in_min) )
@@ -74,6 +75,8 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo):
         ant_trace = go.Scatter(x = ant_ejeX, y = ant_ejeY,
                         name = 'Anotaciones', mode='markers+text', 
                         text=simbols, textposition="top right")
+    
+    app.logger.info("[ecg_service] - END 'build_data_annt()'")
     return ant_trace
     
 
@@ -81,7 +84,9 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo):
 def get_delineator_graph(signal, fs, sampFrom):
     ondas = []
     #Delineador de la señal
+    app.logger.info("[ecg_service] - 'get_delineator_graph()' -> calculando signalDelination")
     Pwav, QRS, Twav = wav.signalDelineation(signal,fs)
+    app.logger.info("[ecg_service] - 'get_delineator_graph()' -> fin signalDelination")
     #app.logger.info("[ecg_service] - 'get_qrs_waves()' ->  Q: " + str(len(QRS[:,1])) )
     #app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  R: " + str(QRS[:,2]) )
     #app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  S: " + str(QRS[:,3]) )
@@ -254,10 +259,10 @@ def get_interval_samples(interv_ini, interv_fin, signal_len, fs):
         sampTo = utils.min_to_sec(num_fin) * fs
         
         if sampFrom < signal_len and sampTo > sampFrom and sampTo <= signal_len:
-            return sampFrom, sampTo
-        
+            return int(sampFrom), int(sampTo)
     
-    return 0, 10000 if signal_len > 100000 else signal_len
+    sampFrom = int(60*fs)
+    return 0, sampFrom if sampFrom <= signal_len else signal_len
         
     
 
@@ -272,7 +277,10 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin):
     nLeads = ecg.header.nLeads
     fs = ecg.header.samplingRate
     
-    sampFrom, sampTo = get_interval_samples(interv_ini, interv_fin, signal_len, fs)
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  signal_len: " + str(signal_len) )
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  fs: " + str(fs) )
+    
+    sampFrom, sampTo = get_interval_samples(interv_ini, interv_fin, signal_len, fs)    
     app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  sampFrom: " + str(sampFrom) )
     app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  sampTo: " + str(sampTo) )
     
@@ -313,23 +321,31 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin):
         data_fig.append(ant_trace)
         
     #Datos de QRS    
+        
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' -> sampFrom: " + str(sampFrom))    
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' -> fs: " + str(fs))
+    
     qrs_wave = get_delineator_graph(ejeY, fs, sampFrom)
     if qrs_wave != []:   
         for wave in qrs_wave:
             data_fig.append(wave) 
+            
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' -> Fin datos QRS. Creando objeto grafica")
     
     #Objeto grafica
     fig = go.Figure(data = data_fig, layout = layout)
     
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' -> Fin creacion objeto grafica. Devolviendo grafico")
+    
     return fig, title
 
 
-
+# Borrar un fichero en el sistema y en BBDD
 def delete_file_system(token_session, name_file):
     app.logger.info( "[ecg_service] - 'delete_file_system()' -> name_file: " + str(name_file))
     ruta_fichero = token_session + "/" + name_file
     utils.borrar_fichero(ruta_fichero)
-    borrado = delete_file_session(name_file, token_session)
+    delete_file_session(name_file, token_session)
     
 
 

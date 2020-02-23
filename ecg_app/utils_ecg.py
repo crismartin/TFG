@@ -141,11 +141,15 @@ def convert_seg_to_hhmm(num_sec):
     result = ""
     hor=(int(num_sec/3600))
     minu=int((num_sec-(hor*3600))/60)
+    sec = int(num_sec) / 60
     if hor != 0:
         result += str(hor)+" horas "
         
     if minu != 0:
         result += str(minu)+" min "
+        
+    if sec <= 1:
+        result += str(num_sec) + " seg"
     
     return result
 

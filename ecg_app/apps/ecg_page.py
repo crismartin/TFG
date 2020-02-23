@@ -719,11 +719,11 @@ def process_file(click_process, click_load, data_session, name_file, rows, row_s
 
 
 @app.callback(
-    [Output("optLeads","disabled"),
+    [ Output("duracion-total", "value"),
+     Output("optLeads","disabled"),
      Output("optLeads","options"),
      Output("optLeads","value"),
-     Output("msg-duracion", "children"),
-     Output("duracion-total", "value"),
+     Output("msg-duracion", "children"),    
      Output("interv_ini", "max"),
      Output("interv_fin", "max")
      ],
@@ -742,11 +742,11 @@ def select_first_lead(fname_uploaded):
         app.logger.info("@callback: 'select_first_lead()' -> optLeads: " + str(optLeads))
         app.logger.info("@callback: FIN 'select_first_lead()'")
         text_duracion = "Duración total aprox: " + msg_duration
-        return False, optLeads, 1, text_duracion, duration_min, duration_min, duration_min
+        return duration_min, False, optLeads, 1, text_duracion,  duration_min, duration_min
     
     app.logger.info("@callback: FIN 'select_first_lead()'")
 
-    return True, None, None, None, "", "", ""
+    return "", True, None, None, None, "", ""
 
 
 
@@ -760,9 +760,10 @@ def select_first_lead(fname_uploaded):
      Input("ver-intervalo", "n_clicks")],
     [State("fname_process", "value"),
      State("interv_ini", "value"),
-     State("interv_fin", "value")]
+     State("interv_fin", "value"),
+     State("duracion-total", "value")]
 )
-def print_ecg_lead(selected_lead, ver_intervalo, fname_uploaded, interv_ini, interv_fin):
+def print_ecg_lead(selected_lead, ver_intervalo, fname_uploaded, interv_ini, interv_fin, duracion_total):
     app.logger.info("\n@callback: INICIO 'print_ecg()'")
     
     app.logger.info("@callback: 'print_ecg()' -> selected_lead: " + str(selected_lead))
@@ -778,8 +779,9 @@ def print_ecg_lead(selected_lead, ver_intervalo, fname_uploaded, interv_ini, int
     app.logger.info("@callback: 'print_ecg()' -> Pintando datos...")
     
     fig, title = ecg_serv.build_plot_by_lead(ruta_file, selected_lead, interv_ini, interv_fin)
+    desactivar_interval = True if int(duracion_total) < 1 else False 
     app.logger.info("@callback: FIN 'print_ecg()'")
-    return fig, title, False, False, False
+    return fig, title, False, desactivar_interval, desactivar_interval
 
 
 @app.callback(
