@@ -529,7 +529,7 @@ def guardar_ficheros(list_contents, list_nombres, token_session):
     if es_fichero_repetido is not None and es_fichero_repetido == True:
         msg_error = "Error: El fichero ya existe. Utilice el historial de ficheros para cargarlo, "
         msg_error += "cambie el nombre del archivo a subir o borre los ficheros antiguos y suba los nuevos"
-        return msg_error, False, None
+        return msg_error, False, nom_raiz_fichero
     
     elif es_fichero_repetido is None:
         msg_error = "Warning: Se ha encontrado un error de sesion. Vuelva a cargar la página"
@@ -539,7 +539,7 @@ def guardar_ficheros(list_contents, list_nombres, token_session):
     list_err_files = upload_files(num_files, list_contents, list_nombres, token_session)
     msg_error = check_save_files(list_err_files)
     if msg_error is not None:
-        return msg_error, False, None
+        return msg_error, False, nom_raiz_fichero
     
     #Paso 4, si todo ha ido bien, compruebo si el fichero es de un formato valido    
     ruta_abs_file = utils.dir_files + token_session + "/" + nom_raiz_fichero
@@ -564,7 +564,7 @@ def guardar_ficheros(list_contents, list_nombres, token_session):
     msg_error = "Error! El fichero de datos no se ha podido leer correctamente."
     msg_error += " Compruebe los ficheros de datos y de cabecera introducidos y vuelva a intentarlo"
         
-    return msg_error, False, None
+    return msg_error, False, nom_raiz_fichero
 
 
 

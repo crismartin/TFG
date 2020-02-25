@@ -6,6 +6,7 @@ Created on Wed Dec 18 23:47:58 2019
 @author: cristian
 """
 
+import json
 import dash
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
@@ -198,8 +199,9 @@ modal_historial = html.Div([
 ##############################################################################
 
 ecg_fig = dcc.Graph(id='ecg-fig', 
-              figure=fig_default,
-              style={'height': 600, 'width':900})
+                    figure=fig_default,              
+                    style={'height': 600, 'width':900}
+          )
 
 
 display_ecg = dbc.FormGroup([   
@@ -224,7 +226,11 @@ display_ecg = dbc.FormGroup([
     
         
 menu_ecg = html.Div([
-    dbc.Button("HRV", id="hrvGraph", outline=True, color="danger", className="mr-1"),
+    dbc.Button(id="hrvGraph", outline=True, color="info", className="mr-1",
+               children=[
+                       html.Span([html.I(className="fas fa-info-circle ml-2"), " Datos ECG"])
+                       ]
+               ),
     dbc.Button(id="otroGraph", outline=True, color="secondary", className="mr-1",
                children=[
                        html.Span([html.I(className="fas fa-folder ml-2"), " Historial de ficheros"])
@@ -255,44 +261,59 @@ dropdown_leads = dbc.FormGroup([
     ])
 ])
 
-edit_point_input = dbc.Row(dbc.FormGroup([
-        
-    dbc.Row([
-        html.H6("Editar Punto"),    
-    ]),
+point_info_input = dbc.FormGroup([
+    dbc.Col(
+        html.Span( [html.P(id="pto-inf-xi", children="Xi: "), html.P(id="pto-inf-yi", children="Yi: ")] ),  
+    ),
+    dbc.Col(
+        html.Span( [html.P(id="pto-inf-xf", children="Xf: "), html.P(id="pto-inf-yf", children="Yf: ")] ),  
+    )
     
-    dbc.FormGroup([
-        dbc.Label("X:", html_for="point-x", width=2),
-        dbc.Col(
-            dbc.Input(
-                type="number", id="point-x", disabled=True
-            ),
-            width=10,
-        ),
-    ], row=True),
-                    
-    dbc.FormGroup([
-        dbc.Label("Y:", html_for="point-y", width=2),
-        dbc.Col(
-            dbc.Input(
-                type="number", id="point-y", disabled=True
-            ),
-            width=10,
-        ),
-    ], row=True),
-                    
-    dbc.FormGroup([
-        dbc.Col([
-            dbc.Button(id="guardar-modif", color="success",
-               children=[
-                   html.Span([html.I(className="fas fa-floppy-o ml-2"), " Guardar"])
-                  ]
-            )
+], row=True)
+
+
+edit_pt = html.Div([html.Div([
+                dbc.Alert(                
+                    id="alert-ann-success",                
+                    color="success",
+                    is_open=False,
+                    dismissable=True
+                ),    
+            ]),
+            html.Div([
+                 dbc.Alert(id="alert-ann", children="Seleccione la anotación a cambiar", color="info"),
+            ]),
+            html.Div([
+                point_info_input
+            ]),
         ])
+
+edit_point_input = dbc.Row(    
+    dbc.FormGroup([
         
-    ], className="float-right", row=True)
-])
+        html.H6("Editar Anotación"),
+        
+        html.Div(id="cnt-pt-edit", children=edit_pt),
+            
+        dbc.FormGroup([            
+            dbc.Input(
+                type="hidden", id="point-ini", disabled=True, step="any", value=""
+            ),
+            dbc.Input(
+                type="hidden", id="point-fin", disabled=True, step="any", value=""
+            ),
+            dbc.Col([
+                dbc.Button(id="guardar-modif", color="success", disabled=True,
+                   children=[
+                       html.Span([html.I(className="fas fa-floppy-o ml-2"), " Guardar"])
+                      ], className="float-right"
+                )
+            ])
+        ], row=True),       
+    ])
 )
+
+
 
 load_intervals_inputs = dbc.Row(
     dbc.FormGroup([
@@ -403,7 +424,26 @@ title_controls =  dbc.FormGroup([
                     html.H2("Controles", id="controles-title", style={'text-align': 'left'})
                   ], row=True)
 
-form_controls = html.Div(id="form-controls", children=[title_controls, dropdown_leads, load_intervals_inputs, edit_point_input])
+
+collapse_edicion = dbc.Row(
+    dbc.FormGroup([
+        dbc.Button(
+            id="btn-collapse-edicion",
+            className="mb-3",
+            color="primary",
+            children=[
+                html.Span([html.I(className="fas fa-pencil-square-o mr-1"), " Editar Anotaciones"])
+            ],
+        ),    
+        dbc.Collapse(            
+            id="collapse-edicion",
+            children=edit_point_input
+        ),
+    ]),    
+)
+
+
+form_controls = html.Div(id="form-controls", children=[ dropdown_leads, load_intervals_inputs, collapse_edicion])
 
 cnt_form_controls = dbc.Form(id="cnt-form-controls", children=form_controls)
 
@@ -510,6 +550,18 @@ def toggle_collapse(n, is_open):
     if n:
         return not is_open
     return is_open
+
+
+@app.callback(
+    Output("collapse-edicion", "is_open"),
+    [Input("btn-collapse-edicion", "n_clicks")],
+    [State("collapse-edicion", "is_open")],
+)
+def toggle_collapse_edicion(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
 
 
 @app.callback(
@@ -666,6 +718,7 @@ def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_
         
         app.logger.info( "@callback: 'updload_file() -> msg_error: " + str(msg_error) )
         app.logger.info( "@callback: 'updload_file() -> fichero_valido: " + str(fichero_valido) )
+        app.logger.info( "@callback: 'updload_file() -> nombre_file: " + str(nombre_file) )
         
         if fichero_valido:
             hay_annt = msg_error is None
@@ -675,7 +728,7 @@ def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_
         
         else:
             st_val_data = str(fichero_valido) + "," + str(None)
-            return [None, False, False, False, True, st_val_data, msg_error]
+            return [nombre_file, False, False, False, True, st_val_data, msg_error]
     
     else:
         app.logger.info("@callback: FIN by None content 'updload_file()'")
@@ -754,6 +807,7 @@ def select_first_lead(fname_uploaded):
     [Output("ecg-fig", "figure"),
      Output("formato-title", "children"),     
      Output("point-y", "disabled"),
+     Output("point-x", "disabled"),
      Output("interv_ini", "disabled"),
      Output("interv_fin", "disabled")],
     [Input("optLeads", "value"),
@@ -781,7 +835,7 @@ def print_ecg_lead(selected_lead, ver_intervalo, fname_uploaded, interv_ini, int
     fig, title = ecg_serv.build_plot_by_lead(ruta_file, selected_lead, interv_ini, interv_fin)
     desactivar_interval = True if int(duracion_total) < 1 else False 
     app.logger.info("@callback: FIN 'print_ecg()'")
-    return fig, title, False, desactivar_interval, desactivar_interval
+    return fig, title, False, False, desactivar_interval, desactivar_interval
 
 
 @app.callback(
@@ -902,7 +956,90 @@ def tbl_hist_row_selected(rows, derived_virtual_selected_rows):
     return False
 
     
+
+###############################################################################
+#### Edicion de Anotaciones    
+###############################################################################
+
+
+@app.callback(
+    [Output("pto-inf-xi",   "children"),
+     Output("pto-inf-yi",   "children"),
+     Output("pto-inf-xf",   "children"),
+     Output("pto-inf-yf",   "children"),
+     Output("point-ini",    "value"),
+     Output("point-fin",    "value")],
+    [Input("ecg-fig",       "clickData")],
+    [State("point-ini",     "value")]
+)
+def display_click_data(clickData, pt_ini):
+    info_xi = "Xi: "
+    info_yi = "Yi: "
+    info_xf = "Xf: "
+    info_yf = "Yf: "
     
+    app.logger.info("@callback: INICIO 'display_click_data()'")
+    if clickData is None:
+        raise dash.exceptions.PreventUpdate()
+        
+    data_json = json.dumps(clickData, indent=2)
+    data_json = json.loads(data_json)
+    
+    app.logger.info("@callback: 'display_click_data() -> data_json: " + str(data_json))
+    app.logger.info("@callback: 'display_click_data() -> data_json: " + str(pt_ini))
+    
+    pto_select = data_json["points"][0]
+        
+    if pt_ini == "": #Es primera seleccion
+        #Comprobamos que es una anotacion
+        if "text" in pto_select: #Es una anotacion
+            # seteo el valor del punto en los input hidden
+            pt_ini = {}
+            pt_ini["x"] = str("{:.8}".format(pto_select["x"]) )
+            pt_ini["y"] = str(pto_select["y"])
+            pt_ini["symbol"] = str(pto_select["text"])
+            info_xi += pt_ini["x"]
+            info_yi += pt_ini["y"]
+
+            return info_xi, info_yi, info_xf, info_yf, pt_ini, ""
+        
+    elif pt_ini != "": #Es la segunda seleccion
+        #Comprobamos que no es una anotacion        
+        app.logger.info("@callback: 'display_click_data() -> Entro aqui")
+        if not "text" in pto_select: #Es un punto         
+            app.logger.info("@callback: 'display_click_data() -> y tambien aqui")
+            pt_fin = {}
+            pt_fin["x"] = str("{:.8}".format(pto_select["x"]) )
+            pt_fin["y"] = str(pto_select["y"])
+                        
+            return info_xi, info_yi, info_xf, info_yf, pt_ini, pt_fin
+    
+    app.logger.info("@callback: FIN 'display_click_data()'")
+    return info_xi, info_yi, info_xf, info_yf, "", ""
+
+
+
+@app.callback(
+    [Output("alert-ann",            "children"),
+     Output("alert-ann",            "color"),
+     Output("alert-ann-success",    "children"),
+     Output("alert-ann-success",    "is_open")],
+    [Input("point-ini",             "value"),
+     Input("point-fin",             "value")],    
+)
+def change_msg_alert_ann(pt_ini, pt_fin):
+    
+    if pt_ini != "" and pt_fin == "":
+        msg = "Seleccione el punto nuevo"
+        return msg, "secondary", "", False
+    elif pt_ini != "" and pt_fin != "":
+        msg = "Nueva anotación en X: " + str(pt_fin["x"]) + " Y: " + str(pt_fin["x"])
+        return "Seleccione la anotación a cambiar", "primary", msg, True
+    
+    return "Seleccione la anotación a cambiar", "primary", "", False
+
+
+
 
 ###############################################################################
 ############################## Main layout ####################################
