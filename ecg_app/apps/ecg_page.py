@@ -288,29 +288,35 @@ edit_pt = html.Div([html.Div([
             ]),
         ])
 
-edit_point_input = dbc.Row(    
-    dbc.FormGroup([
+edit_point_input = dbc.Row( 
+    dbc.Col(
+        dbc.FormGroup([
         
-        html.H6("Editar Anotación"),
-        
-        html.Div(id="cnt-pt-edit", children=edit_pt),
+            html.H6("Editar Anotación"),
             
-        dbc.FormGroup([            
-            dbc.Input(
-                type="hidden", id="point-ini", disabled=True, step="any", value=""
-            ),
-            dbc.Input(
-                type="hidden", id="point-fin", disabled=True, step="any", value=""
-            ),
-            dbc.Col([
-                dbc.Button(id="guardar-modif", color="success", disabled=True,
-                   children=[
-                       html.Span([html.I(className="fas fa-floppy-o ml-2"), " Guardar"])
-                      ], className="float-right"
-                )
-            ])
-        ], row=True),       
-    ])
+            html.Div(id="cnt-pt-edit", children=edit_pt),
+                
+            dbc.FormGroup([            
+                dbc.Input(
+                    type="hidden", id="point-ini", disabled=True, step="any", value=""
+                ),
+                dbc.Input(
+                    type="hidden", id="point-fin", disabled=True, step="any", value=""
+                ),
+                dbc.Input(
+                    type="hidden", id="estado-edit", disabled=True, step="any", value=""
+                ),
+                dbc.Col([
+                    dbc.Button(id="guardar-modif", color="success", disabled=True,
+                       children=[
+                           html.Span([html.I(className="fas fa-floppy-o ml-2"), " Guardar"])
+                          ], className="float-right"
+                    )
+                ])
+            ], row=True),       
+        ]), width=12
+    )
+    
 )
 
 
@@ -968,11 +974,12 @@ def tbl_hist_row_selected(rows, derived_virtual_selected_rows):
      Output("pto-inf-xf",   "children"),
      Output("pto-inf-yf",   "children"),
      Output("point-ini",    "value"),
-     Output("point-fin",    "value")],
+     Output("point-fin",    "value"),
+     Output("estado-edit",  "value")],
     [Input("ecg-fig",       "clickData")],
-    [State("point-ini",     "value")]
+    [State("estado-edit",   "value")]
 )
-def display_click_data(clickData, pt_ini):
+def display_click_data(clickData, last_estado):
     info_xi = "Xi: "
     info_yi = "Yi: "
     info_xf = "Xf: "
@@ -986,11 +993,11 @@ def display_click_data(clickData, pt_ini):
     data_json = json.loads(data_json)
     
     app.logger.info("@callback: 'display_click_data() -> data_json: " + str(data_json))
-    app.logger.info("@callback: 'display_click_data() -> data_json: " + str(pt_ini))
-    
+    app.logger.info("@callback: 'display_click_data() -> last_estado: '" + str(last_estado)+ "'")
+
     pto_select = data_json["points"][0]
         
-    if pt_ini == "": #Es primera seleccion
+    if last_estado == "" or last_estado=="1": #Es primera seleccion
         #Comprobamos que es una anotacion
         if "text" in pto_select: #Es una anotacion
             # seteo el valor del punto en los input hidden
@@ -1001,9 +1008,9 @@ def display_click_data(clickData, pt_ini):
             info_xi += pt_ini["x"]
             info_yi += pt_ini["y"]
 
-            return info_xi, info_yi, info_xf, info_yf, pt_ini, ""
+            return info_xi, info_yi, info_xf, info_yf, pt_ini, "", "0"
         
-    elif pt_ini != "": #Es la segunda seleccion
+    elif last_estado == "0": #Es la segunda seleccion
         #Comprobamos que no es una anotacion        
         app.logger.info("@callback: 'display_click_data() -> Entro aqui")
         if not "text" in pto_select: #Es un punto         
@@ -1012,10 +1019,10 @@ def display_click_data(clickData, pt_ini):
             pt_fin["x"] = str("{:.8}".format(pto_select["x"]) )
             pt_fin["y"] = str(pto_select["y"])
                         
-            return info_xi, info_yi, info_xf, info_yf, pt_ini, pt_fin
+            return info_xi, info_yi, info_xf, info_yf, "", pt_fin, "1"
     
     app.logger.info("@callback: FIN 'display_click_data()'")
-    return info_xi, info_yi, info_xf, info_yf, "", ""
+    return info_xi, info_yi, info_xf, info_yf, "", "", ""
 
 
 
@@ -1024,16 +1031,26 @@ def display_click_data(clickData, pt_ini):
      Output("alert-ann",            "color"),
      Output("alert-ann-success",    "children"),
      Output("alert-ann-success",    "is_open")],
-    [Input("point-ini",             "value"),
-     Input("point-fin",             "value")],    
+    [Input("estado-edit",           "value")],
+    [State("point-fin",             "value")]
 )
-def change_msg_alert_ann(pt_ini, pt_fin):
+def change_msg_alert_ann(estatus_edit, pt_fin):
+    app.logger.info("@callback: INICIO 'change_msg_alert_ann()' -> estatus_edit: " + str(estatus_edit))    
+    app.logger.info("@callback: INICIO 'change_msg_alert_ann()' -> pt_fin: " + str(pt_fin))
     
-    if pt_ini != "" and pt_fin == "":
+    if estatus_edit == "0":
         msg = "Seleccione el punto nuevo"
         return msg, "secondary", "", False
-    elif pt_ini != "" and pt_fin != "":
-        msg = "Nueva anotación en X: " + str(pt_fin["x"]) + " Y: " + str(pt_fin["x"])
+    elif estatus_edit == "1":
+        msg = html.Div(children=[            
+                html.P(
+                "Nueva anotación en "            
+                ),
+                html.P(                
+                "X: " + str(pt_fin["x"]) + " Y: " + str(pt_fin["x"])
+                )
+            ]                  
+        )        
         return "Seleccione la anotación a cambiar", "primary", msg, True
     
     return "Seleccione la anotación a cambiar", "primary", "", False
