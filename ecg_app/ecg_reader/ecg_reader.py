@@ -9,7 +9,7 @@ Module with differente ECG read options
 """
 
 
-import ecg_reader.ecg_factory as ecgf
+import ecg_factory as ecgf
 
 
     

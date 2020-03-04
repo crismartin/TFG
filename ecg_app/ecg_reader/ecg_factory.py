@@ -11,12 +11,14 @@ Module with differente ECG read options
 from . import ishne_data as ishne
 from . import physionet_data as physionet
 
-
 class ECGFactory():
+    
     """
     Class that implements differente types or ECG formats.
     """
     def create_ECG(self, fileName):
+        
+        
         print("[INFO][ecgFactory] nombre del fichero a crear: " + fileName)
         if(ishne.is_Ishne_file(fileName)):
             print("[INFO][ecgFactory] Es un fichero ISHNE1.0")
