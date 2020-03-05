@@ -20,7 +20,7 @@ stylesheets = [dbc.themes.BOOTSTRAP,
 
 
 # Declaracion del servidor
-server = flask.Flask(__name__)
+server = flask.Flask(__name__,static_folder="src/static")
 
 
 # Declaracion del fichero de log
