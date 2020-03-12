@@ -8,8 +8,10 @@ Module with differente ECG read options
 @author: obarquero
 """
 
-from . import ishne_data as ishne
-from . import physionet_data as physionet
+#from . import ishne_data as ishne
+#from . import physionet_data as physionet
+import ishne_data as ishne
+import physionet_data as physionet
 
 class ECGFactory():
     
@@ -40,8 +42,11 @@ if __name__ == "__main__":
     # physionet file: ./sample-data/drive02             #Con 5 leads
     #                  ./sample-data/100
     # physionet file: ../physionet/100
-    #     ishne file: ../matlab_ishne/ishne.ecg
-    miECG = ECGFactory().create_ECG("/Users/cristian/TFG/datos_prueba/physionet/100")
+    #     ishne file: ../matlab_ishne/ishne
+    miECG = ECGFactory().create_ECG("/Users/cristian/TFG/datos_prueba/matlab_ishne/ishne")
+    print("aqui")
     miECG.read_signal(0, 10000)
     miECG.read_annotations(0, 10000)
     miECG.printTestECG()
+    miECG.printInfoECG()
+    print("probando a pintar miECG.signal: " + str(miECG.signal))

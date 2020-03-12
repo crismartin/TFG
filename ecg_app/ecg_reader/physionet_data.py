@@ -7,7 +7,8 @@ Created on Mon Oct 22 21:16:26 2018
 """
 
 #import numpy as np
-from . import ecg as ecg
+#from . import ecg as ecg
+import ecg as ecg
 import wfdb
 from IPython.display import display
 
@@ -33,44 +34,74 @@ def is_Physionet_file(fileRoute):
     
 
 # Clase Principal ECGPhysionet
-class ECGPhysionet(ecg.ECG):
-    typeECG = PHYSIONET_TYPE
+class ECGPhysionet(ecg.ECG):   
+    _header = []      
+    _signal = []
+    _annt = None
+    _fileRoute = ""
+    _fileName = ""
+    _typeECG = PHYSIONET_TYPE    
+    
+    @property
+    def fileRoute(self):
+        return self._fileRoute
+        
+    @fileRoute.setter
+    def fileRoute(self, newvalue):
+        self.fileRoute = newvalue
+    
+    
+    @property
+    def fileName(self):
+        return self._fileName
+      
+    @fileName.setter
+    def fileName(self, newvalue):
+        self.fileRoute = newvalue
+    
+    
+    @property
+    def typeECG(self):
+        return self._typeECG
+        
+    @typeECG.setter
+    def typeECG(self, newvalue):
+        self.typeECG = newvalue
+    
+    
+    @property
+    def header(self):
+        return self._header
+    
+    @header.setter
+    def header(self, newvalue):
+        self.header = newvalue
+    
+    
+    @property
+    def signal(self):
+        return self._signal
+    
+    @signal.setter
+    def signal(self, newvalue):
+        self.signal = newvalue
+    
+    
+    @property
+    def annt(self):
+        return self._annt
+        
+    @annt.setter
+    def annt(self, newvalue):
+        self.annt = newvalue
     
     def __init__(self, fileRoute):
-        self.header = []      
-        self.signal = []
-        self.annt = None
-        self.__allSignal = [] #Asi tengo todos los datos de la señal
-        
-        fileRoute = fileRoute.split(".")[0]
-        self.fileName = fileRoute.split("/")[-1]
-        self.fileRoute = fileRoute
-       
+        self._fileRoute = fileRoute.split(".")[0]
+        self._fileName = fileRoute.split("/")[-1]
+        self.__allSignal = []
+
         self.read_physionet_file(fileRoute)
         
-    ""
-    " Devuelve el formato de ECG "
-    ""
-    def getTypeECG(self):
-        return self.typeECG
-    
-    ""
-    " Devuelve los datos de cabecera de la señal "
-    ""
-    def getHeader(self):
-        return self.header
-    
-    ""
-    " Devuelve los datos de anotaciones de la señal "
-    ""
-    def getAnnotations(self):
-        return self.annt
-    
-    ""
-    " Devuelve los datos de la señal "
-    ""
-    def getSignal(self):
-        return self.signal
     
     ""
     " Representa la señal ECG "
@@ -104,12 +135,13 @@ class ECGPhysionet(ecg.ECG):
         
         def printInfo(self):
             display('[INFO][Physionet] Header - otherData: \n%s' %self.otherData.__dict__)
+            print("[INFO][Physionet] Header - Main Data:")
             print("[INFO][Physionet] Header - nLeads: %s" %str(self.nLeads))
             print("[INFO][Physionet] Header - samplingRate: %s" %str(self.samplingRate))
             print("[INFO][Physionet] Header - signal_len: %s" %str(self.signal_len))
             
             
-    class ECG():
+    class ECGSignal():
         def _read_ecg_data(self, fileRoute, sampfrom, sampto):
             return wfdb.rdrecord(fileRoute, sampfrom=sampfrom, sampto=sampto)
             
@@ -147,38 +179,38 @@ class ECGPhysionet(ecg.ECG):
         """
         Function that reads Physionet files format
         """        
-        self.header = self.Header(fileRoute)
+        self._header = self.Header(fileRoute)
         
     
     def read_signal(self, sampFrom, sampTo):
-        if self.header == []:
+        if self._header == []:
             print('[ERROR][Physionet] No se puede leer datos. Cabecera errónea para fichero "%s"' %self.fileRoute)
             return
         
-        fileRoute = self.fileRoute
-        sig_len = self.header.otherData.sig_len
+        fileRoute = self._fileRoute
+        sig_len = self._header.otherData.sig_len
         
         if (sampTo >= 0 and sampTo <= sig_len) and (sampFrom < sampTo):
-            self.__allSignal = self.ECG()._read_ecg_data(fileRoute, sampFrom, sampTo)
+            self.__allSignal = self.ECGSignal()._read_ecg_data(fileRoute, sampFrom, sampTo)
             self.lenEcg = self.__allSignal.sig_len
-            self.signal = []
+            self._signal = []
             auxSignal = self.__allSignal.p_signal
             nLeads = self.__allSignal.n_sig
             for n in range(0, nLeads):
-                self.signal.append(auxSignal[:, n])
+                self._signal.append(auxSignal[:, n])
         else:
             print('[ERROR][Physionet] No se puede leer datos de la señal. Intervalo de muestras erróneo')
             
     
     
     def read_annotations(self, sampFrom, sampTo):        
-        if self.header == []:
+        if self._header == []:
             print('[ERROR][Physionet] No se puede leer anotaciones. Cabecera errónea (vacía) para fichero "%s"' %self.fileRoute)
             return
         
-        sig_len = self.header.signal_len
+        sig_len = self._header.signal_len
         if(sampTo >= 0 and sampTo <= sig_len) and (sampFrom < sampTo):
-            self.annt = self.Annotations(self.fileRoute, sampFrom, sampTo)
+            self._annt = self.Annotations(self._fileRoute, sampFrom, sampTo)
         else:
             print('[ERROR][Physionet] No se puede leer anotaciones. Intervalo de muestras erróneo')    
     

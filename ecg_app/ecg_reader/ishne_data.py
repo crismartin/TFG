@@ -5,11 +5,13 @@ Created on Wed Mar 14 20:13:59 2018
 
 @author: cristian
 """
-from . import ecg as ecg
+#from . import ecg as ecg
+import ecg as ecg
 import numpy as np
 import matplotlib.pyplot as plt
 import os
 from IPython.display import display
+
 
 
 ISHNE_MAGIC_NUM     = "ISHNE1.0"
@@ -88,18 +90,71 @@ def read_file(urlFile):
     
 # Clase principal ECG_ISHNE
 class ECGIshne(ecg.ECG):
+   
+    _header = []      
+    _signal = []
+    _annt = None
+    _fileRoute = ""
+    _fileName = ""
+    _typeECG = ISHNE_MAGIC_NUM
     
-    typeECG = ISHNE_MAGIC_NUM
+    @property
+    def fileRoute(self):
+        return self._fileRoute
+        
+    @fileRoute.setter
+    def fileRoute(self, newvalue):
+        self.fileRoute = newvalue
+    
+    
+    @property
+    def fileName(self):
+        return self._fileName
+      
+    @fileName.setter
+    def fileName(self, newvalue):
+        self.fileRoute = newvalue
+    
+    
+    @property
+    def typeECG(self):
+        return self._typeECG
+        
+    @typeECG.setter
+    def typeECG(self, newvalue):
+        self.typeECG = newvalue
+    
+    
+    @property
+    def header(self):
+        return self._header
+    
+    @header.setter
+    def header(self, newvalue):
+        self.header = newvalue
+    
+    
+    @property
+    def signal(self):
+        return self._signal
+    
+    @signal.setter
+    def signal(self, newvalue):
+        self.signal = newvalue
+    
+    
+    @property
+    def annt(self):
+        return self._annt
+        
+    @annt.setter
+    def annt(self, newvalue):
+        self.annt = newvalue
     
     def __init__(self, fileRoute):
-        self.header = []      
-        self.signal = []
-        self.annt = None
+        self._fileRoute = fileRoute.split(".")[0]
+        self._fileName = fileRoute.split("/")[-1]
         self.__allSignal = []
-        
-        fileRoute = fileRoute.split(".")[0]
-        self.fileRoute = fileRoute
-        self.fileName = fileRoute.split("/")[-1]
         
         self.read_ishne_file(fileRoute)
         
@@ -114,30 +169,13 @@ class ECGIshne(ecg.ECG):
         """
         #LECTURA DE LAS ANOTACIONES
         
-        
-    ""
-    " Devuelve el formato de ECG "
-    ""
-    def getTypeECG(self):
-        return self.typeECG
-    
-    ""
-    " Devuelve ls datos de cabecera de la señal "
-    ""
-    def getHeader(self):
-        return self.header
-        
-    ""
-    " Devuelve los datos de la señal "
-    ""
-    def getSignal(self):
-        return self.signal
+
     
     ""
     " Representa la señal ECG "
     ""
     def printECG(self, sampleFrom, sampleTo):
-        ecg = self.signal
+        ecg = self._signal
         
         fs = self.getHeader().samplingRate
         offset = 30 + sampleFrom
@@ -173,7 +211,7 @@ class ECGIshne(ecg.ECG):
     " Imprime la informacion de los datos de la señal "
     ""
     def printInfoECG(self):
-        display(self.__allSignal.__dict__)
+        display(self._signal)
     
     
     def printSignalData(self):
@@ -311,7 +349,7 @@ class ECGIshne(ecg.ECG):
 
 
 
-    class ECG():    
+    class ECGSignal():    
         def __init__(self):
             self.crcChecksum = ""
             self.ecg = []
@@ -448,7 +486,7 @@ class ECGIshne(ecg.ECG):
     """           
     def read_ishne_file(self, fileName):
         fileRoute = fileName + EXT_FILE_DATA        
-        ecg = self.ECG()
+        ecg = self.ECGSignal()
         crc = self.Crc()
                 
         fdIshne = read_file(fileRoute) #Open File 'r' mode
@@ -465,16 +503,16 @@ class ECGIshne(ecg.ECG):
 
             fdIshne.close() #Close file
             
-            self.header = header
+            self._header = header
                         
             
         
     def read_signal(self, sampleFrom, sampleTo):
-        fileRoute = self.fileRoute + EXT_FILE_DATA
-        ecg = self.ECG()
+        fileRoute = self._fileRoute + EXT_FILE_DATA
+        ecg = self.ECGSignal()
         
-        if self.header == []:
-            print('[ERROR][ISHNE] No se puede leer datos. Cabecera errónea para fichero "%s"' %self.fileRoute)
+        if self._header == []:
+            print('[ERROR][ISHNE] No se puede leer datos. Cabecera errónea para fichero "%s"' %self._fileRoute)
             return
                 
         fdIshne = read_file(fileRoute) #Open File 'r' mode
@@ -483,12 +521,12 @@ class ECGIshne(ecg.ECG):
             return
         
         byteStartSignal = self.header.offsetECGBlock
-        sig_len = self.header.signal_len
+        sig_len = self._header.signal_len
         
         fdIshne.seek(byteStartSignal, 0)
         
         if(sampleTo >= 0 and sampleTo <= sig_len) and (sampleFrom < sampleTo):
-            self.signal = ecg.read_ecg(fdIshne, self.header.nLeads, sampleFrom, sampleTo)
+            self._signal = ecg.read_ecg(fdIshne, self.header.nLeads, sampleFrom, sampleTo)
         else:
             print('[ERROR][ISHNE] No se puede leer datos de la señal. Intervalo de muestras erróneo')
         
@@ -498,15 +536,15 @@ class ECGIshne(ecg.ECG):
              
        
     def read_annotations(self, sampleFrom, sampleTo):
-        if self.header == []:
+        if self._header == []:
             print('[ERROR][ISHNE] No se puede leer anotaciones. Cabecera errónea (vacía) para fichero "%s"' %self.fileRoute)
             return
         
         posBytesData = self.header.offsetECGBlock
-        sig_len = self.header.signal_len
+        sig_len = self._header.signal_len
     
         if(sampleTo >= 0 and sampleTo <= sig_len) and (sampleFrom < sampleTo):
-            self.annt = self.Annotations(self.fileRoute, posBytesData, sampleFrom, sampleTo)
+            self._annt = self.Annotations(self.fileRoute, posBytesData, sampleFrom, sampleTo)
         else:
             print('[ERROR][ISHNE] No se puede leer anotaciones. Intervalo de muestras erróneo')
         
@@ -515,10 +553,10 @@ class ECGIshne(ecg.ECG):
 if __name__=="__main__":
 
     #ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m")
-    ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m.ecg")
+    ishneECG = ECGIshne("/Users/cristian/TFG/datos_prueba/matlab_ishne/1-300m")
     ishneECG.read_signal(3000, 100000)
     ishneECG.read_annotations(3000, 100000)
-    ishneECG.printTestECG()
+    ishneECG.header.printInfo()
     
 
     #ishneECG.printAnntECG()
