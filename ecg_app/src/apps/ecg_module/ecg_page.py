@@ -437,6 +437,7 @@ collapse_edicion = dbc.Row(
             id="btn-collapse-edicion",
             className="mb-3",
             color="primary",
+            disabled=True,
             children=[
                 html.Span([html.I(className="fas fa-pencil-square-o mr-1"), " Editar Anotaciones"])
             ],
@@ -808,23 +809,24 @@ def select_first_lead(fname_uploaded):
     return "", True, None, None, None, "", ""
 
 
-
 @app.callback(
     [Output("ecg-fig",          "figure"),
      Output("formato-title",    "children"),     
      Output("point-y",          "disabled"),
      Output("point-x",          "disabled"),
      Output("interv_ini",       "disabled"),
-     Output("interv_fin",       "disabled")],
+     Output("interv_fin",       "disabled"),
+     Output("btn-collapse-edicion", "disabled")],
     [Input("optLeads",          "value"),
      Input("ver-intervalo",     "n_clicks"),
      Input("estado-edit",       "value")],
     [State("fname_process",     "value"),
      State("interv_ini",        "value"),
      State("interv_fin",        "value"),
-     State("duracion-total",    "value")]
+     State("duracion-total",    "value"),
+     State("session",           "data")]
 )
-def print_ecg_lead(selected_lead, ver_intervalo, estado_edit, fname_uploaded, interv_ini, interv_fin, duracion_total):
+def print_ecg_lead(selected_lead, ver_intervalo, estado_edit, fname_uploaded, interv_ini, interv_fin, duracion_total, data_session):
     app.logger.info("\n@callback: INICIO 'print_ecg()'")
     
     app.logger.info("@callback: 'print_ecg()' -> selected_lead: " + str(selected_lead))
@@ -833,18 +835,19 @@ def print_ecg_lead(selected_lead, ver_intervalo, estado_edit, fname_uploaded, in
     if fname_uploaded is None or selected_lead is None:
         app.logger.info("@callback: FIN 'print_ecg()' by Exception")
         raise dash.exceptions.PreventUpdate()
-        
+    
+    token_user = utils.get_session_token(data_session)
     app.logger.info("@callback: 'print_ecg()' -> Configurando parametros para pintar")
     ruta_file = utils.dir_files + fname_uploaded
     app.logger.info("@callback: 'print_ecg()' -> ruta_file: " + str(ruta_file))
     app.logger.info("@callback: 'print_ecg()' -> Pintando datos...")
     
-    fig, title = ecg_serv.build_plot_by_lead(ruta_file, selected_lead, interv_ini, interv_fin)
+    fig, title, hay_annt = ecg_serv.build_plot_by_lead(ruta_file, selected_lead, interv_ini, interv_fin, token_user)
     
     # Desactivamos los inputs de intervalos porque la duracion de la señal es menor de 1 minuto
     desactivar_interval = True if int(duracion_total) < 1 else False 
     app.logger.info("@callback: FIN 'print_ecg()'")
-    return fig, title, False, False, desactivar_interval, desactivar_interval
+    return fig, title, False, False, desactivar_interval, desactivar_interval, not hay_annt
 
 
 @app.callback(

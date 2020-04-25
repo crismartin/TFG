@@ -5,8 +5,8 @@ Created on Wed Mar 14 20:13:59 2018
 
 @author: cristian
 """
-#from . import ecg as ecg
-import ecg as ecg
+from . import ecg as ecg
+#import ecg as ecg
 import numpy as np
 import matplotlib.pyplot as plt
 import os

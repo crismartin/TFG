@@ -45,7 +45,7 @@ class ECG(object):
     Methods
     -------
     read_signal(self, sampleFrom, sampleTo)
-        Lee las muestras de la señal de electrocardiograma en un intervalor
+        Lee las muestras de la señal de electrocardiograma en un intervalo
     
     printECG(self, sampleFrom, sampleTo)
         Muestra en una gráfica el electrocardiograma leído

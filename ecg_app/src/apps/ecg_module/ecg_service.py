@@ -47,10 +47,44 @@ def get_nleads_and_duration(file_name):
     
 
 
-def build_data_annt(ecg, signal_y, sampFrom, sampTo):
+def replace_ann_edit(filename, token_session, annt_file, annt_ejeY, fs, nLead):
+    anotaciones = annt_file
+    
+    #Obtener todas las anotaciones para el fichero filename en token_sesion
+    lann_db = get_ann_by_filen(filename, nLead, token_session)
+    app.logger.info("[ecg_service] - replace_ann_edit 'lann_db': " + str(lann_db))
+    
+    if lann_db is not None:        
+        #Calcular el valor que hay que reemplazar en ann_x
+        for annt in lann_db:
+            # calculo las muestras (inicial y actual)
+            pt_inicial_x = round( float(annt["pt_inicial"]["x"]) * fs )
+            pt_inicial_y = float(annt["pt_inicial"]["y"])
+            
+            pt_actual_x = round( float(annt["pt_actual"]["x"]) * fs )
+            pt_actual_y = float(annt["pt_actual"]["y"])
+            
+            app.logger.info("[ecg_service] - replace_ann_edit 'pt_inicial': " + str(pt_inicial_x) + " - " + str(pt_inicial_y) )
+            app.logger.info("[ecg_service] - replace_ann_edit 'pt_actual': " + str(pt_actual_x) + " - " + str(pt_actual_y) )
+            
+            # obtengo la posicion de pt_inicial de ann_fichero. (i)
+            indice = np.where(anotaciones == pt_inicial_x)[0]
+            app.logger.info("[ecg_service] - replace_ann_edit 'indice': " + str(indice) )
+            anotaciones = np.where(anotaciones==pt_inicial_x, pt_actual_x, anotaciones)
+            annt_ejeY[indice] = pt_actual_y
+            
+    app.logger.info("[ecg_service] - replace_ann_edit 'anotaciones_fin': " + str(anotaciones))
+    app.logger.info("[ecg_service] - replace_ann_edit 'annt_ejeY': " + str(annt_ejeY))
+    
+    return anotaciones, annt_ejeY
+
+
+
+def build_data_annt(ecg, signal_y, sampFrom, sampTo, token_session):
     ecg.read_annotations(sampFrom, sampTo)
     ant_trace = None
     anotaciones = ecg.annt
+    nLead = 1
     
     app.logger.info("[ecg_service] - 'build_data_annt()' ->  signal_y: " + str(len(signal_y)) )
         
@@ -58,19 +92,25 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo):
     
     if anotaciones is not None and anotaciones.ann_len is not None and anotaciones.ann_len > 0:
         fs = ecg.header.samplingRate
-        ant_ejeX = anotaciones.sample
-        ant_ejeX = ant_ejeX / float(fs)
-        ant_ejeX = np.around(ant_ejeX, decimals=6)
-        ant_ejeX = ant_ejeX.tolist()        
-        app.logger.info("[ecg_service] - 'build_data_annt()' ->  ant_ejeX: " + str(ant_ejeX) )    
         
         if sampFrom > 0:
             zeros_array = np.zeros(sampFrom)
             signal_y = np.concatenate((zeros_array, signal_y))
             app.logger.info("[ecg_service] - 'build_data_annt()' ->  signal_y: " + str(signal_y))
-            
+        
         ant_ejeY = signal_y[anotaciones.sample]
+        
+        # Llamar al remplace_ann_edit, devolver el array modificado de muestras
+        annt_samples, ant_ejeY = replace_ann_edit(ecg.fileName, token_session, anotaciones.sample, ant_ejeY, fs, nLead)
+        
+        ant_ejeX = annt_samples
+        ant_ejeX = ant_ejeX / float(fs)
+        ant_ejeX = np.around(ant_ejeX, decimals=6)
+        ant_ejeX = ant_ejeX.tolist()        
+        
+        app.logger.info("[ecg_service] - 'build_data_annt()' ->  ant_ejeX: " + str(ant_ejeX) )
         app.logger.info("[ecg_service] - 'build_data_annt()' ->  ant_ejeY: " + str(ant_ejeY) )
+        
         simbols = anotaciones.symbol
         ant_trace = go.Scatter(x = ant_ejeX, y = ant_ejeY,
                         name = 'Anotaciones', mode='markers+text', 
@@ -78,21 +118,8 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo):
     
     app.logger.info("[ecg_service] - END 'build_data_annt()'")
     return ant_trace
-    
 
 
-def replace_ann_edit(ann_x, ann_y, ann_symbols, filename, nLead, token_session):
-    #Obtener todas las anotaciones para el fichero filename en token_sesion
-    list_ann_edit = get_ann_by_filen(filename, nLead, token_session)
-    
-    #Calcular el valor que hay que reemplazar en ann_x
-    
-    
-    #Calcular el valor que hay que reemplazar en ann_y
-    
-    #Devolver ann_x, ann_y, ann_symbols
-    return ann_x, ann_y, ann_symbols
-    
 
 def get_delineator_graph(signal, fs, sampFrom):
     ondas = []
@@ -280,7 +307,7 @@ def get_interval_samples(interv_ini, interv_fin, signal_len, fs):
     
 
 # Contruye la grafica para el lead correspondiente
-def build_plot_by_lead(file_name, lead, interv_ini, interv_fin):
+def build_plot_by_lead(file_name, lead, interv_ini, interv_fin, token_user):
     app.logger.info("\n[ecg_service] - INICIO 'build_plot_by_lead()'")
     data_fig = []
     ecgFactory = ecgf.ECGFactory()    
@@ -328,7 +355,7 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin):
     data_fig.append(ecg_trace)
     
     # Datos de las anotaciones    
-    ant_trace = build_data_annt(ecg, ejeY, sampFrom, sampTo)
+    ant_trace = build_data_annt(ecg, ejeY, sampFrom, sampTo, token_user)
     
     if ant_trace is not None:
         data_fig.append(ant_trace)
@@ -350,7 +377,7 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin):
     
     app.logger.info("[ecg_service] - 'build_plot_by_lead()' -> Fin creacion objeto grafica. Devolviendo grafico")
     
-    return fig, title
+    return fig, title, ant_trace is not None
 
 
 # Borrar un fichero en el sistema y en BBDD
@@ -710,13 +737,15 @@ def get_ann_by_filen(filename, nLead, token_session):
     try:        
         
         filename = utils.get_name_file(filename, True)
-        app.logger.info("[ecg_service] - 'save_ann_temp()' -> filename: " + str(filename) )
+        app.logger.info("[ecg_service] - 'get_ann_by_filen()' -> filename: " + str(filename) )
         
-        guardado = db.get_ann_by_filen(filename, nLead, token_session)
+        lista_ann = db.get_ann_by_file(filename, nLead, token_session)
         
-        app.logger.info("[ecg_service] - 'save_ann_temp()' -> guardado: " + str(guardado))
+        app.logger.info("[ecg_service] - 'get_ann_by_filen()' -> lista_ann: " + str(lista_ann))
         
+        return lista_ann
     except RuntimeError:
-        app.logger.info("[ecg_service] - 'save_ann_temp()' -> Ha ocurrido un error")
+        app.logger.info("[ecg_service] - 'get_ann_by_filen()' -> Ha ocurrido un error")
     
+    return None
     

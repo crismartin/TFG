@@ -7,8 +7,8 @@ Created on Mon Oct 22 21:16:26 2018
 """
 
 #import numpy as np
-#from . import ecg as ecg
-import ecg as ecg
+from . import ecg as ecg
+#import ecg as ecg
 import wfdb
 from IPython.display import display
 
