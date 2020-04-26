@@ -80,12 +80,11 @@ def replace_ann_edit(filename, token_session, annt_file, annt_ejeY, fs, nLead):
 
 
 
-def build_data_annt(ecg, signal_y, sampFrom, sampTo, token_session):
+def build_data_annt(ecg, signal_y, sampFrom, sampTo, lead, token_session):
     ecg.read_annotations(sampFrom, sampTo)
     ant_trace = None
     anotaciones = ecg.annt
-    nLead = 1
-    
+
     app.logger.info("[ecg_service] - 'build_data_annt()' ->  signal_y: " + str(len(signal_y)) )
         
     anotaciones.printInfo()
@@ -101,7 +100,7 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo, token_session):
         ant_ejeY = signal_y[anotaciones.sample]
         
         # Llamar al remplace_ann_edit, devolver el array modificado de muestras
-        annt_samples, ant_ejeY = replace_ann_edit(ecg.fileName, token_session, anotaciones.sample, ant_ejeY, fs, nLead)
+        annt_samples, ant_ejeY = replace_ann_edit(ecg.fileName, token_session, anotaciones.sample, ant_ejeY, fs, lead)
         
         ant_ejeX = annt_samples
         ant_ejeX = ant_ejeX / float(fs)
@@ -131,6 +130,10 @@ def get_delineator_graph(signal, fs, sampFrom):
     #app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  R: " + str(QRS[:,2]) )
     #app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  S: " + str(QRS[:,3]) )
     
+    ini_QRS = ondaQ = get_qrs_wave(QRS, signal, fs, sampFrom, 0)
+    if ini_QRS is not None:
+        ondas.append(ini_QRS)
+    
     ondaQ = get_qrs_wave(QRS, signal, fs, sampFrom, 1)
     if ondaQ is not None:
         ondas.append(ondaQ)
@@ -143,43 +146,51 @@ def get_delineator_graph(signal, fs, sampFrom):
     ondaS = get_qrs_wave(QRS, signal, fs, sampFrom, 3)
     if ondaS is not None:
         ondas.append(ondaS)
+        
+    fin_QRS = get_qrs_wave(QRS, signal, fs, sampFrom, 4)
+    if fin_QRS is not None:
+        ondas.append(fin_QRS)
     
     if Pwav != []:
-        pWaves = get_p_wave(Pwav, signal, sampFrom, fs)
+        pWaves = get_p_wave(Pwav, 'P', signal, sampFrom, fs)
         for p_wave in pWaves:
             ondas.append(p_wave) 
-    
+            
+    if Twav != []:
+        tWaves = get_p_wave(Twav, 'T', signal, sampFrom, fs)
+        for t_wave in tWaves:
+            ondas.append(t_wave) 
     return ondas
 
 
 
-def get_simbol_P(num_sample):
+def get_simbol_P(num_sample, symbol_root):
     simbol = None
     text_pos = None
     name = None
     
     if num_sample == 0:
-        simbol = 'P('
+        simbol = "#" + symbol_root + "("
         text_pos = 'top left'
-        name = "P Start"
+        name = symbol_root+"("
     elif num_sample == 1:
-        simbol = 'P1'
+        simbol = '#'+symbol_root+'1'
         text_pos = 'top center'
-        name = "Peak 1"
+        name = symbol_root + "eak 1"
     elif num_sample == 2:
-        simbol = 'P2'
+        simbol = '#P2'
         text_pos = 'top center'
-        name = "Peak 2"
+        name = symbol_root + "eak 2"
     elif num_sample == 3:
-        simbol = ')P'
+        simbol = ')'+symbol_root+'#'
         text_pos = 'top right'
-        name = "P End"
+        name = ")"+symbol_root
         
     return simbol, text_pos, name
 
 
 
-def get_p_wave(pWav, signal, sampFrom, fs):
+def get_p_wave(pWav, symbol_root, signal, sampFrom, fs):
     traces = []
     
     #app.logger.info("[ecg_service] - 'get_p_wave()' ->  PWave: " + str(pWav) )
@@ -198,7 +209,7 @@ def get_p_wave(pWav, signal, sampFrom, fs):
             ejeX = ejeX.tolist()
             #app.logger.info("[ecg_service] - 'get_p_wave()' ->  p_i: " + str(p_i) )
             
-            simbolo_onda, text_position, name_wave = get_simbol_P(i)
+            simbolo_onda, text_position, name_wave = get_simbol_P(i, symbol_root)
             simbols = [simbolo_onda for i in range(len(ejeX))]
             
             p_trace = go.Scatter(x = ejeX, y = ejeY,
@@ -216,14 +227,26 @@ def get_qrs_wave(qrs, signal, fs, sampFrom, wave):
     app.logger.info("[ecg_service] - 'get_qrs_wave()' ->  signal: " + str(signal) )
     
     simbolo_onda = ''
+    nombre_onda = ''
     text_position = 'top left'
-    if wave == 1:
-        simbolo_onda = 'Q'
+    if wave == 0:
+        simbolo_onda = '#QRS('
+        nombre_onda = 'QRS('
+        text_position = 'bottom left'
+    elif wave == 1:
+        simbolo_onda = '#Q'
+        nombre_onda = 'Q'
         text_position = 'bottom left'
     elif wave == 2:
-        simbolo_onda = 'R'
+        simbolo_onda = '#R'
+        nombre_onda = 'R'
     elif wave == 3:
-        simbolo_onda = 'S'
+        simbolo_onda = '#S'
+        nombre_onda = 'S'
+        text_position = 'bottom right'
+    elif wave == 4:
+        simbolo_onda = ')#QRS'
+        nombre_onda = ')QRS'
         text_position = 'bottom right'
     
     if simbolo_onda != '':
@@ -244,9 +267,8 @@ def get_qrs_wave(qrs, signal, fs, sampFrom, wave):
             
             simbols = [simbolo_onda for i in range(len(ejeX))]
     
-            name_wave = 'Onda ' + str(simbolo_onda)
             q_trace = go.Scatter(x = ejeX, y = ejeY,
-                                name = name_wave, mode='markers+text',
+                                name = nombre_onda, mode='markers+text',
                                 text=simbols, textposition=text_position,
                                 visible='legendonly')
             return q_trace
@@ -355,7 +377,7 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin, token_user):
     data_fig.append(ecg_trace)
     
     # Datos de las anotaciones    
-    ant_trace = build_data_annt(ecg, ejeY, sampFrom, sampTo, token_user)
+    ant_trace = build_data_annt(ecg, ejeY, sampFrom, sampTo, lead, token_user)
     
     if ant_trace is not None:
         data_fig.append(ant_trace)

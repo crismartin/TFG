@@ -1009,16 +1009,20 @@ def display_click_data(clickData, last_estado, pt_ini, rutafile, nLead, data_ses
         
     if last_estado == "" or last_estado=="1": #Es primera seleccion
         #Comprobamos que es una anotacion
-        if "text" in pto_select: #Es una anotacion
-            # seteo el valor del punto en los input hidden
-            pt_ini = {}
-            pt_ini["x"] = str("{:.8}".format(pto_select["x"]) )
-            pt_ini["y"] = str(pto_select["y"])
-            pt_ini["symbol"] = str(pto_select["text"])
-            info_xi += pt_ini["x"]
-            info_yi += pt_ini["y"]
+        if "text" in pto_select: #Es una posible anotacion
+            simbolo =  str(pto_select["text"])
+            app.logger.info("@callback: 'display_click_data() -> simbolo: " + str(simbolo))
+            if "#" not in simbolo: #Es una anotacion                
+                app.logger.info("@callback: 'display_click_data() -> Anotacion seleccionada")
+                # seteo el valor del punto en los input hidden
+                pt_ini = {}
+                pt_ini["x"] = str("{:.8}".format(pto_select["x"]) )
+                pt_ini["y"] = str(pto_select["y"])
+                pt_ini["symbol"] = simbolo
+                info_xi += pt_ini["x"]
+                info_yi += pt_ini["y"]
 
-            return info_xi, info_yi, info_xf, info_yf, pt_ini, "", "0"
+                return info_xi, info_yi, info_xf, info_yf, pt_ini, "", "0"
         
     elif last_estado == "0": #Es la segunda seleccion
         #Comprobamos que no es una anotacion        
