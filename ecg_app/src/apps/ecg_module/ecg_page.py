@@ -23,6 +23,11 @@ import src.apps.ecg_module.ecg_service as ecg_serv
 from app_context import app
 
 
+
+
+###############################################################################
+
+
 tipos_soportados = [{"label": "ISHNE",      "value": 1}, 
                     {"label": "Physionet",  "value": 2},
                     ]
@@ -218,7 +223,7 @@ display_ecg = dbc.FormGroup([
             id = "modal-historico",
             size = "lg",
             backdrop = "static"
-        ),
+        )
     ]),
     
     html.Div(id="cnt-ecg-fig", children=ecg_fig)
@@ -474,7 +479,7 @@ body = dbc.Container([
     ]),
     dbc.Row(
         menu_ecg, className="float-right"
-    )
+    ),    
 ])
 
 
@@ -487,6 +492,8 @@ footer = html.Div([
 ###############################################################################
 ############################### CALLBACKS #####################################
 ###############################################################################
+    
+
 
 # Validaciones de campos
 

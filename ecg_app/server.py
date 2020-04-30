@@ -10,8 +10,6 @@ from router import app
 import os
 from flask import send_from_directory
 
-
-
 server = app.server
 
 

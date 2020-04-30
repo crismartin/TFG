@@ -13,6 +13,9 @@ import logging
 from flask_caching import Cache
 from flask_pymongo import PyMongo
 from flask_mail import Mail
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+
 
 stylesheets = [dbc.themes.BOOTSTRAP, 
                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
@@ -29,6 +32,7 @@ logging.basicConfig(filename="logs/ecgApp.log", level=logging.DEBUG,
 
 
 # Configuracion de la BBDD en el server
+server.config["SECRET_KEY"] = os.urandom(12)
 server.config['MONGO_HOST'] = 'localhost'
 server.config['MONGO_PORT'] = '27017'
 server.config['MONGO_DBNAME'] = 'EcgDB'
@@ -36,6 +40,7 @@ server.config['MONGO_USERNAME'] = 'hexxa'
 server.config['MONGO_PASSWORD'] = '1708bilens'
 server.config['MONGO_AUTH_SOURCE'] = 'admin'
 server.config["MONGO_URI"] = "mongodb://localhost:27017/EcgDB"
+
                             
 ecgDB = PyMongo(server)
 
@@ -61,8 +66,17 @@ CACHE_CONFIG={
 cache=Cache()
 cache.init_app(server,config=CACHE_CONFIG)
 
-# Propiedades de la APP
+# Configuración del Hasing
+bcrypt = Bcrypt(server)
 
+
+# Configuracion del LoginManager  del servidor
+login_manager = LoginManager()
+login_manager.init_app(server)
+login_manager.login_view = '/'
+
+
+# Propiedades de la APP
 app = dash.Dash(server=server, external_stylesheets=stylesheets)
 app.title = "ECGApp"
 app.config.supress_callback_exceptions = True

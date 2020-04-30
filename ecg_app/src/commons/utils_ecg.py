@@ -120,6 +120,13 @@ def name_file_valid(nombre_file):
         
     return False   
 
+# Comprueba si el nombre del fichero no es nulo o vacío
+def is_empty(string):
+    if string is not None and string != "":
+        return True
+        
+    return False   
+
 
 # Devuelve el nombre del fichero sin extesion
 def get_name_file(file_url, with_ext):

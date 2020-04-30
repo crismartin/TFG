@@ -9,38 +9,28 @@ Created on Thu Mar  5 18:55:25 2020
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
+import src.apps.auth_module.auth_page as auth_page
+
+navlink_home = dbc.NavItem(dbc.NavLink(children=html.Span([html.I(className="fa fa-home"), " Home"]), 
+                                        href="/"))
 
 
 navbar = dbc.NavbarSimple(
-            children=[
-                dbc.NavItem(dbc.NavLink("Link", href="/")),
-                dbc.DropdownMenu(
-                    nav=True,
-                    in_navbar=True,
-                    label="Menu",
-                    children=[
-                        dbc.DropdownMenuItem("Entry 1"),
-                        dbc.DropdownMenuItem("Entry 2"),
-                        dbc.DropdownMenuItem(divider=True),
-                        dbc.DropdownMenuItem("Entry 3"),
-                    ],
-                ),
-            ],
+            id="nav-auth",
+            children = auth_page.nologged_component(),
             brand="ECG App",
-            brand_href="/ecg",
+            brand_href="/",
             sticky="top",
         )
 
 
-store_session = dcc.Store(id='session', storage_type='session')
+
+store_session   = dcc.Store(id='session', storage_type='session')
 
 
-layout_index = html.Div([
-    dcc.Location(id='url', refresh=False),
-    navbar,
-    html.Div(id='page-content'),
-    store_session
-])
+hidden_status = html.Div([dbc.Input(type="hidden", id="registrado", value=""),
+                          dbc.Input(type="hidden", id="logado", value="")
+                          ])
 
 ###############################################################################
 ############################## Main layout ####################################
@@ -48,7 +38,9 @@ layout_index = html.Div([
 def layout():
     return html.Div([
         dcc.Location(id='url', refresh=False),
-        navbar,
-        html.Div(id='page-content'),
-        store_session
+        navbar,        
+        html.Div(id="page-content"),
+        auth_page.layout(),
+        store_session,
+        hidden_status
     ])

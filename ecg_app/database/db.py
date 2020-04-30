@@ -6,16 +6,20 @@ Created on Fri Feb 21 18:26:55 2020
 @author: cristian
 """
 
-from app_context import ecgDB
-from app_context import app
+
+from app_context import app, ecgDB
+from bson.objectid import ObjectId
+from database.models import Usuario
 
 logger = app.logger
 
 
 # Bases de datos de la APP
+usuarios = ecgDB.db.Usuarios
 sesiones_user = ecgDB.db.SesionesUsuario
 ficheros = ecgDB.db.Ficheros
 anotaciones_temp = ecgDB.db.Anotaciones_Temp
+
 
 def set_token_session(data_session):
     logger.info("'db.set_token_session()' -> data_session: " + str(data_session ) )
@@ -184,3 +188,51 @@ def get_ann_by_file(filename, nLead, token_session):
     return result
 
 
+
+
+###############################################################################
+                            ####### USUARIOS ######
+###############################################################################
+
+
+# Guarda los datos de un fichero asociados a una sesion de usuario
+def insert_user(nick, password):
+    id_usuario = None
+
+    id_usuario = usuarios.insert({"nick": nick, "password": password}) 
+    id_usuario = str(id_usuario) if id_usuario is not None else None
+    logger.info("[db] - 'insert_user()' -> Creado nuevo usuario con id "  + id_usuario )
+        
+    return id_usuario
+
+
+# Devuelve los datos de un usuario por id
+def get_usuario(id_usuario):
+    obj_id = ObjectId(id_usuario)
+    usuario = usuarios.find_one({"_id": obj_id})
+    if usuario is None:
+        logger.info("[db] - 'get_usuario()' -> Usuario con id '"  + str(id_usuario)+ "' NO ENCONTRADA")
+        raise RuntimeError
+    
+    logger.info("[db] - 'get_usuario()' -> Usuario con id '"  + str(id_usuario)+ "' ENCONTRADA")
+    
+    # Devolvemos el objeto usuario
+    usuario = Usuario(str(usuario["_id"]), usuario["nick"], usuario["password"])
+    
+    return usuario
+
+
+def get_usuario_by_nick(nick):
+    
+    usuario = usuarios.find_one({"nick": nick})
+    if usuario is None:
+        logger.info("[db] - 'get_usuario()' -> Usuario con nick '"  + str(nick)+ "' NO ENCONTRADA")
+        raise RuntimeError
+    
+    logger.info("[db] - 'get_usuario()' -> Usuario con nick '"  + str(nick)+ "' ENCONTRADA")
+    
+    # Devolvemos el objeto usuario
+    usuario = Usuario(str(usuario["_id"]), usuario["nick"], usuario["password"])
+    
+    return usuario
+    

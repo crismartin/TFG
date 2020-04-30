@@ -5,7 +5,7 @@ Created on Fri Feb 21 18:39:09 2020
 
 @author: cristian
 """
-
+from flask_login import UserMixin as UserMixin
 
 class Punto:
     
@@ -22,16 +22,19 @@ class Punto:
         }
     
 
-class Usuarios:
+class Usuario(UserMixin):
     
-    def __init__(self, token, nick):
-        self.token = token
+    def __init__(self, token, nick, password):
+        self.id = token
         self.nick = nick
+        self.password = password
         
+    
     def toDBCollection(self):
         return {
-            "token" : self.token,
-            "nick" : self.nick
+            "_id" : self.token,
+            "nick" : self.nick,
+            "password": self.password
         }
     
     
