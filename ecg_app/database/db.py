@@ -6,10 +6,10 @@ Created on Fri Feb 21 18:26:55 2020
 @author: cristian
 """
 
-
+from datetime import datetime
 from app_context import app, ecgDB
 from bson.objectid import ObjectId
-from database.models import Usuario
+from database.models import Usuario, Sesion, Fichero
 
 logger = app.logger
 
@@ -48,9 +48,9 @@ def get_list_files_user(token_session):
     lista_ficheros = ficheros.find({"id_usession": usuario_sesion["_id"]})    
     
     for file in lista_ficheros:        
-        result_file = {"Id": str(file["_id"]), "Nombre": file["nombre"], "Formato": file["formato"]}
-        logger.info("[db] - 'get_list_files_user()' -> result_file: "  + str(result_file) )
-        result.append(result_file)
+        result_file = Fichero( str(file["_id"]), str(file["id_usession"]), file["nombre"], file["formato"], file["f_creacion"])
+        logger.info("[db] - 'get_list_files_user()' -> result_file: "  + str(result_file.toDBCollection()) )
+        result.append(result_file.toDBCollection())
     
     return result
 
@@ -195,11 +195,13 @@ def get_ann_by_file(filename, nLead, token_session):
 ###############################################################################
 
 
-# Guarda los datos de un fichero asociados a una sesion de usuario
+# Guarda un nuevo usuario
 def insert_user(nick, password):
     id_usuario = None
-
-    id_usuario = usuarios.insert({"nick": nick, "password": password}) 
+    date_registro = datetime.now()
+    fecha_registro = date_registro.strftime("%d/%m/%Y")
+    
+    id_usuario = usuarios.insert({"nick": nick, "password": password, "f_registro": str(fecha_registro)}) 
     id_usuario = str(id_usuario) if id_usuario is not None else None
     logger.info("[db] - 'insert_user()' -> Creado nuevo usuario con id "  + id_usuario )
         
@@ -217,7 +219,7 @@ def get_usuario(id_usuario):
     logger.info("[db] - 'get_usuario()' -> Usuario con id '"  + str(id_usuario)+ "' ENCONTRADA")
     
     # Devolvemos el objeto usuario
-    usuario = Usuario(str(usuario["_id"]), usuario["nick"], usuario["password"])
+    usuario = Usuario(str(usuario["_id"]), usuario["nick"], usuario["f_registro"], usuario["password"])
     
     return usuario
 
@@ -232,7 +234,24 @@ def get_usuario_by_nick(nick):
     logger.info("[db] - 'get_usuario()' -> Usuario con nick '"  + str(nick)+ "' ENCONTRADA")
     
     # Devolvemos el objeto usuario
-    usuario = Usuario(str(usuario["_id"]), usuario["nick"], usuario["password"])
+    usuario = Usuario(str(usuario["_id"]), usuario["nick"], usuario["f_registro"], usuario["password"])
     
     return usuario
-    
+
+
+
+def get_sesiones_by_user(id_usuario):
+    sesiones_result = []
+    usuario = get_usuario(id_usuario)
+    obj_id = ObjectId(usuario.id)
+    sesiones = sesiones_user.find({"id_usuario": obj_id})
+        
+    if sesiones is not None:
+        for sesion in sesiones:
+            sesion_result = Sesion(str(sesion["_id"]), sesion["token"] ,sesion["nombre"], sesion["f_creacion"], sesion["f_edicion"])
+            logger.info( "[db] - 'get_sesiones_by_user()' -> sesiones_result: "  + str(sesion_result.toDBCollection()) )
+            sesiones_result.append(sesion_result.toDBCollection())
+    else:
+        logger.info("[db] - 'get_sesiones_by_user()' -> El usuario con nick '"  + str(usuario.nick)+ " NO tiene SESIONES")
+        
+    return sesiones_result

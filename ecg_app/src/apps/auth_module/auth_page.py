@@ -22,9 +22,9 @@ def logged_component(nombre_user):
     logged_user = dbc.DropdownMenu(
                         nav=True,
                         in_navbar=True,
-                        label="Bienvenido " + nombre_user,
+                        label="Welcome " + nombre_user,
                         children=[
-                            dbc.DropdownMenuItem(children=[html.Span([html.I(className="fa fa-user"), " Ver perfil"])], href="/perfil"),
+                            dbc.DropdownMenuItem(children=[html.Span([html.I(className="fa fa-user"), " Ver perfil"])], href="/user/profile"),
                             dbc.DropdownMenuItem(children=[html.Span([html.I(className="fa fa-power-off"), " Cerrar sesión"])], href="/logout"),
                         ],
                     )

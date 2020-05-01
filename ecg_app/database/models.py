@@ -24,30 +24,38 @@ class Punto:
 
 class Usuario(UserMixin):
     
-    def __init__(self, token, nick, password):
+    def __init__(self, token, nick, f_registro, password):
         self.id = token
         self.nick = nick
         self.password = password
-        
+        self.f_registro = f_registro
+    
     
     def toDBCollection(self):
         return {
             "_id" : self.token,
             "nick" : self.nick,
+            "f_registro" : self.f_registro,
             "password": self.password
         }
     
     
-class FicherosUsuario:
+class Fichero:
     
-    def __init_(self, id_user, name_file):
-        self.id_user = id_user
-        self.name_file = name_file
+    def __init__(self, id_file, id_sesion, nombre, formato, f_creacion ):
+        self.id = id_file
+        self.id_sesion = id_sesion
+        self.nombre = nombre
+        self.formato = formato
+        self.f_creacion = f_creacion
         
     def toDBCollection(self):
         return {
-            "id_user": self.id_user,
-            "name_file": self.name_file
+            "id": self.id,
+            "id_sesion": self.id_sesion,
+            "nombre": self.nombre,
+            "formato": self.formato,
+            "f_creacion": self.f_creacion            
         }
     
     
@@ -66,4 +74,22 @@ class Anotacion:
             "pt_default": self.pt_default,
             "pt_actual": self.pt_actual            
         }
+
+
+class Sesion:
     
+    def __init__(self, id_sesion, token, nombre, f_creacion, f_edicion):
+        self.id = id_sesion
+        self.token = token
+        self.nombre = nombre
+        self.f_creacion = f_creacion
+        self.f_edicion = f_edicion
+        
+    def toDBCollection(self):
+        return{
+            "id" : self.id,
+            "token": self.token,
+            "nombre": self.nombre,
+            "f_creacion": self.f_creacion,
+            "f_edicion": self.f_edicion            
+        }    

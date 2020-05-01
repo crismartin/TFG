@@ -24,13 +24,8 @@ navbar = dbc.NavbarSimple(
         )
 
 
-
 store_session   = dcc.Store(id='session', storage_type='session')
 
-
-hidden_status = html.Div([dbc.Input(type="hidden", id="registrado", value=""),
-                          dbc.Input(type="hidden", id="logado", value="")
-                          ])
 
 ###############################################################################
 ############################## Main layout ####################################
@@ -41,6 +36,5 @@ def layout():
         navbar,        
         html.Div(id="page-content"),
         auth_page.layout(),
-        store_session,
-        hidden_status
+        store_session
     ])

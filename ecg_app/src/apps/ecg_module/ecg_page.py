@@ -47,13 +47,13 @@ spiner_loading = html.Div([
 
 
 msg_file = html.Div([
-                    html.Span("Fichero seleccionado: "),
-                    dbc.Badge(id="lbl_name_file", color="info", className="mr-1")
+                    html.Span("  Fichero seleccionado: "),
+                    dbc.Badge(id="lbl_name_file", color="info", className="mr-1"),                    
                 ])
 
 
 cnt_msg_upfile = html.Div([
-                        html.Div(id="msg-upfile", children=msg_file)
+                        html.Div(id="msg-upfile", children=msg_file)                        
                     ])
                        
 
@@ -83,7 +83,8 @@ cnt_uploader = html.Div([dcc.Upload(id="upload-file",
                             color="light",
                             is_open=False
                         )
-                    ])
+                    ]),
+            html.Div([html.Span("* Formatos soportados: Ishne, Physionet")])
             ])
 
 uploader = html.Div(id="cnt-uploader", children=cnt_uploader)
@@ -154,8 +155,9 @@ cnt_state_fant =  html.Div([
         dbc.Input( id="st-up-ant",    type="hidden"),
 ])
 
+
 modal_component = html.Div([
-    dbc.ModalHeader("Cargar Fichero"),
+    dbc.ModalHeader("Cargar Fichero*"),
     dbc.ModalBody([
         formulario        
     ]),
@@ -172,11 +174,34 @@ modal_component = html.Div([
 ##############################################################################
 ## Modal historico de ficheros
 
+def th_tbl_hist_files():
+    result = []
+    th_nombres = ["Id", "Nombre", "Formato", "Fecha creación"]
+    th_id = ["id", "nombre", "formato", "f_creacion"]
+    
+    for i in range( len(th_nombres) ):
+        aux = {"id": th_id[i], "hidden": True if (th_id[i]=="id") else False, "name": th_nombres[i]}
+        result.append(aux)    
+    return result
+
 table = dash_table.DataTable(
     id="tblHistFiles",
-    columns=[{"name": i, "id": i, "hidden": True if i=="Id" else False } for i in ["Id", "Nombre", "Formato"]
-             ],    
-    row_selectable="single"
+    columns=th_tbl_hist_files(),    
+    row_selectable="single",
+    style_cell_conditional=[
+            {'if': {'column_id': 'id'},
+             'width': '5%',             
+            },
+            {'if': {'column_id': 'nombre'},
+             'width': '50%'
+            },
+            {'if': {'column_id': 'formato'},
+             'width': '20%'
+            },
+            {'if': {'column_id': 'f_creacion'},
+             'width': '25%'
+            }
+    ]
 )
 
 
@@ -774,7 +799,7 @@ def process_file(click_process, click_load, data_session, name_file, rows, row_s
     
     if row_select is not None and row_select != []:
         index_element = row_select[0]
-        name_file = rows[index_element]["Nombre"]    
+        name_file = rows[index_element]["nombre"]    
     
     ruta_file += name_file
     

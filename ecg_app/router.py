@@ -14,9 +14,14 @@ import src.apps.ecg_module.ecg_page as ecg_page
 import src.apps.index as index_page
 import src.apps.auth_module.auth_page as auth_page
 import src.apps.auth_module.logout_page as logout_page
+import src.apps.user_module.perfil_page as perfil_page
+from src.apps.error_module.error_page import SessionError
 
-import src.apps.ecg_module.ecg_service as ecg_serv
+
+import src.apps.user_module.user_service as user_service
+
 from flask_login import login_user, logout_user, current_user
+from flask import request
 
 """
 from flask_mail import Message
@@ -35,30 +40,37 @@ logger = app.logger
               [State("session",         "data")]
 )
 def route_page(pathname, data):
-    logger.info("[router] - route_page() -> ENTRO AQUI")
-    if pathname == "/":
-        """
-        msg = Message(subject="Hello",
-                      sender=server.config.get("MAIL_USERNAME"),
-                      recipients=["emilytecnokent@gmail.com"], # replace with your email for testing
-                      body="This is a test email I sent with Gmail and Python!")
-        mail.send(msg)
-        """
     
-    if pathname == "/logout":
+    if pathname:
+        logger.info("[router] - route_page() -> ENTRO AQUI con PATHNAME: " + pathname)
+        
+        if pathname == "/":
+            """
+            msg = Message(subject="Hello",
+                          sender=server.config.get("MAIL_USERNAME"),
+                          recipients=["emilytecnokent@gmail.com"], # replace with your email for testing
+                          body="This is a test email I sent with Gmail and Python!")
+            mail.send(msg)
+            """
         if current_user.is_authenticated:
-            return [logout_page.layout(), None]
-        
-    if pathname == '/ecg':
-        data = ecg_serv.set_token_session(data)
-        #app.logger.info("'set_token_session()' -> data:"  + str(data["token_session"]) )
-        
-        # guardo el token del usuario
-        #usuarios = ecgDB.db.Usuarios
-        #usuarios.insert({"token" : str(data["token_session"]), "nick" : "cristian"})
+            if pathname == "/logout":                
+                return [logout_page.layout(), None]
+                
+            if pathname.startswith('/ecg/sesion/'):                
+                token_session = "session_"+pathname.split('/')[-1]
+                app.logger.info("[ router ] - route_page() -> /sesion/ecg")
+                app.logger.info("'set_token_session()' -> token_session: "+ str(token_session))
     
-        return [ecg_page.layout(), data]
+                data = user_service.set_session(token_session)            
+                if data is not None:            
+                #if current_user.is_authenticated:
+                    return [ecg_page.layout(), data]
+                else:
+                    return [SessionError.layout(), data]
     
+            if pathname == "/user/profile":
+                 app.logger.info("[ router ] - route_page() -> /user/profile")                 
+                 return [perfil_page.layout(), None]
         
     return [None, data]
 
@@ -68,16 +80,17 @@ def route_page(pathname, data):
               [Input("url",        "pathname")]
 )
 def auth_route(pathname):
-    logger.info("[router] - auth_route() -> ENTRO AQUI")
-    if pathname == "/success" or pathname == "/" or pathname == "/perfil":
-        if current_user.is_authenticated:
-            logged_navbar = auth_page.logged_component(current_user.nick)
-            return logged_navbar
     
-    if pathname == "/logout":
-        if current_user.is_authenticated:
-            logout_user()
-            return auth_page.nologged_component()
+    if pathname:
+        if pathname == "/logout":
+            if current_user.is_authenticated:
+                logout_user()
+                return auth_page.nologged_component()
+        else:         
+             if current_user.is_authenticated:
+                 logger.info("[ router ] - route_page() -> current_user: " + str(current_user))
+                 logged_navbar = auth_page.logged_component(current_user.nick)
+                 return logged_navbar
     
     return auth_page.nologged_component()
     
