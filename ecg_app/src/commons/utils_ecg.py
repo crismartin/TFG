@@ -12,11 +12,17 @@ import os, glob
 from urllib.request import urlopen
 import random
 import src.commons.constantes_ecg as cte
-
+from datetime import datetime
 
 
 dir_files = os.getcwd() + cte.DIR_UPLOAD_FILES
 
+# Devuelve la fecha actual en un string
+def getCurrentStringDate(formato):
+    date_registro = datetime.now()
+    formato = "%d/%m/%Y" if formato is None else formato
+    string = date_registro.strftime(formato)
+    return string
 
 # Para obtener token de session
 def generateNewTokenSession():

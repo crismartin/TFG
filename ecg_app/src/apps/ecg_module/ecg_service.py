@@ -714,7 +714,8 @@ def insert_file_session(nombre_file, formato, token_session):
     try:
         app.logger.info("[ecg_service] - 'insert_file_session()' -> filename: " + str(nombre_file) )
         app.logger.info("[ecg_service] - 'insert_file_session()' -> formato: " + str(formato) )
-        id_file = db.insert_file_session(nombre_file, formato, token_session)
+        f_creacion = utils.getCurrentStringDate(None)
+        id_file = db.insert_file_session(nombre_file, formato, token_session, f_creacion)
         return id_file
     except RuntimeError:
         app.logger.info("[ecg_service] - 'insert_file_session()' -> Token de session incorrecto")
@@ -770,4 +771,13 @@ def get_ann_by_filen(filename, nLead, token_session):
         app.logger.info("[ecg_service] - 'get_ann_by_filen()' -> Ha ocurrido un error")
     
     return None
+
+
+def update_sesion(token_sesion):
+    try:
+        f_edicion = utils.getCurrentStringDate(None)
+        db.update_sesion(token_sesion, f_edicion)        
+    except RuntimeError:
+        app.logger.info("[ecg_service] - 'update_sesion()' -> Ha ocurrido un error al actualizar la fecha de la sesion")
+    
     

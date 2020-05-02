@@ -16,12 +16,12 @@ from flask_login import current_user
 
 import src.apps.user_module.user_service as user_service
 import src.apps.ecg_module.ecg_service as ecg_serv
+import src.commons.utils_ecg as utils
 
 from app_context import app
 logger = app.logger
 
-#{"id": i, "hidden": True if i=="id" else False } for i in ["id", "nombre", "f_creacion", "f_edicion"]
-# 
+
 
 def th_tbl_sesiones():
     result = []
@@ -31,8 +31,7 @@ def th_tbl_sesiones():
     for i in range( len(th_nombres) ):
         aux = {"id": th_id[i], "hidden": True if (th_id[i]=="id" or th_id[i]=="token") else False, "name":th_nombres[i]}
         result.append(aux)
-        
-    logger.info("[ perfil_page ]- th_tbl_sesiones() -> result: " + str(result))
+            
     return result
 
 
@@ -197,17 +196,92 @@ cnt_modal_files_sesion = dbc.Modal(
             size = "lg",
             backdrop = "static"
         )
+
+
+##############################################################################
+## Modal alta sesión
+
+mbtn_nuevases_crear = dbc.Button(id="mnuevases-crear", n_clicks=None, className="mr-1", color="success",
+                                children=[
+                                    html.Span([html.I(className="fa fa-plus ml-2"), " Crear"])
+                                 ], disabled=True                    
+                        )
+
+mbtn_nuevases_cancel = dbc.Button(id="mnuevases-cancelar", n_clicks=None, className="mr-1",
+                              children=[
+                                html.Span([html.I(className="fas fa-times ml-2"), " Cancelar"])
+                             ])
+
+form_nuevases_input = dbc.Input(type="text", id="fnuevases-nombre", placeholder="", value="", maxlength=40)
+
+form_nuevases_body = html.Div([
+    dbc.FormGroup([
+        dbc.Label("Nombre sesión: ", html_for="fnuevases-nombre", width=3),
+        dbc.Col(
+            html.Div(id="cnt-fnuevases-nombre", children = form_nuevases_input), width=9,
+        )
+    ], row=True),
+])
+
+
+form_nuevases = dbc.Form(id="form-nueva-sesion", children=[
+    form_nuevases_body
+])
+
+nuevases_alert_error = html.Div(
+     dbc.Alert(id="nuevases-al-error", children=["No se ha podido crear la sesión. Vuelva a intentarlo"], 
+               color="danger", is_open=False)
+)
+
+cnt_nuevases_alert_error = html.Div(id="cnt-nuevases-al-error", children=nuevases_alert_error)
+
+modal_nueva_sesion = html.Div([
+    dbc.ModalHeader("Nueva sesión"),
+    dbc.ModalBody([
+        form_nuevases,
+        cnt_nuevases_alert_error
+    ]),
+    dbc.ModalFooter([
+        html.Div( id="cnt-mnuevases-cancelar",  children=[mbtn_nuevases_cancel] ),
+        html.Div( id="cnt-mnuevases-crear",     children=[mbtn_nuevases_crear] )        
+    ]),
+])
+
+
+cnt_modal_nueva_sesion = dbc.Modal(
+            children = modal_nueva_sesion,
+            id = "mnueva-sesion",
+            size = "lg",
+            backdrop = "static"
+        )
+
+nuevases_alert_sucess = html.Div(
+     dbc.Alert(id="nuevases-al-success", children=["Se ha creado la sesión correctamente"], 
+               color="success", is_open=False, dismissable=True)
+)
+
+
+
+cnt_nuevases_alert = html.Div(children=nuevases_alert_sucess)
+
 ##############################################################################
 
 cargar_sesiones = dbc.Input(id="load-sesiones", type="hidden", value="True")
 
+nuevases_status = dbc.Input(id="nuevases-estado", type="hidden", value="")
+cnt_nuevases_status = html.Div(id="cnt-nuevases-estado", children=nuevases_status)
+
+
 body = dbc.Container([
+    cnt_nuevases_alert,
     html.Br(),
+    cnt_nuevases_status,
     html.H1("Perfil de Usuario"),
     html.Hr(),
     cabecera,
     cargar_sesiones,
-    cnt_modal_files_sesion
+    cnt_modal_files_sesion,
+    cnt_modal_nueva_sesion
 ])
 
 
@@ -218,7 +292,8 @@ body = dbc.Container([
 @app.callback(
     [Output("tbl-sesiones",   "data"),
      Output("prof-nick",      "children"),
-     Output("prof-freg",      "children")],
+     Output("prof-freg",      "children"),
+     Output('cnt-nuevases-estado',  "children")],
     [Input("load-sesiones",   "value")]
 )
 def load_sesiones_usuario(btn_new_sesion):
@@ -226,8 +301,9 @@ def load_sesiones_usuario(btn_new_sesion):
         logger.info("@callback [ perfil_page ] - load_sesiones_usuario() -> ENTRA EN PERFIL PAGE")        
         sesiones_usuario = user_service.get_sesiones_by_user(current_user.id)
         logger.info("@callback [ perfil_page ] - load_sesiones_usuario() -> sesiones_usuario: " + str(sesiones_usuario))
-        return [sesiones_usuario, current_user.nick, current_user.f_registro]
-
+        return [sesiones_usuario, current_user.nick, current_user.f_registro, nuevases_status]
+    
+    raise dash.exceptions.PreventUpdate()
 
 
 @app.callback(
@@ -258,10 +334,11 @@ def toggle_msesfiles(btn_verfiles, btn_cancel_files, is_open):
 
 
 @app.callback(
-    Output('tbl-files-sesion',  "data"),
-    [Input("btn-ver-files",     "n_clicks")],
-    [State('tbl-sesiones',      "derived_virtual_selected_rows"),
-     State('tbl-sesiones',      "derived_virtual_data")]
+    [Output('tbl-files-sesion',     "data"),
+     Output("tbl-files-sesion",     "selected_rows")],
+    [Input("btn-ver-files",         "n_clicks")],
+    [State('tbl-sesiones',          "derived_virtual_selected_rows"),
+     State('tbl-sesiones',          "derived_virtual_data")]
 )
 def load_files_sesion(btn_ver_files, row_selected, rows):
     app.logger.info("@callback [ perfil_page ] INICIO 'load_files_sesion()'")    
@@ -273,10 +350,12 @@ def load_files_sesion(btn_ver_files, row_selected, rows):
         app.logger.info("@callback [ perfil_page ] - load_files_sesion() -> id_token_sesion: " + str(id_token_sesion))
         files_sesion = ecg_serv.get_list_files_user(id_token_sesion)
         app.logger.info("@callback [ perfil_page ] - load_files_sesion() -> files_sesion: " + str(files_sesion))
-        return files_sesion
+        if files_sesion is not None and files_sesion != []:
+            app.logger.info("@callback [ perfil_page ] - load_files_sesion() -> MUESTRO LOS FICHEROS")
+            return files_sesion, []
     
-    return []
-
+    app.logger.info("@callback [ perfil_page ] - load_files_sesion() -> LANZO EXEPCION DE LA BUENA")
+    raise dash.exceptions.PreventUpdate()
 
 
 
@@ -284,8 +363,7 @@ def load_files_sesion(btn_ver_files, row_selected, rows):
      Output("msesfiles-borrar",    "disabled"),
     [Input("tbl-files-sesion",     "derived_virtual_selected_rows")]
 )
-def select_row_file_sesion(sesion_selected):
-    #logger.info("@callback [ perfil_page ] - select_row_file_sesion() -> sesion_selected: "+ str(sesion_selected))
+def select_row_file_sesion(sesion_selected):    
     disable_btns = False
     if sesion_selected is not None and sesion_selected != []:
         return disable_btns
@@ -314,8 +392,103 @@ def go_session_selected(showed_alert, row_selected, rows):
 
 
 
-sesion_load_url = dcc.Location(id='url_sesion_load',  refresh=True)
+###############################################################################
+## Callbacks Nueva sesión
+        
+@app.callback(    
+    Output("mnueva-sesion",      "is_open"),     
+    [Input("prof-new-sesion",    "n_clicks"),
+     Input("mnuevases-cancelar", "n_clicks")],
+    [State('mnueva-sesion',      "is_open")]
+)
+def toggle_modal_new_session(btn_ns, btn_cancel, is_open):
 
+    if btn_ns or btn_cancel:
+        return not is_open
+
+    return is_open
+
+
+
+@app.callback(
+    [Output("mnuevases-crear",          "disabled"),
+     Output("cnt-nuevases-al-error",    "children")],
+    [Input("fnuevases-nombre",          "value")]
+)
+def mnuevases_crear_disabled(nombre_sesion):
+    
+    if utils.is_empty(nombre_sesion):        
+        return False, nuevases_alert_error
+    else:        
+        return True, nuevases_alert_error
+
+
+
+@app.callback(
+    Output("fnuevases-nombre", "value"),
+    [Input("prof-new-sesion", "n_clicks")]
+)
+def mnuevases_form_reset(btn):
+    return ""
+    
+
+    
+@app.callback(
+    Output("nuevases-estado", "value"),
+    [Input("mnuevases-crear", "n_clicks")],
+    [State("fnuevases-nombre", "value")]
+)
+def mnuevases_crear_sesion(btn, nombre_sesion):
+    if btn is None:
+        raise dash.exceptions.PreventUpdate()
+    
+    if current_user.is_authenticated:    
+        # Obtenemos el ID del usuario para asociar la nueva sesion 
+        id_usuario = current_user.id  # "5ea8a6e7c725a0a9f3692e7a"
+        # Guardamos la nueva sesion
+        logger.info("@callback [ perfil_page ] - mnuevases_crear_sesion() -> Guardando nueva sesion...")
+        result_operacion = user_service.create_sesion(id_usuario, nombre_sesion)
+        logger.info("@callback [ perfil_page ] - mnuevases_crear_sesion() -> nueva_sesion: " + str(result_operacion))
+
+    return result_operacion
+
+
+
+@app.callback(
+    [Output("nuevases-al-success",  "is_open"),
+     Output("nuevases-al-error",    "is_open")],
+    [Input("nuevases-estado",       "value")],    
+)
+def show_msg_crear_sesion(stat_created):
+
+    if stat_created == "0":
+        return False, True
+
+    elif stat_created == "1":
+        return True, False
+    
+    else:
+        raise dash.exceptions.PreventUpdate()
+    
+    
+    
+@app.callback(
+    [Output("mnuevases-cancelar",   "n_clicks"),
+     Output("load-sesiones",        "value")],
+    [Input("nuevases-al-success",  "is_open"),
+     Input("nuevases-al-error",    "is_open")],
+    [State("mnuevases-cancelar",    "n_clicks")]
+)
+def click_cancel_btn(success, error, clicks_cancel):
+    logger.info("@callback [ perfil_page ] - click_cancel_btn() -> success: " + str(success))
+    if success is True:
+        return clicks_cancel, ""
+    else:
+        raise dash.exceptions.PreventUpdate()
+
+###############################################################################
+
+sesion_load_url = dcc.Location(id='url_sesion_load',  refresh=True)
 
 ###############################################################################
                        ########## MAIN LAYOUT ##########

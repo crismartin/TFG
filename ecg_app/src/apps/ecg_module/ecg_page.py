@@ -507,11 +507,14 @@ body = dbc.Container([
     ),    
 ])
 
+input_up_fecha_edicion_aux = dbc.Input(id="up-fecha-edicion-aux", type="hidden", value="")
+input_up_fecha_edicion = dbc.Input(id="up-fecha-edicion", type="hidden", value="")
 
 footer = html.Div([
-            dbc.Input(type="hidden", id="fname_process")
+            dbc.Input(type="hidden", id="fname_process"),
+            input_up_fecha_edicion,
+            input_up_fecha_edicion_aux
         ])
-
 
 
 ###############################################################################
@@ -1107,6 +1110,20 @@ def change_msg_alert_ann(estatus_edit, pt_fin):
 
 
 
+@app.callback(
+    Output("up-fecha-edicion",      "value"),
+    [Input("up-fecha-edicion-aux",  "value")],
+    [State("url",                   "pathname")]
+)
+def up_fecha_edicion_sesion(val, url_sesion):
+    app.logger.info("@callback: INICIO 'change_msg_alert_ann()' -> ENTRO PARA ACTUALIZAR LA SESION")
+    id_token = url_sesion.split('/')[-1]
+    
+    if utils.is_empty(id_token):
+        token_session = "session_" + id_token
+        ecg_serv.update_sesion(token_session)
+        
+    raise dash.exceptions.PreventUpdate()
 
 ###############################################################################
 ############################## Main layout ####################################

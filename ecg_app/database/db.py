@@ -69,11 +69,11 @@ def get_file_user_by_name(filename, token_session):
 
 
 # Guarda los datos de un fichero asociados a una sesion de usuario
-def insert_file_session(filename, formato, token_session):
+def insert_file_session(filename, formato, token_session, f_creacion):
     id_file = None
     user_sesion = check_session(token_session)    
         
-    id_file = ficheros.insert({"id_usession": user_sesion["_id"], "nombre": filename, "formato": formato}) 
+    id_file = ficheros.insert({"id_usession": user_sesion["_id"], "nombre": filename, "formato": formato, "f_creacion": f_creacion}) 
     logger.info("[db] - 'insert_file_session()' -> Insertado fichero con id "  + str(id_file) )
  
     return id_file
@@ -239,6 +239,9 @@ def get_usuario_by_nick(nick):
     return usuario
 
 
+###############################################################################
+                            ####### SESIONES ######
+###############################################################################
 
 def get_sesiones_by_user(id_usuario):
     sesiones_result = []
@@ -255,3 +258,37 @@ def get_sesiones_by_user(id_usuario):
         logger.info("[db] - 'get_sesiones_by_user()' -> El usuario con nick '"  + str(usuario.nick)+ " NO tiene SESIONES")
         
     return sesiones_result
+
+
+
+def create_sesion(id_usuario, token_sesion, nombre_sesion, f_creacion):    
+    usuario = get_usuario(id_usuario)
+    usuario_obj_id = ObjectId(usuario.id)
+    
+    id_sesion = sesiones_user.insert({"id_usuario": usuario_obj_id, 
+                                      "nombre": nombre_sesion, 
+                                      "token": token_sesion, 
+                                      "f_creacion": str(f_creacion),
+                                      "f_edicion": None}) 
+    id_sesion = str(id_usuario) if id_usuario is not None else None
+    logger.info("[ db ] - 'create_sesion()' -> Creada nueva sesion con id "  + id_sesion )
+
+    return id_sesion
+
+
+def update_sesion(token_session, f_edicion):
+    sesion = sesiones_user.find_one({"token" : token_session})
+    if token_session is None:
+        logger.info("[db] - 'update_sesion()' -> La sesion con token_session '" + str(token_session) + "' NO EXISTE")
+        raise RuntimeError
+    
+    query_update = { "_id": sesion["_id"] }
+    new_values =  { "$set": { "f_edicion" : f_edicion} }
+        
+    logger.info("[db] - 'save_ann_temp()' -> Antes de actualizar registro")
+    id_sesion = sesiones_user.update_one(query_update, new_values)
+    if id_sesion is None:
+        logger.info("[db] - 'update_sesion()' -> La sesion con token_session '" + str(token_session) + "' NO EXISTE")
+        raise RuntimeError
+            
+    

@@ -42,7 +42,7 @@ logger = app.logger
 def route_page(pathname, data):
     
     if pathname:
-        logger.info("[router] - route_page() -> ENTRO AQUI con PATHNAME: " + pathname)
+        logger.info("[ router ] - route_page() -> ENTRO AQUI con PATHNAME: " + pathname)
         
         if pathname == "/":
             """
@@ -53,25 +53,23 @@ def route_page(pathname, data):
             mail.send(msg)
             """
         if current_user.is_authenticated:
+            if pathname == "/user/profile":
+                app.logger.info("[ router ] - route_page() -> /user/profile")                 
+                return [perfil_page.layout(), None]
+            
             if pathname == "/logout":                
                 return [logout_page.layout(), None]
                 
             if pathname.startswith('/ecg/sesion/'):                
                 token_session = "session_"+pathname.split('/')[-1]
-                app.logger.info("[ router ] - route_page() -> /sesion/ecg")
                 app.logger.info("'set_token_session()' -> token_session: "+ str(token_session))
     
-                data = user_service.set_session(token_session)            
-                if data is not None:            
-                #if current_user.is_authenticated:
+                data = user_service.set_session(token_session)
+                if data is not None:
                     return [ecg_page.layout(), data]
                 else:
                     return [SessionError.layout(), data]
     
-            if pathname == "/user/profile":
-                 app.logger.info("[ router ] - route_page() -> /user/profile")                 
-                 return [perfil_page.layout(), None]
-        
     return [None, data]
 
 
