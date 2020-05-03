@@ -167,16 +167,23 @@ tbl_ficheros = dash_table.DataTable(
 )
 
 
-mbtn_delete_files = dbc.Button(id="msesfiles-borrar", n_clicks=None, className="mr-1", color="danger",
+mbtn_delete_files = dbc.Button(id="msesfiles-borrar", className="mr-1", color="danger",
                                 children=[
                                     html.Span([html.I(className="fa fa-trash ml-2"), " Eliminar"])
                                  ], disabled=True                    
                         )
 
-mbtn_cerrar_files = dbc.Button(id="msesfiles-cerrar", n_clicks=None, className="mr-1",
+mbtn_cerrar_files = dbc.Button(id="msesfiles-cerrar", className="mr-1",
                               children=[
                                 html.Span([html.I(className="fas fa-times ml-2"), " Cerrar"])
                              ])
+
+histf_alert_error = html.Div(
+     dbc.Alert(id="histf-al-error", children=["Ha ocurrido un error al eliminar los ficheros seleccionados"],
+               color="danger", is_open=False, dismissable=True)
+)
+
+cnt_histf_alert_error = html.Div(id="cnt-histf-al-error", children=histf_alert_error)
 
 modal_files_sesion = html.Div([
     dbc.ModalHeader("Historial de ficheros"),
@@ -184,6 +191,7 @@ modal_files_sesion = html.Div([
         tbl_ficheros
     ]),
     dbc.ModalFooter([
+        cnt_histf_alert_error,
         html.Div( id="cnt-msesfiles-cerrar",   children=[mbtn_cerrar_files] ),
         html.Div( id="cnt-msesfiles-borrar",   children=[mbtn_delete_files] )        
     ]),
@@ -197,17 +205,54 @@ cnt_modal_files_sesion = dbc.Modal(
             backdrop = "static"
         )
 
+##############################################################################
+## Modal confirmacion borrar ficheros
+
+mbtn_borrarfiles_borrar = dbc.Button(id="mborrarfiles-borrar", className="mr-1", color="danger",
+                                children=[
+                                    html.Span([html.I(className="fa fa-plus ml-2"), " Borrar"])
+                                 ]
+                          )
+
+mbtn_borrarfiles_cancelar = dbc.Button(id="mborrarfiles-cancelar", className="mr-1",
+                              children=[
+                                html.Span([html.I(className="fas fa-times ml-2"), " Cancelar"])]
+                             )
+
+modal_borrar_ficheros = html.Div([    
+    dbc.ModalBody([
+        html.H4(children=["Eliminar ficheros"]),
+        html.P("Se van a borrar los ficheros seleccionados."),
+        html.P("Proceso IRREVERSIBLE. ¿Desea continuar?"),
+        dbc.Row([
+            dbc.Col([
+                html.Div( id="cnt-mborrarfiles-cancelar",  children=[mbtn_borrarfiles_cancelar], className="text-left" )
+            ]),
+            dbc.Col([
+                html.Div( id="cnt-mborrarfiles-borrar",    children=[mbtn_borrarfiles_borrar], className="text-right" )
+            ])
+        ])
+    ], className="text-center"),
+])
+
+cnt_modal_borrar_files = dbc.Modal(
+            children = modal_borrar_ficheros,
+            id = "cnt-mborrarfiles",
+            size = "lg",
+            backdrop = "static"
+)
+
 
 ##############################################################################
 ## Modal alta sesión
 
-mbtn_nuevases_crear = dbc.Button(id="mnuevases-crear", n_clicks=None, className="mr-1", color="success",
+mbtn_nuevases_crear = dbc.Button(id="mnuevases-crear", className="mr-1", color="success",
                                 children=[
                                     html.Span([html.I(className="fa fa-plus ml-2"), " Crear"])
                                  ], disabled=True                    
                         )
 
-mbtn_nuevases_cancel = dbc.Button(id="mnuevases-cancelar", n_clicks=None, className="mr-1",
+mbtn_nuevases_cancel = dbc.Button(id="mnuevases-cancelar", className="mr-1",
                               children=[
                                 html.Span([html.I(className="fas fa-times ml-2"), " Cancelar"])
                              ])
@@ -260,9 +305,52 @@ nuevases_alert_sucess = html.Div(
                color="success", is_open=False, dismissable=True)
 )
 
-
-
 cnt_nuevases_alert = html.Div(children=nuevases_alert_sucess)
+
+
+##############################################################################
+## Modal confirmacion borrar sesion
+
+borrarsesion_btn_borrar = dbc.Button(id="mdelsesion-borrar", className="mr-1", color="danger",
+                                children=[
+                                    html.Span([html.I(className="fa fa-plus ml-2"), " Borrar"])
+                                 ]
+                          )
+
+borrarsesion_btn_cancel = dbc.Button(id="mdelsesion-cancelar", className="mr-1",
+                              children=[
+                                html.Span([html.I(className="fas fa-times ml-2"), " Cancelar"])]
+                             )
+
+modal_borrar_sesion = html.Div([
+    dbc.ModalBody([
+        html.H4(children=["Eliminar sesión"]),
+        html.P("Se va a eliminar los datos de la SESIÓN seleccionada junto con los FICHEROS asociados a ella"),
+        html.P("Proceso IRREVERSIBLE. ¿Desea continuar?"),
+        dbc.Row([
+            dbc.Col([
+                html.Div( id="cnt-mdelsesion-cancelar",  children=[borrarsesion_btn_cancel], className="text-left" )
+            ]),
+            dbc.Col([
+                html.Div( id="cnt-mdelsesion-borrar",    children=[borrarsesion_btn_borrar], className="text-right" )
+            ])
+        ])
+    ], className="text-center"),
+])
+
+borrarsesion_al_error = html.Div(
+     dbc.Alert(id="mdelsesion-al-error", children=["Ha ocurrido un error al eliminar la sesión"],
+               color="danger", is_open=False, dismissable=True)
+)
+
+cnt_borrarsesion_al_error = html.Div(id="cnt-mdelsesion-al-error", children=borrarsesion_al_error)
+
+cnt_modal_borrar_sesion = dbc.Modal(
+            children = modal_borrar_sesion,
+            id = "mdelsesion",
+            size = "lg",
+            backdrop = "static"
+)
 
 ##############################################################################
 
@@ -274,6 +362,7 @@ cnt_nuevases_status = html.Div(id="cnt-nuevases-estado", children=nuevases_statu
 
 body = dbc.Container([
     cnt_nuevases_alert,
+    cnt_borrarsesion_al_error,
     html.Br(),
     cnt_nuevases_status,
     html.H1("Perfil de Usuario"),
@@ -281,7 +370,9 @@ body = dbc.Container([
     cabecera,
     cargar_sesiones,
     cnt_modal_files_sesion,
-    cnt_modal_nueva_sesion
+    cnt_modal_nueva_sesion,
+    cnt_modal_borrar_files,
+    cnt_modal_borrar_sesion
 ])
 
 
@@ -289,20 +380,57 @@ body = dbc.Container([
                        ########## CALLBACKS ##########
 ###############################################################################
 
-@app.callback(
-    [Output("tbl-sesiones",   "data"),
-     Output("prof-nick",      "children"),
-     Output("prof-freg",      "children"),
-     Output('cnt-nuevases-estado',  "children")],
-    [Input("load-sesiones",   "value")]
-)
-def load_sesiones_usuario(btn_new_sesion):
-    if current_user.is_authenticated:
-        logger.info("@callback [ perfil_page ] - load_sesiones_usuario() -> ENTRA EN PERFIL PAGE")        
-        sesiones_usuario = user_service.get_sesiones_by_user(current_user.id)
-        logger.info("@callback [ perfil_page ] - load_sesiones_usuario() -> sesiones_usuario: " + str(sesiones_usuario))
-        return [sesiones_usuario, current_user.nick, current_user.f_registro, nuevases_status]
+def get_id_btn_clicked(ctx):
+    button_id = ""
+    if not ctx.triggered:
+        raise dash.exceptions.PreventUpdate()
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        logger.info("[ perfil_page ] -  get_id_btn_clicked() -> button_id: "+ str(button_id))
     
+    return button_id
+
+
+def msesions_get_sesion(sesion_sel, tbl_sesiones):    
+    sesion = None
+    if sesion_sel is not None and tbl_sesiones != []:
+        indice = sesion_sel[0]
+        sesion = tbl_sesiones[indice]
+    
+    app.logger.info("[ perfil_page ] - msesions_get_sesion() -> sesion: " + str(sesion))
+    return sesion
+    
+
+
+@app.callback(
+    [Output("tbl-sesiones",         "data"),
+     Output("prof-nick",            "children"),
+     Output("prof-freg",            "children"),
+     Output('cnt-nuevases-estado',  "children"),
+     Output('mdelsesion-al-error',  "is_open")],
+    [Input("load-sesiones",         "value"),
+     Input("mdelsesion-borrar",     "n_clicks")],
+    [State('tbl-sesiones',          "derived_virtual_selected_rows"),
+     State('tbl-sesiones',          "derived_virtual_data")]
+)
+def load_sesiones_usuario(btn_new_sesion, btn_del_sesion, row_seleted, rows):
+    if current_user.is_authenticated:
+        
+        logger.info("\n@callback [ perfil_page ] - load_sesiones_usuario() -> ENTRA EN PERFIL PAGE") 
+        ctx = dash.callback_context
+        button_id = get_id_btn_clicked(ctx)
+        
+        if button_id == "mdelsesion-borrar" and btn_del_sesion is not None:
+            sesion = msesions_get_sesion(row_seleted, rows)
+            if sesion is not None:
+                result_borrar = user_service.borrar_sesion(sesion)
+                sesiones_usuario = user_service.get_sesiones_by_user(current_user.id)
+                return [sesiones_usuario, current_user.nick, current_user.f_registro, nuevases_status, not result_borrar]
+        else:
+            sesiones_usuario = user_service.get_sesiones_by_user(current_user.id)
+            logger.info("@callback [ perfil_page ] - load_sesiones_usuario() -> sesiones_usuario: " + str(sesiones_usuario))
+            return [sesiones_usuario, current_user.nick, current_user.f_registro, nuevases_status, False]
+        
     raise dash.exceptions.PreventUpdate()
 
 
@@ -328,33 +456,93 @@ def select_row_sesion(sesion_selected):
     [State("msesfiles-sesion",  "is_open")]
 )
 def toggle_msesfiles(btn_verfiles, btn_cancel_files, is_open):
+
     if btn_verfiles or btn_cancel_files:
         return not is_open
     return is_open
 
 
+
+def msesfiles_get_sesion(sesion_sel, tbl_sesiones):    
+    id_token_sesion = None
+    if sesion_sel is not None and tbl_sesiones != []:
+        indice = sesion_sel[0]
+        id_token_sesion = tbl_sesiones[indice]["token"]
+    
+    app.logger.info("[ perfil_page ] - msesfiles_get_sesion() -> id_token_sesion: " + str(id_token_sesion))
+    return id_token_sesion
+    
+
+
+def msesfiles_cargar_files(token_sesion):
+    files_sesion = ecg_serv.get_list_files_user(token_sesion)
+    app.logger.info("[ perfil_page ] - msesfiles_cargar_files() -> files_sesion: " + str(token_sesion))
+    if files_sesion is not None and files_sesion != []:
+        app.logger.info("[ perfil_page ] - msesfiles_cargar_files() -> MUESTRO LOS FICHEROS")
+        return files_sesion
+    
+    return []
+
+def msesfiles_borrar_files(token_sesion, list_files):
+
+    if list_files is not None and list_files != []:
+        app.logger.info("[ perfil_page ] - msesfiles_cargar_files() -> MUESTRO LOS FICHEROS")
+        result = user_service.delete_files_selected(token_sesion, list_files)
+        if result is True:
+            files_sesion = msesfiles_cargar_files(token_sesion)
+            return files_sesion, True
+        else:
+            return [], False
+    
+    return [], False
+
+def get_data_selected(rows_sel, rows):
+    result = []
+    if rows_sel is not None and rows_sel != []:
+        for row in rows_sel:
+            data = rows[row]
+            result.append(data)
+    
+    return result
+
+
+
 @app.callback(
     [Output('tbl-files-sesion',     "data"),
-     Output("tbl-files-sesion",     "selected_rows")],
-    [Input("btn-ver-files",         "n_clicks")],
+     Output("tbl-files-sesion",     "selected_rows"),
+     Output("histf-al-error",       "is_open")],
+    [Input("btn-ver-files",         "n_clicks"),
+     Input("mborrarfiles-borrar",   "n_clicks")],
     [State('tbl-sesiones',          "derived_virtual_selected_rows"),
-     State('tbl-sesiones',          "derived_virtual_data")]
+     State('tbl-sesiones',          "derived_virtual_data"),
+     State('tbl-files-sesion',      "derived_virtual_selected_rows"),
+     State('tbl-files-sesion',      "derived_virtual_data"),]
 )
-def load_files_sesion(btn_ver_files, row_selected, rows):
+def load_files_sesion(btn_ver_files, btn_borrar_files, row_selected_ses, rows_ses, rows_files_sel, rows_files):
     app.logger.info("@callback [ perfil_page ] INICIO 'load_files_sesion()'")    
-    app.logger.info("@callback [ perfil_page ] - load_files_sesion() -> row_selected: " + str(row_selected))
-        
-    if row_selected is not None and row_selected != []:
-        indice = row_selected[0]
-        id_token_sesion = rows[indice]["token"]
-        app.logger.info("@callback [ perfil_page ] - load_files_sesion() -> id_token_sesion: " + str(id_token_sesion))
-        files_sesion = ecg_serv.get_list_files_user(id_token_sesion)
-        app.logger.info("@callback [ perfil_page ] - load_files_sesion() -> files_sesion: " + str(files_sesion))
-        if files_sesion is not None and files_sesion != []:
-            app.logger.info("@callback [ perfil_page ] - load_files_sesion() -> MUESTRO LOS FICHEROS")
-            return files_sesion, []
+
+    ctx = dash.callback_context
+    button_id = get_id_btn_clicked(ctx)
     
-    app.logger.info("@callback [ perfil_page ] - load_files_sesion() -> LANZO EXEPCION DE LA BUENA")
+    token_sesion = msesfiles_get_sesion(row_selected_ses, rows_ses)
+    if utils.is_not_empty(token_sesion):
+        if button_id == "btn-ver-files":
+            app.logger.info("@callback [ perfil_page ] - 'load_files_sesion()' -> CARGAR ficheros")
+            files_sesion = msesfiles_cargar_files(token_sesion)
+            return files_sesion, [], False #Cargar ficheros de sesion
+        
+        elif button_id == "mborrarfiles-borrar":
+            app.logger.info("@callback [ perfil_page ] - 'load_files_sesion()' -> BORRAR ficheros")
+            # Borrar ficheros de sesion
+            files_selected = get_data_selected(rows_files_sel, rows_files)
+            files_sesion, result_operacion = msesfiles_borrar_files(token_sesion, files_selected) 
+            if result_operacion is True:
+                app.logger.info("@callback [ perfil_page ] - 'load_files_sesion()' -> Los ficheros se han borrado correctamente")
+                return files_sesion, [], False
+            else:
+                app.logger.info("@callback [ perfil_page ] - 'load_files_sesion()' -> Los ficheros NO se han podido borrar")
+                return rows_files, [], True
+    
     raise dash.exceptions.PreventUpdate()
 
 
@@ -392,6 +580,29 @@ def go_session_selected(showed_alert, row_selected, rows):
 
 
 
+@app.callback(
+    Output("cnt-mborrarfiles",      "is_open"),
+    [Input("msesfiles-borrar",      "n_clicks"),
+     Input("mborrarfiles-cancelar", "n_clicks"),
+     Input("mborrarfiles-borrar",   "n_clicks")],
+    [State("cnt-mborrarfiles",      "is_open")]
+)
+def mborrarfiles_toggle(btn, btn_cancel, btn_borrar, is_open):
+    if btn or btn_cancel or btn_borrar:
+        return not is_open
+    return is_open
+    
+
+@app.callback(
+    Output("cnt-histf-al-error",    "children"),
+    [Input("msesfiles-borrar",      "n_clicks")],
+)
+def mborrarfiles_reset_alert(btn):
+    if btn:
+        return histf_alert_error
+    
+
+
 ###############################################################################
 ## Callbacks Nueva sesión
         
@@ -417,7 +628,7 @@ def toggle_modal_new_session(btn_ns, btn_cancel, is_open):
 )
 def mnuevases_crear_disabled(nombre_sesion):
     
-    if utils.is_empty(nombre_sesion):        
+    if utils.is_not_empty(nombre_sesion):        
         return False, nuevases_alert_error
     else:        
         return True, nuevases_alert_error
@@ -485,6 +696,24 @@ def click_cancel_btn(success, error, clicks_cancel):
         return clicks_cancel, ""
     else:
         raise dash.exceptions.PreventUpdate()
+
+
+
+@app.callback(
+    Output("mdelsesion",            "is_open"),
+    [Input("btn-delete-sesion",     "n_clicks"),
+     Input("mdelsesion-cancelar",   "n_clicks"),
+     Input("mdelsesion-borrar",     "n_clicks")],
+    [State("mdelsesion",            "is_open")]
+)
+def mborrarsesion_toggle(btn, btn_cancel, btn_borrar, is_open):
+    if btn or btn_cancel or btn_borrar:
+        return not is_open
+    return is_open
+
+
+
+
 
 ###############################################################################
 

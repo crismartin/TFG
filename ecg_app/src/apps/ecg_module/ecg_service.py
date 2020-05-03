@@ -645,7 +645,7 @@ def is_file_soported(file_route):
         
         sig_len = ecg_data.header.signal_len
         if sig_len is None or sig_len <= 0:
-            print( "[ecg_service] - 'is_file_soported()' -> No hay datos de señal ECG para fichero " + str(file_route) )    
+            print( "[ecg_service] - 'is_file_soported()' -> No hay datos de señal ECG para fichero " + str(file_route) )
             return False, filename_aux, False, formato
         
         app.logger.info( "[ecg_service] - 'is_file_soported()' -> sig_len: " + str(sig_len))
@@ -684,7 +684,9 @@ def get_list_files_user(token_session):
     except RuntimeError:
         app.logger.info("[ecg_service] - 'insert_file_session()' -> Token de session incorrecto" )
     
-    return None        
+    return None
+
+
 
 
 # Devuelve el fichero de nombre "filename" asociado a una sesion de usuario 

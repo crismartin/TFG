@@ -13,9 +13,24 @@ from urllib.request import urlopen
 import random
 import src.commons.constantes_ecg as cte
 from datetime import datetime
+import shutil
 
 
 dir_files = os.getcwd() + cte.DIR_UPLOAD_FILES
+
+
+# Elimina un directorio con todo lo que hay dentro de él
+def remove_dir(name_dir):
+    result = False
+    path_folder = dir_files + "/" + name_dir
+    try:
+        print("[ utils_ecg ] - remove_dir() -> DIRECTORIO a BORRAR '%s'" %name_dir)
+        shutil.rmtree(path_folder, ignore_errors=True)
+        result = True
+    except Exception:
+        print("[ utils_ecg ] - remove_dir() -> Ha ocurrido un error al intentar borrar el directorio '%s'" %name_dir)
+    
+    return result
 
 # Devuelve la fecha actual en un string
 def getCurrentStringDate(formato):
@@ -127,7 +142,7 @@ def name_file_valid(nombre_file):
     return False   
 
 # Comprueba si el nombre del fichero no es nulo o vacío
-def is_empty(string):
+def is_not_empty(string):
     if string is not None and string != "":
         return True
         

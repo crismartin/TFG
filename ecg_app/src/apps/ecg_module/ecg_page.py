@@ -1119,7 +1119,7 @@ def up_fecha_edicion_sesion(val, url_sesion):
     app.logger.info("@callback: INICIO 'change_msg_alert_ann()' -> ENTRO PARA ACTUALIZAR LA SESION")
     id_token = url_sesion.split('/')[-1]
     
-    if utils.is_empty(id_token):
+    if utils.is_not_empty(id_token):
         token_session = "session_" + id_token
         ecg_serv.update_sesion(token_session)
         
