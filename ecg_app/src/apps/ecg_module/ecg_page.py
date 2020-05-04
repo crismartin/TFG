@@ -84,7 +84,7 @@ cnt_uploader = html.Div([dcc.Upload(id="upload-file",
                             is_open=False
                         )
                     ]),
-            html.Div([html.Span("* Formatos soportados: Ishne, Physionet")])
+            html.Div([html.Span("* ", className="text-info"), html.Span("Formatos soportados: Ishne, Physionet")])
             ])
 
 uploader = html.Div(id="cnt-uploader", children=cnt_uploader)
@@ -98,7 +98,11 @@ input_component      = dbc.Input(type="url", id="url-dat-file", placeholder="htt
 
 form_datos_ecg = html.Div([
     
-    html.H5("Datos Header"),
+    html.H5(children=["Datos Header", html.Span(id="title-datos-header", children="*", className="text-danger")]),
+    dbc.Tooltip(
+            "Campo obligatorio",
+            target="title-datos-header",
+        ),
     dbc.FormGroup([
         dbc.Label("Desde url remota: ", html_for="url-hed-file"),
         html.Div(id="input-component-hed", children = input_component_hed)
@@ -110,7 +114,11 @@ form_datos_ecg = html.Div([
         html.Div(id="input-component-ant", children = input_component_ant)
     ]),
 
-    html.H5("Datos ECG"),
+    html.H5(children=["Datos ECG", html.Span(id="title-datos-ecg", children="*", className="text-danger")]),
+    dbc.Tooltip(
+            "Campo obligatorio",
+            target="title-datos-ecg",
+        ),
     dbc.FormGroup([
         dbc.Label("Desde url remota: ", html_for="url-dat-file"),
         html.Div(id="input-component", children = input_component)
@@ -156,8 +164,13 @@ cnt_state_fant =  html.Div([
 ])
 
 
+
 modal_component = html.Div([
-    dbc.ModalHeader("Cargar Fichero*"),
+    dbc.ModalHeader(children=["Cargar Fichero", html.Span(id="title-modal-files", children="*", className="text-info")]),
+    dbc.Tooltip(
+        "Formatos soportados: Ishne, Physionet",
+        target="title-modal-files",
+    ),
     dbc.ModalBody([
         formulario        
     ]),
@@ -480,22 +493,35 @@ collapse_edicion = dbc.Row(
 )
 
 
-form_controls = html.Div(id="form-controls", children=[ dropdown_leads, load_intervals_inputs, collapse_edicion])
+form_controls = html.Div(id="form-controls", children=[ dropdown_leads, load_intervals_inputs, collapse_edicion],
+                         style={'padding-top': '48px'})
 
 cnt_form_controls = dbc.Form(id="cnt-form-controls", children=form_controls)
 
-title_format = html.H1("Formato", id="formato-title", style={'textAlign': 'center'})
+title_format_file = html.H2("Formato", id="formato-title", style={'textAlign': 'center'})
+
+title_name_sesion = html.H2(children=["SESIÓN: ", html.I(id="title-sesion", children=[""])], style={'textAlign': 'left'})
+
+cnt_title_page = dbc.Row([
+    dbc.Col([
+        title_name_sesion        
+    ]),    
+])
+
+
 
 
 body = dbc.Container([
-    html.Div(id="cnt-title-format", children=title_format),
+    html.Br(),
+    html.Div(id="cnt-title-format", children=[cnt_title_page]),    
     dbc.Row([
-        dbc.Col([
+        dbc.Col([            
             dbc.Row([
                 cnt_form_controls
             ]),
         ], width=3),
         dbc.Col([
+            title_format_file,
             dbc.Row(
                 display_ecg
             ),            
@@ -704,7 +730,7 @@ def delete_file(eliminar_file, name_file, data_session):
         
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
-    return [form_datos_ecg, cnt_state_fdata, ecg_fig, cnt_form_controls, move_controls, title_format]
+    return [form_datos_ecg, cnt_state_fdata, ecg_fig, cnt_form_controls, move_controls, title_format_file]
     
 
 
@@ -1111,7 +1137,8 @@ def change_msg_alert_ann(estatus_edit, pt_fin):
 
 
 @app.callback(
-    Output("up-fecha-edicion",      "value"),
+    [Output("up-fecha-edicion",     "value"),
+     Output("title-sesion",         "children")],
     [Input("up-fecha-edicion-aux",  "value")],
     [State("url",                   "pathname")]
 )
@@ -1122,6 +1149,8 @@ def up_fecha_edicion_sesion(val, url_sesion):
     if utils.is_not_empty(id_token):
         token_session = "session_" + id_token
         ecg_serv.update_sesion(token_session)
+        nombre_sesion = ecg_serv.get_nombre_sesion(token_session)
+        return "", nombre_sesion
         
     raise dash.exceptions.PreventUpdate()
 

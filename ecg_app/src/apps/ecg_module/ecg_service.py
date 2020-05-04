@@ -782,4 +782,12 @@ def update_sesion(token_sesion):
     except RuntimeError:
         app.logger.info("[ecg_service] - 'update_sesion()' -> Ha ocurrido un error al actualizar la fecha de la sesion")
     
+
+def get_nombre_sesion(token_sesion):
+    try:    
+        nombre_sesion = db.get_name_sesion_by_token(token_sesion)
+        return nombre_sesion
+    except RuntimeError:
+        app.logger.info("[ecg_service] - 'get_nombre_sesion()' -> Ha ocurrido un error al buscar el nombre de la sesión")
     
+    return None

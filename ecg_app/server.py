@@ -15,15 +15,11 @@ server = app.server
 
 @server.route('/src/static/<path:path>')
 def static_file(path):
+    print("static_file()")
     print("Path es: " + path)
-    static_folder = os.path.join(os.getcwd(), 'static')
-    return send_from_directory(static_folder, path)
-
-
-@server.route('/src/assets/<path:path>')
-def assets_file(path):
-    print("Path es: " + path)
-    static_folder = os.path.join(os.getcwd(), 'assets')
+    print("os.getcwd() es: " + os.getcwd())
+    static_folder = os.path.join(os.getcwd(), 'src/static')
+    print("os.getcwd() es: " + os.getcwd())
     return send_from_directory(static_folder, path)
 
 

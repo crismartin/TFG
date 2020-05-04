@@ -347,3 +347,15 @@ def delete_sesion(id_sesion):
     id_objSesion = ObjectId(id_sesion)
     result_delete = sesiones_user.delete_one({"_id": id_objSesion})
     return True if (result_delete.acknowledged == True and result_delete.deleted_count == 1) else False     
+
+
+
+def get_name_sesion_by_token(token_session):
+    
+    sesion = sesiones_user.find_one({"token": token_session})
+    if sesion is None:
+        logger.info("[ db ] - 'get_name_sesion_by_token()' -> No se ha encontrado ninguna sesion con el token '"+ token_session+"'")
+        raise RuntimeError
+    
+    logger.info("[ db ] - 'get_name_sesion_by_token()' -> Sesion encontrada para el token '"+ token_session+"'")
+    return sesion["nombre"]
