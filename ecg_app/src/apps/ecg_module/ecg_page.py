@@ -15,7 +15,7 @@ import dash_table
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 
-
+from flask_login import login_user, logout_user, current_user, login_required
 import src.commons.utils_ecg as utils
 import src.apps.ecg_module.ecg_service as ecg_serv
 
@@ -536,11 +536,17 @@ body = dbc.Container([
 input_up_fecha_edicion_aux = dbc.Input(id="up-fecha-edicion-aux", type="hidden", value="")
 input_up_fecha_edicion = dbc.Input(id="up-fecha-edicion", type="hidden", value="")
 
+url_check_sesion =  dcc.Location(id='url_out_user',   refresh=True)
+
 footer = html.Div([
             dbc.Input(type="hidden", id="fname_process"),
             input_up_fecha_edicion,
-            input_up_fecha_edicion_aux
+            input_up_fecha_edicion_aux,
+            url_check_sesion
         ])
+
+
+
 
 
 ###############################################################################
@@ -766,6 +772,7 @@ def get_list_fname( url_head, url_ant, url_data ):
      State("url-ant-file",    "value"),
      State("session",         "data")]
 )
+@login_required
 def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_session):
     
     app.logger.info( "@callback: INICIO 'updload_file()'" )
@@ -1153,6 +1160,23 @@ def up_fecha_edicion_sesion(val, url_sesion):
         return "", nombre_sesion
         
     raise dash.exceptions.PreventUpdate()
+    
+
+@app.callback(
+     Output("url_out_user",         "pathname"),
+    [Input("otroGraph",             "n_clicks"),
+     Input("hrvGraph",              "n_clicks"),
+     Input("ver-intervalo",         "n_clicks"),
+     Input("btn-collapse-edicion",  "n_clicks"), 
+     Input("open-upfile",           "n_clicks"),
+     Input("optLeads",              "value"),
+     Input("ecg-fig",               "clickData")],
+)
+def check_sesion(btn1, btn2, btn3, btn4, btn5, btn6, click_data):    
+    if current_user.is_authenticated:
+        raise dash.exceptions.PreventUpdate()
+    else:
+        return "/"
 
 ###############################################################################
 ############################## Main layout ####################################

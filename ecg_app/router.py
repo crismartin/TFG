@@ -22,7 +22,7 @@ from src.apps.error_module.error_page import SessionError
 import src.apps.user_module.user_service as user_service
 
 from flask_login import login_user, logout_user, current_user
-from flask import request
+from flask import request, session
 
 """
 from flask_mail import Message
@@ -58,7 +58,8 @@ def route_page(pathname, data):
                 app.logger.info("[ router ] - route_page() -> /user/profile")                 
                 return [perfil_page.layout(), None]
             
-            if pathname == "/logout":                
+            if pathname == "/logout":       
+                session.clear()
                 return [logout_page.layout(), None]
                 
             if pathname.startswith('/ecg/sesion/'):                
