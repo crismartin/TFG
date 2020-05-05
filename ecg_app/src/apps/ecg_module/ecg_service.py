@@ -86,10 +86,10 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo, lead, token_session):
     anotaciones = ecg.annt
 
     app.logger.info("[ecg_service] - 'build_data_annt()' ->  signal_y: " + str(len(signal_y)) )
-        
-    anotaciones.printInfo()
-    
+
     if anotaciones is not None and anotaciones.ann_len is not None and anotaciones.ann_len > 0:
+        
+        anotaciones.printInfo()
         fs = ecg.header.samplingRate
         
         if sampFrom > 0:
@@ -348,7 +348,11 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin, token_user):
     
     ecg.read_signal(sampFrom, sampTo)
     
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  ANTES DE LA LECTURA ")
     signals = ecg.signal
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->  DESPUES DE LA LECTURA ")
+    app.logger.info("[ecg_service] - 'build_plot_by_lead()' ->   ecg.header.signal_len: " + str(ecg.header.signal_len) )
+    signal_len = ecg.header.signal_len
     
     title = ecg.fileName + " | Formato " + ecg.typeECG
     
@@ -387,7 +391,7 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin, token_user):
     app.logger.info("[ecg_service] - 'build_plot_by_lead()' -> sampFrom: " + str(sampFrom))    
     app.logger.info("[ecg_service] - 'build_plot_by_lead()' -> fs: " + str(fs))
     
-    qrs_wave = get_delineator_graph(ejeY, fs, sampFrom)
+    qrs_wave = get_delineator_graph(ejeY, fs, sampFrom) if ejeY != [] else []
     if qrs_wave != []:   
         for wave in qrs_wave:
             data_fig.append(wave) 
