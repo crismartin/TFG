@@ -361,6 +361,7 @@ class ECGIshne(ecg.ECG):
             return crcChecksum
         
         def read_ecg(self, fdFile, nLeads, sampFrom, sampTo):
+            len_signal_total = 0
             ecgArrayBytes = np.fromfile(fdFile, dtype=np.int16, count=-1)
             ecgArrayBytes = np.asarray(ecgArrayBytes)            
             ecgArrayBytes = ecgArrayBytes.reshape(-1, nLeads)
@@ -369,11 +370,12 @@ class ECGIshne(ecg.ECG):
             for nChannel in range(nLeads):
                 aux = ecgChannels[nChannel].reshape(-1)
                 len_aux = len(aux)
+                len_signal_total = len(aux)
                 sampTo = len_aux if sampTo > len_aux else sampTo
                 print("aux len de la señal ecg: " + str(len(aux)))
                 self.ecg.append( aux[sampFrom:sampTo] )
             
-            return self.ecg       
+            return self.ecg, len_signal_total
                 
         def readVarBlock(self, fileFd, varLenBlockSize):
             varBlock = np.fromfile(fileFd, dtype=np.byte, count=varLenBlockSize)
@@ -526,9 +528,14 @@ class ECGIshne(ecg.ECG):
         fdIshne.seek(byteStartSignal, 0)
         
         if(sampleTo >= 0 and sampleTo <= sig_len) and (sampleFrom < sampleTo):
-            self._signal = ecg.read_ecg(fdIshne, self.header.nLeads, sampleFrom, sampleTo)
+            self._signal, len_signal_total = ecg.read_ecg(fdIshne, self.header.nLeads, sampleFrom, sampleTo)
+            print('[INFO][ISHNE] - read_signal() -> len_signal_total: ' + str(len_signal_total))
+            print('[INFO][ISHNE] - read_signal() -> sig_len: ' + str(sig_len))
+            self._header.signal_len  = len_signal_total if len_signal_total != sig_len else sig_len            
+            
+            print('[INFO][ISHNE] - read_signal() -> self._header.signal_len: ' + str(self._header.signal_len))
         else:
-            print('[ERROR][ISHNE] No se puede leer datos de la señal. Intervalo de muestras erróneo')
+            print('[INFO][ISHNE] No se puede leer datos de la señal. Intervalo de muestras erróneo')
         
         fdIshne.close() #Close file 
         
