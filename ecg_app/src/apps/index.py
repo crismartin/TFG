@@ -161,8 +161,7 @@ class Inicio:
         html.H4("Tecnologías utilizadas"),
         cards,
         html.Br(),
-        html.Br(),
-        html.Br(),
+        html.Br(),        
         footer,
         html.Br()
     ])

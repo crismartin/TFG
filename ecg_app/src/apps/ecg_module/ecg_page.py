@@ -348,14 +348,7 @@ edit_point_input = dbc.Row(
                 ),
                 dbc.Input(
                     type="hidden", id="estado-edit", disabled=True, step="any", value=""
-                ),
-                dbc.Col([
-                    dbc.Button(id="guardar-modif", color="success", disabled=True,
-                       children=[
-                           html.Span([html.I(className="fas fa-floppy-o ml-2"), " Finalizar Edición"])
-                          ], className="float-right"
-                    )
-                ])
+                ),                
             ], row=True),       
         ]), width=12
     )
