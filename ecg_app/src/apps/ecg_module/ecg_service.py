@@ -290,7 +290,9 @@ def build_ecg_trace(ejeX, ejeY, nLead, range_min):
                                 ),
                                 range=[range_min, range_min+12]
                             ),
+                    xaxis_title="Tiempo [s]",                    
                     yaxis=dict(gridcolor="LightPink"),
+                    yaxis_title="Amplitud [mV]",
                     plot_bgcolor='rgb(248,248,248)'
                     )
         
@@ -334,6 +336,8 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin, token_user):
     data_fig = []
     ecgFactory = ecgf.ECGFactory()    
     ecg = ecgFactory.create_ECG(file_name)
+    
+    ecg.header.printInfo()
     
     signal_len = ecg.header.signal_len
     nLeads = ecg.header.nLeads
