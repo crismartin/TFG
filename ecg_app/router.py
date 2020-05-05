@@ -12,6 +12,7 @@ from app_context import app
 
 import src.apps.ecg_module.ecg_page as ecg_page
 import src.apps.index as index_page
+from src.apps.index import Inicio
 import src.apps.auth_module.auth_page as auth_page
 import src.apps.auth_module.logout_page as logout_page
 import src.apps.user_module.perfil_page as perfil_page
@@ -70,7 +71,7 @@ def route_page(pathname, data):
                 else:
                     return [SessionError.layout(), data]
     
-    return [None, data]
+    return [Inicio.layout(), data]
 
 
 
