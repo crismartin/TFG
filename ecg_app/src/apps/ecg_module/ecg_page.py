@@ -100,7 +100,7 @@ form_datos_ecg = html.Div([
     
     html.H5(children=["Datos Header", html.Span(id="title-datos-header", children="*", className="text-danger")]),
     dbc.Tooltip(
-            "Campo obligatorio",
+            "Campo obligatorio para Physionet",
             target="title-datos-header",
         ),
     dbc.FormGroup([

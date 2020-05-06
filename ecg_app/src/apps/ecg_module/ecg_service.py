@@ -87,7 +87,7 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo, lead, token_session):
 
     app.logger.info("[ecg_service] - 'build_data_annt()' ->  signal_y: " + str(len(signal_y)) )
 
-    if anotaciones is not None and anotaciones.ann_len is not None and anotaciones.ann_len > 0:
+    if anotaciones is not None and anotaciones.ann_len is not None and anotaciones.ann_len > 0 and anotaciones.sample is not None:
         
         anotaciones.printInfo()
         fs = ecg.header.samplingRate
