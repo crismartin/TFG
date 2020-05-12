@@ -116,9 +116,13 @@ class Inicio:
                     className="lead",
                 ),
                 html.P(
-                    "Formatos soportados: Physionet, Ishne"
+                    "Crea una cuenta o inicia sesión para empezar."    
                 ),
                 html.Br(),
+                html.P(
+                    "Formatos soportados: Physionet, Ishne."
+                    
+                ),
                 html.Hr(className="my-2"),                
                 dbc.Row([
                     dbc.Col([    
