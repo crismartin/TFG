@@ -37,8 +37,9 @@ class Inicio:
                 [
                     html.H5("Dash", className="card-title"),
                     html.P(
-                        "This card has some text content, which is a little "
-                        "bit longer than the second card.",
+                        "Framework de código abierto desarrollado por Plotly en lenguaje Python"
+                        " para crear aplicaciones reactivas y analíticas basadas en la web."
+                        " Soportada sobre Flask.",
                         className="card-text",
                     ),
                     dbc.Nav(
@@ -56,10 +57,9 @@ class Inicio:
                 [
                     html.H5("MongoDB", className="card-title"),
                     html.P(
-                        "This card has some text content, which is longer "
-                        "than both of the other two cards, in order to "
-                        "demonstrate the equal height property of cards in a "
-                        "card group.",
+                        "Sistema de base de datos multiplataforma orientado a documentos,"
+                        " de esquema libre. Estos documentos son almacenados en BSON, "
+                        "versión modificada de JSON que permite búsquedas rápidas de datos.",
                         className="card-text",
                     ),
                     dbc.Nav(
@@ -77,7 +77,9 @@ class Inicio:
                 [
                     html.H5("WDelineator", className="card-title"),
                     html.P(
-                        "This card has some text content.",
+                        "Módulo desarrollado en Python cuya función es calcular "
+                        "en qué puntos de la señal empiezan y/o terminan las diferentes "
+                        "ondas que componen un ECG, como por ejemplo, la onda P, onda T, y complejo QRS",
                         className="card-text",
                     ),
                     dbc.Nav(
@@ -102,22 +104,15 @@ class Inicio:
     ]),
     
     body = dbc.Jumbotron([
-        html.H1("ECG App"),
+        
         dbc.Row([
             dbc.Col([
+                html.H1("Visualiza y analiza ECG's con ECG App"),
                 html.P(
-                    "Use a jumbotron to call attention to "
-                    "Use a jumbotron to call attention to "
-                    "Use a jumbotron to call attention to "
-                    "Use a jumbotron to call attention to "
-                    "Use a jumbotron to call attention to "
-                    "Use a jumbotron to call attention to "
-                    "Use a jumbotron to call attention to "
-                    "Use a jumbotron to call attention to "
-                    "Use a jumbotron to call attention to "
-                    "Use a jumbotron to call attention to "
-                    "Use a jumbotron to call attention to "
-                    "featured content or information.",
+                    "Carga ficheros con distinto formato de almacenamiento de señal de ECG. "
+                    "Visualiza por intervalos la señal y las anotaciones sobre las ondas más importantes del ECG "
+                    "como la onda P, T y complejo QRS obtenidas de manera automática, además, edita "
+                    "las anotaciones del ECG por defecto.",
                     className="lead",
                 ),
                 html.P(
