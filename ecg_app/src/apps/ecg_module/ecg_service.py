@@ -10,6 +10,9 @@ import src.commons.utils_ecg as utils
 import src.commons.constantes_ecg as cte
 import numpy as np
 import ecg_reader.ecg_factory as ecgf
+import io
+import base64
+from zipfile import ZipFile
 
 import WTdelineator.WTdelineator as wav
 
@@ -18,6 +21,45 @@ from database import db
 import plotly.graph_objs as go
 
 from app_context import app
+
+
+def is_zip_file(lfiles_name):
+    if lfiles_name is not None and lfiles_name != []:
+        ext_file = utils.get_ext_file(lfiles_name[0])
+        app.logger.info("[ecg_service] - is_zip_file() -> 'ext_file': " + str(ext_file))
+        if ext_file == ".zip":
+            return True
+    return False
+
+
+def pre_procesado_files(list_nombres, list_contents):
+    lnombres_result = []
+    lcontent_result = []
+
+    if list_nombres is not None and list_nombres != []:
+        if is_zip_file(list_nombres):            
+            for content, name in zip(list_contents, list_nombres):
+                # the content needs to be split. It contains the type and the real content
+                content_type, content_string = content.split(',')
+                # Decode the base64 string
+                content_decoded = base64.b64decode(content_string)
+                # Use BytesIO to handle the decoded content
+                zip_str = io.BytesIO(content_decoded)
+                # Now you can use ZipFile to take the BytesIO output
+                zip_obj = ZipFile(zip_str, 'r')
+                
+                app.logger.info("[ecg_service] - pre_procesado_files() -> 'zip_obj.namelist': " + str(zip_obj.namelist()))
+                lnombres_result[:] = zip_obj.namelist()
+                for filename in lnombres_result:
+                    data = zip_obj.read(filename)
+                    data = base64.b64encode(data)                    
+                    lcontent_result.append( data )
+        
+            app.logger.info("[ecg_service] - pre_procesado_files() -> 'lcontent_result': " + str(len(lcontent_result)))
+            
+            return lnombres_result, lcontent_result
+
+    return list_nombres, list_contents
 
 
 
@@ -292,7 +334,7 @@ def build_ecg_trace(ejeX, ejeY, nLead, range_min):
                             ),
                     xaxis_title="Tiempo [s]",                    
                     yaxis=dict(gridcolor="LightPink"),
-                    yaxis_title="Amplitud [mV]",
+                    yaxis_title="Amplitud",
                     plot_bgcolor='rgb(248,248,248)'
                     )
         

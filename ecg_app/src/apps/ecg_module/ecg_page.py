@@ -306,10 +306,10 @@ dropdown_leads = dbc.FormGroup([
 
 point_info_input = dbc.FormGroup([
     dbc.Col(
-        html.Span( [html.P(id="pto-inf-xi", children="Xi: "), html.P(id="pto-inf-yi", children="Yi: ")] ),  
+        html.Span( [html.P(id="pto-inf-xi", children="Xi: ")] ), width=7
     ),
     dbc.Col(
-        html.Span( [html.P(id="pto-inf-xf", children="Xf: "), html.P(id="pto-inf-yf", children="Yf: ")] ),  
+        html.Span( [ html.P(id="pto-inf-yi", children="Yi: ")] ), width=5
     )
     
 ], row=True)
@@ -775,6 +775,8 @@ def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_
     #app.logger.info( "@callback: 'updload_file() -> token_user: " + str(utils.get_session_token(data_session)) )
     app.logger.info( "@callback: 'updload_file() -> list_nombres: " + str(list_nombres) )
     
+    # Preprocesado por si hay un fichero .zip
+    #list_nombres, list_contents = ecg_serv.pre_procesado_files(list_nombres, list_contents)
     list_nombres = list_nombres or get_list_fname( url_head, url_ant, url_data )
     
     app.logger.info( "@callback: 'updload_file() -> list_nombres definitivo: " + str(list_nombres) )
@@ -1038,8 +1040,6 @@ def tbl_hist_row_selected(rows, derived_virtual_selected_rows):
 @app.callback(
     [Output("pto-inf-xi",   "children"),
      Output("pto-inf-yi",   "children"),
-     Output("pto-inf-xf",   "children"),
-     Output("pto-inf-yf",   "children"),
      Output("point-ini",    "value"),
      Output("point-fin",    "value"),
      Output("estado-edit",  "value")],
@@ -1053,8 +1053,6 @@ def tbl_hist_row_selected(rows, derived_virtual_selected_rows):
 def display_click_data(clickData, last_estado, pt_ini, rutafile, nLead, data_session):
     info_xi = "Xi: "
     info_yi = "Yi: "
-    info_xf = "Xf: "
-    info_yf = "Yf: "
     
     app.logger.info("@callback: INICIO 'display_click_data()'")
     if clickData is None:
@@ -1083,7 +1081,7 @@ def display_click_data(clickData, last_estado, pt_ini, rutafile, nLead, data_ses
                 info_xi += pt_ini["x"]
                 info_yi += pt_ini["y"]
 
-                return info_xi, info_yi, info_xf, info_yf, pt_ini, "", "0"
+                return info_xi, info_yi, pt_ini, "", "0"
         
     elif last_estado == "0": #Es la segunda seleccion
         #Comprobamos que no es una anotacion        
@@ -1098,10 +1096,10 @@ def display_click_data(clickData, last_estado, pt_ini, rutafile, nLead, data_ses
             token_user = utils.get_session_token(data_session)
             ecg_serv.save_ann_temp(pt_ini, pt_fin, rutafile, nLead, token_user)
             
-            return info_xi, info_yi, info_xf, info_yf, pt_ini, pt_fin, "1"
+            return info_xi, info_yi, pt_ini, pt_fin, "1"
     
     app.logger.info("@callback: FIN 'display_click_data()'")
-    return info_xi, info_yi, info_xf, info_yf, "", "", ""
+    return info_xi, info_yi, "", "", ""
 
 
 
@@ -1126,7 +1124,7 @@ def change_msg_alert_ann(estatus_edit, pt_fin):
                 "Nueva anotación en "            
                 ),
                 html.P(                
-                "X: " + str(pt_fin["x"]) + "   Y: " + str(pt_fin["x"])
+                "X: " + str(pt_fin["x"]) + "   Y: " + str(pt_fin["y"])
                 )
             ]                  
         )        
