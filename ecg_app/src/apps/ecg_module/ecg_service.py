@@ -65,7 +65,18 @@ def pre_procesado_files(list_nombres, list_contents):
 
 def build_select_leads(nleads):
     return [ {'value': i+1, 'label': 'Derivacion '+ str(i+1)} for i in range(nleads)]
+
+
+
+def build_decg_data(header):
+    datos = {}
     
+    datos["nLeads"] = header.nLeads
+    datos["samplingRate"] = header.samplingRate
+    datos["signal_len"] = header.signal_len
+    datos["comments"] = header.comments
+
+    return datos
 
 
 def get_nleads_and_duration(file_name):
@@ -85,7 +96,7 @@ def get_nleads_and_duration(file_name):
     
     nLeads = ecg.header.nLeads    
     
-    return build_select_leads(nLeads), msg_duration, duration_in_min
+    return build_select_leads(nLeads), msg_duration, duration_in_min, build_decg_data(ecg.header)
     
 
 

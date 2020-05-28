@@ -232,6 +232,7 @@ class ECGIshne(ecg.ECG):
             self.fileVersion = ''
             self.firstName = ''
             self.secondName = ''
+            self.nombreCompleto = ''
             self.id = ''
             self.sex = ''
             self.race = []
@@ -249,14 +250,53 @@ class ECGIshne(ecg.ECG):
             self.propierty = ''
             self.copyright = ''
             self.reserverd = ''
-            self.readHeaderISHNE(fileFd)
+            self.comments = []
+            self.readHeaderISHNE(fileFd)            
             
         def _parseDateISHNE(self, date):
-            dia = str(date[0]) if (int(date[0]) > 9) else ( "0" + str(date[0]) )
-            mes = str(date[1]) if (int(date[1]) > 9) else ( "0" + str(date[1]) )
-            anio = str(date[2])
-            fecha = dia + "-" + mes + "-" + anio
-            return fecha
+            fecha_nula = "-9"
+            try:
+                dia = str(date[0])
+                mes = str(date[1])
+                anio = str(date[2])
+                
+                if dia != fecha_nula and mes != fecha_nula and anio != fecha_nula:
+                    dia = str(date[0]) if (int(date[0]) > 9) else ( "0" + str(date[0]) )
+                    mes = str(date[1]) if (int(date[1]) > 9) else ( "0" + str(date[1]) )
+                    anio = str(date[2])
+                    
+                    fecha = dia + "-" + mes + "-" + anio
+                    return fecha
+            except Exception:
+                print("[INFO][ISHNE] _parseDateISHNE -> Ha ocurrido un error al intentar obtener la fecha")
+            
+            return None
+        
+        
+        def _parseSexISHNE(self, sexo):
+            try:
+                if sexo == 0:
+                    return "M"
+                elif sexo == 1:
+                    return "F"
+                
+            except Exception:
+                print("[INFO][ISHNE] _parseSexISHNE -> Ha ocurrido un error al intentar parsear el sexo")
+            
+            return "unknown"
+        
+        def _nombreCompleto(self, firstName, secondName):
+            nombre = ""
+            if firstName is not None and firstName != "":
+                nombre += firstName
+            
+            if secondName is not None and secondName != "":
+                if nombre != "":
+                    nombre += " " + secondName
+                else:
+                    nombre += secondName
+                    
+            return nombre
         
         
         def readHeaderISHNE(self, fileFd):
@@ -267,15 +307,26 @@ class ECGIshne(ecg.ECG):
             self.offsetECGBlock = np.fromfile(fileFd, dtype=np.int32, count=1)[0]
             self.fileVersion = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
             self.firstName = fileFd.read(40).decode("utf8")
+            if self.firstName is not None: 
+                self.firstName = self.firstName.rstrip('\x00')
+                               
             self.secondName = fileFd.read(40).decode("utf8")
+            if self.secondName is not None: 
+                self.secondName = self.secondName.rstrip('\x00')
+                
+            self.nombreCompleto = self._nombreCompleto(self.firstName, self.secondName)
             self.id = fileFd.read(20).decode("utf8")
             self.sex = np.fromfile(fileFd, dtype=np.int16, count=1)[0] ##0 Male, 1 Female
+            self.sex = self._parseSexISHNE(self.sex)
             self.race = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
             self.birthDate = np.fromfile(fileFd, dtype=np.int16, count=3)
+            print("[INFO][ISHNE] readHeaderISHNE -> birthdate: %s" %str(self.birthDate))
             self.birthDate = self._parseDateISHNE(self.birthDate)
             self.recordDate = np.fromfile(fileFd, dtype=np.int16, count=3)
+            print("[INFO][ISHNE] readHeaderISHNE -> recordDate: %s" %str(self.recordDate))
             self.recordDate = self._parseDateISHNE(self.recordDate)
             self.fileDate = np.fromfile(fileFd, dtype=np.int16, count=3)    
+            print("[INFO][ISHNE] readHeaderISHNE -> fileDate: %s" %str(self.fileDate))
             self.fileDate = self._parseDateISHNE(self.fileDate)                  
             self.startDate = np.fromfile(fileFd, dtype=np.int16, count=3)
             self.nLeads = np.fromfile(fileFd, dtype=np.int16, count=1)[0]
@@ -289,7 +340,14 @@ class ECGIshne(ecg.ECG):
             self.propierty = fileFd.read(80).decode("utf8")
             self.copyright = fileFd.read(80).decode("utf8")
             self.reserverd = fileFd.read(88).decode("utf8")
-             
+            
+            if self.nombreCompleto != "":
+                self.comments.append("name: " + self.nombreCompleto)
+                
+            self.comments.append("sex: " + self.sex)
+            if self.birthDate is not None:    
+                self.comments.append("birthdate: " + self.birthDate)
+            
             return self
         
         
@@ -324,6 +382,7 @@ class ECGIshne(ecg.ECG):
             print("[INFO][ISHNE] Header - nLeads: %s" %self.nLeads)
             print("[INFO][ISHNE] Header - samplingRate: %s" %self.samplingRate)
             print("[INFO][ISHNE] Header - signal_len: %s" %self.signal_len)
+            print("[INFO][ISHNE] Header - comments: %s" %self.comments)
     
         
     class Crc():

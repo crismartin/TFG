@@ -239,6 +239,27 @@ modal_historial = html.Div([
         html.Div( id="cnt-load-hist",    children=[btn_cargar_modal_hist] )        
     ]),
 ])
+
+##############################################################################
+## Modal Datos ECG
+
+modal_body_decg = html.Div(id="body-decg")
+
+btn_cerrar_modal_decg = dbc.Button(id="close-decg", n_clicks=None, className="mr-1",
+                              children=[
+                                html.Span([html.I(className="fas fa-times ml-2"), " Cerrar"])
+                             ])
+
+modal_datos_ecg = html.Div([
+    dbc.ModalHeader("Datos del fichero"),
+    dbc.ModalBody([
+        modal_body_decg
+    ]),
+    dbc.ModalFooter([
+        html.Div( id="cnt-close-decg",    children=[btn_cerrar_modal_decg] ),
+    ]),
+])
+
 ##############################################################################
 
 ecg_fig = dcc.Graph(id='ecg-fig', 
@@ -261,6 +282,12 @@ display_ecg = dbc.FormGroup([
             id = "modal-historico",
             size = "lg",
             backdrop = "static"
+        ),
+        dbc.Modal(
+            children = modal_datos_ecg,
+            id = "modal-decg",
+            size = "lg",
+            backdrop = "static"
         )
     ]),
     
@@ -269,7 +296,7 @@ display_ecg = dbc.FormGroup([
     
         
 menu_ecg = html.Div([
-    dbc.Button(id="hrvGraph", outline=True, color="info", className="mr-1",
+    dbc.Button(id="datosECG", outline=True, color="info", className="mr-1",
                children=[
                        html.Span([html.I(className="fas fa-info-circle ml-2"), " Datos ECG"])
                        ]
@@ -841,6 +868,24 @@ def process_file(click_process, click_load, data_session, name_file, rows, row_s
 
 
 
+def create_components_decg(datos_ecg):
+    comments = []
+    
+    if datos_ecg["comments"] is not None:
+        for comment in datos_ecg["comments"]:
+            comments.append(html.P(comment))
+    
+    result = html.Div([
+        html.Span([html.B("Número de derivaciones"), ": ", html.P(datos_ecg["nLeads"])]),
+        html.Span([html.B("Frecuencia de muestreo"), ": ", html.P(datos_ecg["samplingRate"])]),
+        html.Span([html.B("Número de muestras"), ": ", html.P(datos_ecg["signal_len"])]),
+        html.Span([html.B("Comentarios"), ": ", html.Span(comments)])
+    ])
+        
+    return result
+
+
+
 @app.callback(
     [ Output("duracion-total", "value"),
      Output("optLeads","disabled"),
@@ -848,7 +893,8 @@ def process_file(click_process, click_load, data_session, name_file, rows, row_s
      Output("optLeads","value"),
      Output("msg-duracion", "children"),    
      Output("interv_ini", "max"),
-     Output("interv_fin", "max")
+     Output("interv_fin", "max"),
+     Output("body-decg",  "children")
      ],
     [Input("fname_process", "value")]
 )
@@ -860,16 +906,17 @@ def select_first_lead(fname_uploaded):
         ruta_file = utils.dir_files + fname_uploaded
         app.logger.info("@callback: 'select_first_lead()' -> ruta_file: " + str(ruta_file))
         app.logger.info("@callback: 'select_first_lead()' -> Obteniendo leads...")
-        optLeads, msg_duration, duration_min = ecg_serv.get_nleads_and_duration(ruta_file)
+        optLeads, msg_duration, duration_min, datos_ecg = ecg_serv.get_nleads_and_duration(ruta_file)
+        datos_ecg = create_components_decg(datos_ecg)
         
         app.logger.info("@callback: 'select_first_lead()' -> optLeads: " + str(optLeads))
         app.logger.info("@callback: FIN 'select_first_lead()'")
         text_duracion = "Duración total aprox: " + msg_duration
-        return duration_min, False, optLeads, 1, text_duracion,  duration_min, duration_min
+        return duration_min, False, optLeads, 1, text_duracion,  duration_min, duration_min, datos_ecg
     
     app.logger.info("@callback: FIN 'select_first_lead()'")
 
-    return "", True, None, None, None, "", ""
+    return "", True, None, None, None, "", "", ""
 
 
 @app.callback(
@@ -1153,10 +1200,30 @@ def up_fecha_edicion_sesion(val, url_sesion):
     raise dash.exceptions.PreventUpdate()
     
 
+
+###############################################################################
+## funciones modal Datos ecg
+###############################################################################
+
+@app.callback(
+    Output("modal-decg",    "is_open"),
+    [Input("datosECG",      "n_clicks"),
+     Input("close-decg",    "n_clicks")],
+    [State("modal-decg",    "is_open")],
+)
+def toggle_modal_decg(btn_open, btn_close, is_open):
+    if btn_open or btn_close:
+        return not is_open
+    return is_open
+    
+
+
+
+
 @app.callback(
      Output("url_out_user",         "pathname"),
     [Input("otroGraph",             "n_clicks"),
-     Input("hrvGraph",              "n_clicks"),
+     Input("datosECG",              "n_clicks"),
      Input("ver-intervalo",         "n_clicks"),
      Input("btn-collapse-edicion",  "n_clicks"), 
      Input("open-upfile",           "n_clicks"),
@@ -1168,6 +1235,7 @@ def check_sesion(btn1, btn2, btn3, btn4, btn5, btn6, click_data):
         raise dash.exceptions.PreventUpdate()
     else:
         return "/"
+
 
 ###############################################################################
 ############################## Main layout ####################################

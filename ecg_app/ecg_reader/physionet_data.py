@@ -129,6 +129,7 @@ class ECGPhysionet(ecg.ECG):
             self.nLeads = self.otherData.n_sig
             self.samplingRate = self.otherData.fs
             self.signal_len = self.otherData.sig_len
+            self.comments = self.otherData.comments if self.otherData.comments != [] else None
             
         def _read_header(self, fileRoute):
             return wfdb.rdheader(fileRoute)
@@ -139,6 +140,7 @@ class ECGPhysionet(ecg.ECG):
             print("[INFO][Physionet] Header - nLeads: %s" %str(self.nLeads))
             print("[INFO][Physionet] Header - samplingRate: %s" %str(self.samplingRate))
             print("[INFO][Physionet] Header - signal_len: %s" %str(self.signal_len))
+            print("[INFO][Physionet] Header - comments: " + str(self.comments))
             
             
     class ECGSignal():
