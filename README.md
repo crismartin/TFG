@@ -60,7 +60,7 @@ Por útimo, desde un navegador iremos a la siguiente url:</br>
 <code>http://localhost:8050/</code></br>
 
 <h2>Manual de usuario</h2>
-Lo puedes encontrar en el directorio raíz del repositorio como <code>manualUser.pdf</code>, en él se explica las 
+Lo puedes encontrar en el directorio <i>documentacion</i> del repositorio como <code>manualUser.pdf</code>, en él se explica las 
 principales funciones en un uso típico que se puede realizar en la aplicación.</br>
 
 <h2>Comentarios y feedback</h2>
