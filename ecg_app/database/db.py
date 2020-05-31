@@ -21,26 +21,24 @@ ficheros = ecgDB.db.Ficheros
 anotaciones_temp = ecgDB.db.Anotaciones_Temp
 
 
-def set_token_session(data_session):
-    logger.info("'db.set_token_session()' -> data_session: " + str(data_session ) )
-    
-    #usuarios = ecgDB.db.Usuarios
-    #usuarios.insert({"token" : str(data["token_session"]), "nick" : "cristian"})
-    
-    if data_session is None:
-        logger.info("'db.set_token_session()' -> cargando sesion de DB" )
-        token_session = sesiones_user.find_one({"nick" : "willem"})["token"]
-        logger.info("'db.set_token_session()' -> token: " + str(token_session) )
-        data_session = {"token_session": token_session}
-    else:
-        logger.info("'set_token_session()' -> return value in storage" )
-   
-    return data_session
-
 
 
 # Devuelve todos los ficheros asociados a una sesion de usuario
 def get_list_files_user(token_session):
+    """
+    Devuelve una lista de ficheros asociados a una sesión
+
+    Parameters
+    ----------
+    token_session : str
+        Token de la sesión de usuario.
+
+    Returns
+    -------
+    result : list of obj
+        Lista de los ficheros de la sesión.
+
+    """
     result = []
     
     usuario_sesion = check_session(token_session)   
@@ -59,6 +57,22 @@ def get_list_files_user(token_session):
 
 # Para una sesion de usuario, devuelve los datos de un fichero por su nombre
 def get_file_user_by_name(filename, token_session):
+    """
+    Devuelve los datos de un fichero por su nombre, asociado a una sesión.
+
+    Parameters
+    ----------
+    filename : str
+        Nombre del fichero.
+    token_session : str
+        Token de la sesión.
+
+    Returns
+    -------
+    fichero : obj
+        Datos del fichero.
+
+    """
     
     user_sesion = check_session(token_session)
     
@@ -71,6 +85,26 @@ def get_file_user_by_name(filename, token_session):
 
 # Guarda los datos de un fichero asociados a una sesion de usuario
 def insert_file_session(filename, formato, token_session, f_creacion):
+    """
+    Guarda los datos de un fichero asociado a una sesion de usuario
+
+    Parameters
+    ----------
+    filename : str
+        Nombre del fichero.
+    formato : str
+        Formato del fichero.
+    token_session : str
+        Token de la sesión.
+    f_creacion : str
+        Fecha de la creación.
+
+    Returns
+    -------
+    id_file : str
+        Id del fichero guardado.
+
+    """
     id_file = None
     user_sesion = check_session(token_session)    
         
@@ -83,6 +117,22 @@ def insert_file_session(filename, formato, token_session, f_creacion):
 
 # Elimina los datos de un fichero asociados a una sesion de usuario
 def delete_file_session(filename, token_session):
+    """
+    Elimina los datos de un fichero asociados a una sesion de usuario
+
+    Parameters
+    ----------
+    filename : str
+        Nombre del fichero.
+    token_session : str
+        Token de la sesión.
+
+    Returns
+    -------
+    bool
+        True si se ha borrado correctamente, False si ha ocurrido un fallo.
+
+    """
     
     user_sesion = check_session(token_session)
     
@@ -93,6 +143,20 @@ def delete_file_session(filename, token_session):
 
 # Elimina los ficheros de una sesion
 def delete_files_session(id_sesion):
+    """
+    Elimina los ficheros de una sesion
+
+    Parameters
+    ----------
+    id_sesion : str
+        Id de la sesión.
+
+    Returns
+    -------
+    bool
+        True si se ha podido borrar todos los ficheros de la sesión, False si ha ocurrido un error.
+
+    """
     id_objSesion = ObjectId(id_sesion)
     
     # Obtengo los Ids de los ficheros para eliminar las anotaciones
@@ -115,8 +179,22 @@ def delete_files_session(id_sesion):
 
     
     
-# Elimina los ficheros asociados a una sesion de usuario
+# Elimina una lista de ficheros
 def delete_files_by_id(list_files):
+    """
+    Elimina una lista de ficheros
+
+    Parameters
+    ----------
+    list_files : list of str
+        Lista con los id's de cada uno de los ficheros.
+
+    Returns
+    -------
+    bool
+        True si la lista se ha borrado correctamente, False si ha ocurrido un error.
+
+    """
     id_files = []
     
     for id_file in list_files:
@@ -139,6 +217,25 @@ def delete_files_by_id(list_files):
 
 # Funciona auxiliar para mostrar mensaje de sesion no encontrada
 def check_session(token_session):
+    """
+    Comprueba si existe una sesión
+
+    Parameters
+    ----------
+    token_session : str
+        Token de la sesión.
+
+    Raises
+    ------
+    RuntimeError
+        La sesión no ha sido encontrada.
+
+    Returns
+    -------
+    user_sesion : obj
+        Datos de la sesión.
+
+    """
     user_sesion = sesiones_user.find_one({"token": token_session})
     if user_sesion is None:
         logger.info("[ db ] - 'check_session()' -> Sesion con token '"  + str(token_session)+ "' NO ENCONTRADA")
@@ -157,6 +254,33 @@ def check_session(token_session):
 
 # Guarda o actualiza una anotacion temporal
 def save_ann_temp(pt_ini, pt_actual, filename, nLead, token_session):
+    """
+    Guarda o actualiza una anotación
+
+    Parameters
+    ----------
+    pt_ini : obj
+        Punto inicial de la anotación con formato (x, y).
+    pt_actual : obj
+        Punto actual de la anotación con formato (x, y).
+    filename : str
+        Nombre del fichero.
+    nLead : int
+        Numero de la derivación del ECG.
+    token_session : str
+        Token de la sesión.
+
+    Raises
+    ------
+    RuntimeError
+        Lanzada cuando el fichero no está registrado en la BBDD.
+
+    Returns
+    -------
+    id_anotacion : str
+        Id de la anotación si ha ido todo bien.
+
+    """
     fichero = get_file_user_by_name(filename, token_session)
     
     if fichero is None:
@@ -220,6 +344,29 @@ def save_ann_temp(pt_ini, pt_actual, filename, nLead, token_session):
 
 
 def get_ann_by_file(filename, nLead, token_session):
+    """
+    Devuelve las anotaciones modificadas de un fichero
+
+    Parameters
+    ----------
+    filename : str
+        Nombre del fichero.
+    nLead : int
+        Número de derivación del ECG.
+    token_session : str
+        Token de la sesión donde está asociado el fichero.
+
+    Raises
+    ------
+    RuntimeError
+        Lanzada cuando el fichero no está registrado en la sesión.
+
+    Returns
+    -------
+    result : list of obj
+        Lista de anotaciones modificadas del fichero.
+
+    """
     result = []
     fichero = get_file_user_by_name(filename, token_session)
     
@@ -247,6 +394,22 @@ def get_ann_by_file(filename, nLead, token_session):
 
 # Guarda un nuevo usuario
 def insert_user(nick, password):
+    """
+    Crea un usuario en la colección 'Usuarios'
+
+    Parameters
+    ----------
+    nick : str
+        Nickname del usuario.
+    password : bytes
+        Contraseña codificada del usuario
+
+    Returns
+    -------
+    id_usuario : str
+        Id del usuario en la colección 'Usuarios'
+
+    """
     id_usuario = None
     date_registro = datetime.now()
     fecha_registro = date_registro.strftime("%d/%m/%Y")
@@ -260,6 +423,25 @@ def insert_user(nick, password):
 
 # Devuelve los datos de un usuario por id
 def get_usuario(id_usuario):
+    """
+    Devuelve los datos de un usuario por id
+
+    Parameters
+    ----------
+    id_usuario : str
+        Id del usuario en la colección 'Usuarios'
+
+    Raises
+    ------
+    RuntimeError
+        Lanzada cuando no hay un usuario registrado con id_usuario
+
+    Returns
+    -------
+    usuario : obj
+        Datos del usuario.
+
+    """
     obj_id = ObjectId(id_usuario)
     usuario = usuarios.find_one({"_id": obj_id})
     if usuario is None:
@@ -275,6 +457,25 @@ def get_usuario(id_usuario):
 
 
 def get_usuario_by_nick(nick):
+    """
+    Devuelve los datos de un usuario de la colección 'Usuarios' por su nick
+
+    Parameters
+    ----------
+    nick : str
+        Nickname del usuario.
+
+    Raises
+    ------
+    RuntimeError
+        Lanzada cuando no hay un usuario registrado con id_usuario.
+
+    Returns
+    -------
+    usuario : obj
+        Datos del usuario.
+
+    """
     
     usuario = usuarios.find_one({"nick": nick})
     if usuario is None:
@@ -294,6 +495,20 @@ def get_usuario_by_nick(nick):
 ###############################################################################
 
 def get_sesiones_by_user(id_usuario):
+    """
+    Devuelve las sesiones asociadas a un usuario
+
+    Parameters
+    ----------
+    id_usuario : str
+        Id del usuario de la colección 'Usuarios'
+
+    Returns
+    -------
+    sesiones_result : list of obj
+        Lista de las sesiones de la colección 'SesionesUsuario' asociados al usuario
+
+    """
     sesiones_result = []
     usuario = get_usuario(id_usuario)
     obj_id = ObjectId(usuario.id)
@@ -311,7 +526,27 @@ def get_sesiones_by_user(id_usuario):
 
 
 
-def create_sesion(id_usuario, token_sesion, nombre_sesion, f_creacion):    
+def create_sesion(id_usuario, token_sesion, nombre_sesion, f_creacion):
+    """
+    Crea una sesión en la colección 'SesionesUsuario'
+
+    Parameters
+    ----------
+    id_usuario : str
+        Id del usuario de la colección 'Usuarios'.
+    token_sesion : str
+        Token de la sesión a crear.
+    nombre_sesion : str
+        Nombre de la sesión a crear.
+    f_creacion : str
+        Fecha de creación de la sesión a crear.
+
+    Returns
+    -------
+    id_sesion : str
+        Id de la sesión de la colección 'SesionesUsuario'
+
+    """
     usuario = get_usuario(id_usuario)
     usuario_obj_id = ObjectId(usuario.id)
     
@@ -327,6 +562,26 @@ def create_sesion(id_usuario, token_sesion, nombre_sesion, f_creacion):
 
 
 def update_sesion(token_session, f_edicion):
+    """
+    Actualiza la fecha de edición de una sesión
+
+    Parameters
+    ----------
+    token_session : str
+        Token de la sesión.
+    f_edicion : str
+        Fecha de edición.
+
+    Raises
+    ------
+    RuntimeError
+        Lanzada cuando la sesión con token_session no existe en la colección 'SesionesUsuario'
+
+    Returns
+    -------
+    None.
+
+    """
     sesion = sesiones_user.find_one({"token" : token_session})
     if token_session is None:
         logger.info("[ db ] - 'update_sesion()' -> La sesion con token_session '" + str(token_session) + "' NO EXISTE")
@@ -344,6 +599,20 @@ def update_sesion(token_session, f_edicion):
 
 
 def delete_sesion(id_sesion):
+    """
+    Borra una sesión de la colección 'SesionesUsuario'
+
+    Parameters
+    ----------
+    id_sesion : str
+        Id de la sesión de la colección 'SesionesUsuario'
+
+    Returns
+    -------
+    bool
+        True si se ha borrado correctamente, False si ha ocurrido un error
+
+    """
     id_objSesion = ObjectId(id_sesion)
     result_delete = sesiones_user.delete_one({"_id": id_objSesion})
     return True if (result_delete.acknowledged == True and result_delete.deleted_count == 1) else False     
@@ -351,6 +620,25 @@ def delete_sesion(id_sesion):
 
 
 def get_name_sesion_by_token(token_session):
+    """
+    Devuelve el nombre de una sesión
+
+    Parameters
+    ----------
+    token_session : str
+        Token de la sesión.
+
+    Raises
+    ------
+    RuntimeError
+        Lanzada en caso de que no exista una sesión con token_session en la coleccción 'SesionesUsuario'
+
+    Returns
+    -------
+    str
+        Nombre de la sesión.
+
+    """
     
     sesion = sesiones_user.find_one({"token": token_session})
     if sesion is None:

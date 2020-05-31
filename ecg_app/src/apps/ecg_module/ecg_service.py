@@ -734,9 +734,6 @@ def is_file_soported(file_route):
 
 
 
-def set_token_session(data_session):
-    return db.set_token_session(data_session)  
-
 
 # Devuelve la lista de ficheros asociados a una sesion de usuario
 def get_list_files_user(token_session):    

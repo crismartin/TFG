@@ -40,7 +40,26 @@ logger = app.logger
               [Input("url",             "pathname")],
               [State("session",         "data")]
 )
+
 def route_page(pathname, data):
+    """
+    Enruta las distintas páginas de la aplicación
+    
+    Parameters
+    ----------
+    pathname : String
+        Url de la página a la que se accede.
+    data : Object
+        Objeto que contiene la sesión actual cargada.
+
+    Returns
+    -------
+    layout
+        HTML con los componentes de la página que se quiere acceder.
+    session
+        Objeto con los datos de la sesión
+    
+    """
     
     if pathname:
         logger.info("[ router ] - route_page() -> ENTRO AQUI con PATHNAME: " + pathname)
@@ -80,6 +99,20 @@ def route_page(pathname, data):
               [Input("url",        "pathname")]
 )
 def auth_route(pathname):
+    """
+    Enruta la parte del navbar de acuerdo a si está logado o no un usuario
+    
+    Parameters
+    ----------
+    pathname : String
+        Url de la página a acceder.
+
+    Returns
+    -------
+    nav-auth: Object
+        HTML de la navbar con los componentes de logueo de un usuario.
+
+    """
     
     if pathname:
         if pathname == "/logout":

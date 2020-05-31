@@ -103,7 +103,7 @@ signin_url = dcc.Location(id='url_signin',  refresh=True)
     [Input("msignin-nick",      "n_blur"),
      Input("msignin-pass",      "n_blur")],
 )
-def set_error_alert_signin(input1, input2):    
+def set_error_alert_signin(input1, input2):
     return alerts_modal_signin
 
 
@@ -114,6 +114,10 @@ def set_error_alert_signin(input1, input2):
     [State("msignin",        "is_open")],
 )
 def toggle_modal_signin(open_click, close_click, is_open):
+    """
+    Abre/Cierra la ventana modal de registro
+
+    """
     
     if (open_click or close_click):
         return not is_open    
@@ -129,6 +133,27 @@ def toggle_modal_signin(open_click, close_click, is_open):
      State("msignin-pass",       "value")],
 )
 def signin_usuario(btn_signin, nick, password):
+    """
+    Controla el registro de un nuevo usuario
+
+    Parameters
+    ----------
+    btn_signin : int
+        Click sobre el botón "Registrar".
+    nick : str
+        Nickname del usuario.
+    password : str
+        Contraseña del usuario.
+
+
+    Returns
+    -------
+    show_alert_error : bool
+        Muestra o no el mensaje de error al querer registrar un usuario.
+    bool
+        Mensaje "success" cuando el usuario se ha podido registrar correctamente.
+
+    """
     show_alert_error = True
     
     if nick is None and password is None:
@@ -161,6 +186,10 @@ def signin_usuario(btn_signin, nick, password):
     [Input("al-success-signin",  "is_open")]
 )
 def signin_success(showed_alert):
+    """
+    Redirección a la página 'success'
+
+    """
     if showed_alert:
         time.sleep(1)
         return "/success"
@@ -170,7 +199,11 @@ def signin_success(showed_alert):
      Output("cnt-msignin-entrar",   "children")],
     [Input("msignin-close",   "n_clicks")]
 )  
-def reset_form_login(close_modal):
+def reset_form_signin(close_modal):
+    """
+    Reinicia los componentes del formulario de registro
+
+    """
     return [form_signin, cnt_alert_error], btn_entrar_msignin
 
 
@@ -181,6 +214,10 @@ def reset_form_login(close_modal):
      Input("msignin-nick",        "value")]
 )
 def disabled_msignin_enter(password, nick):
+    """
+    Activa/Desactiva el botón de 'Registrar' de la modal de registro
+
+    """
     
     app.logger.info("@callback[ signin_page ]: INICIO 'disabled_msignin_enter()' -> password: " + str(utils.name_file_valid(password)) )
     app.logger.info("@callback[ signin_page ]: INICIO 'disabled_msignin_enter()' -> nick: "     + str(utils.name_file_valid(nick)) )

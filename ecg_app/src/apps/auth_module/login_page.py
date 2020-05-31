@@ -114,7 +114,15 @@ def set_error_alert_login(input1, input2):
     [State("mlogin",        "is_open")],
 )
 def toggle_modal_login(open_click, close_click, is_open):
-    
+    """
+    Abre/Cierra modal de login
+
+    Returns
+    -------
+    bool
+        Si se abre o no la ventana modal.
+
+    """
     if (open_click or close_click):
         return not is_open    
     return is_open
@@ -127,6 +135,10 @@ def toggle_modal_login(open_click, close_click, is_open):
     [Input("mlogin-close",          "n_clicks")]
 )  
 def reset_form_login(close_modal):
+    """
+    Reinicia el formulario de login
+
+    """
     return [form_login, cnt_alert_error], btn_entrar_mlogin
     
 
@@ -139,6 +151,25 @@ def reset_form_login(close_modal):
      State("mlogin-pass",       "value")],
 )
 def login_usuario(btn_login, nick, password):
+    """
+    Autentica a un usuario en la aplicación
+
+    Parameters
+    ----------    
+    nick : str
+        Nickname del usuario.
+    password : str
+        Contraseña del usuario.
+
+    
+    Returns
+    -------
+    show_alert_error : bool
+        Muestra o no el mensaje de error al autenticar el usuario.
+    bool
+        Muestra o no el mensaje de success al autenticar el usuario.
+
+    """
     show_alert_error = True
     
     app.logger.info("@callback[ login_page ]: 'toggle_modal_login()' -> entrando ando")
@@ -165,6 +196,22 @@ def login_usuario(btn_login, nick, password):
     [Input("al-success-login",  "is_open")]
 )
 def signin_success(showed_alert):
+    """
+    Redirecciona a la pantalla /success cuando se ha 
+    logueado correctamente un usuario
+
+    Parameters
+    ----------
+    showed_alert : bool
+        Estado del mensaje que se muestra cuando la autenticación se ha realizado
+        de manera correcta.
+
+    Returns
+    -------
+    str
+        Redirección de la página a success.
+
+    """
     if showed_alert:
         time.sleep(1)
         return "/success"
@@ -176,6 +223,10 @@ def signin_success(showed_alert):
      Input("mlogin-nick",        "value")]
 )
 def disabled_mlogin_enter(password, nick):
+    """
+    Activa/Desactiva el botón 'Enter' de la modal de login
+
+    """
     
     app.logger.info("@callback[ signin_page ]: INICIO 'disabled_mlogin_enter()' -> password: " + str(utils.name_file_valid(password)) )
     app.logger.info("@callback[ signin_page ]: INICIO 'disabled_mlogin_enter()' -> nick: "     + str(utils.name_file_valid(nick)) )

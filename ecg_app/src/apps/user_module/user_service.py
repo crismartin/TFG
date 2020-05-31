@@ -19,6 +19,21 @@ logger = app.logger
 ###############################################################################
 
 def get_sesiones_by_user(id_usuario):
+    """
+    Obtiene las sesiones de un usuario
+
+    Parameters
+    ----------
+    id_usuario : str
+        Id del usuario.
+
+    Returns
+    -------
+    sesiones : list of obj
+        Sesiones del usuario.
+
+    """
+    
     try:
         sesiones = db.get_sesiones_by_user(id_usuario)
         return sesiones
@@ -30,6 +45,21 @@ def get_sesiones_by_user(id_usuario):
 
 
 def check_sesion(token_session):
+    """
+    Comprueba si existe una sesión
+
+    Parameters
+    ----------
+    token_session : str
+        Token de la sesión.
+
+    Returns
+    -------
+    token_session : str
+        Token de la sesión comprobada.
+
+    """
+    
     try:
         db.check_session(token_session)
         return token_session
@@ -40,6 +70,21 @@ def check_sesion(token_session):
 
 
 def set_session(token_session):
+    """
+    Setea los datos de una sesión
+
+    Parameters
+    ----------
+    token_session : str
+        Token de la sesión.
+
+    Returns
+    -------
+    data_session : obj
+        Datos de la sesión.
+
+    """
+    
     data_session = None
     token_session = check_sesion(token_session)
 
@@ -51,6 +96,23 @@ def set_session(token_session):
 
 #Crea una nueva sesion para un usuario
 def create_sesion(id_usuario, nombre_sesion):
+    """
+    Crea una nueva sesión para un usuario
+
+    Parameters
+    ----------
+    id_usuario : str
+        Id del usuario.
+    nombre_sesion : str
+        Nombre de la sesión.
+
+    Returns
+    -------
+    result : str
+        1 si se ha podido crear correctamente la sesión, 0 si ha ocurrido un error
+
+    """
+    
     result = "0"
     try:
         token_sesion = utils.generateNewTokenSession()
@@ -68,6 +130,16 @@ def create_sesion(id_usuario, nombre_sesion):
 
 #Actualiza la fecha de ultima edicion de la sesion
 def update_sesion(token_sesion):
+    """
+    Actualiza la fecha de última edición de la sesión
+
+    Parameters
+    ----------
+    token_sesion : str
+        Token de la sesión.
+
+    """
+    
     try:
         f_edicion = utils.getCurrentStringDate(None)
         db.update_sesion(token_sesion, f_edicion)        
@@ -76,7 +148,22 @@ def update_sesion(token_sesion):
 
 
 
-def borrar_sesion(sesion):    
+def borrar_sesion(sesion):
+    """
+    Borra una sesión
+
+    Parameters
+    ----------
+    sesion : obj
+        Datos de una sesión.
+
+    Returns
+    -------
+    bool
+        True si se ha borrado una sesión correctamente, False en caso contrario.
+
+    """
+    
     id_sesion = sesion["id"]
     token_sesion = sesion["token"]
     
@@ -117,6 +204,17 @@ def borrar_sesion(sesion):
 
 # Elimina los ficheros del sistema
 def delete_files_system(token_session, list_files):
+    """
+    Elimina los ficheros del sistema
+
+    Parameters
+    ----------
+    token_session : str
+        Token de sesión.
+    list_files : list of str
+        Lista de nombres de ficheros a borrar.
+
+    """
     
     for file in list_files:
         ruta_fichero = token_session + "/" + file["nombre"]
@@ -125,6 +223,21 @@ def delete_files_system(token_session, list_files):
 
 # Elimina de la BBDD los ficheros seleccionados
 def delete_files_by_id(list_files):
+    """
+    Elimina los datos de los ficheros en BBDD
+
+    Parameters
+    ----------
+    list_files : list of str
+        Lista de id's de los ficheros a borrar.
+
+    Returns
+    -------
+    result : bool
+        True si se han borrado los ficheros, False en caso contrario.
+
+    """
+    
     result = False
     try:
         result = db.delete_files_by_id(list_files)
@@ -136,6 +249,23 @@ def delete_files_by_id(list_files):
 
 # Elimina los ficheros seleccionados
 def delete_files_selected(token_session, list_files):
+    """
+    Elimina los ficheros (System + BBDD)
+
+    Parameters
+    ----------
+    token_session : str
+        Token de la sesión.
+    list_files : list of obj
+        Lista con los datos de los ficheros a borrar.
+
+    Returns
+    -------
+    bool
+        True si se ha logrado borrar completamente los ficheros, False en caso contrario.
+
+    """
+    
     list_id_files = []
     app.logger.info( "[ user_service ] - 'delete_files_selected()' -> Borrar ficheros: " + str(list_files))
     if list_files is not None and list_files != []:

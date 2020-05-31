@@ -29,6 +29,9 @@ store_session   = dcc.Store(id='session', storage_type='session')
 
 
 class Inicio:
+    """
+    Clase con los componentes de la página de inicio de la aplicación
+    """
     
     cards = dbc.CardGroup(
     [
@@ -75,7 +78,7 @@ class Inicio:
         dbc.Card(
             dbc.CardBody(
                 [
-                    html.H5("WDelineator", className="card-title"),
+                    html.H5("WTdelineator", className="card-title"),
                     html.P(
                         "Módulo desarrollado en Python cuya función es calcular "
                         "en qué puntos de la señal empiezan y/o terminan las diferentes "
@@ -84,7 +87,7 @@ class Inicio:
                     ),
                     dbc.Nav(
                         dbc.NavLink(dbc.Button(children=[
-                                           html.Span([html.I(className="fa fa-code-fork ml-2"), " WDelineator"])
+                                           html.Span([html.I(className="fa fa-code-fork ml-2"), " WTdelineator"])
                                            ], color="primary"
                                     ), href="https://github.com/caledezma/WTdelineator"
                         ), className="float-right"
@@ -169,6 +172,10 @@ class Inicio:
 
     @staticmethod
     def layout():
+        """
+        Devuelve la página de inicio de la aplicación
+
+        """
         return html.Div([
             Inicio.body            
         ])

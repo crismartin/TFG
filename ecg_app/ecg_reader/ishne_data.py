@@ -24,10 +24,22 @@ EXT_FILE_ANN        = ".ann"
 
 
 
-"""
-Function that return 0 if it has a ISHNE format
-"""    
+
 def is_Ishne_file(fileIshne):
+    """
+    Comprueba si el fichero tiene formato ISHNE
+
+    Parameters
+    ----------
+    fileIshne : str
+        Ruta del fichero.
+
+    Returns
+    -------
+    bool
+        True si el fichero es ISHNE, False en caso contrario.
+
+    """
     print("[INFO][ISHNE_DATA] - is_Ishne_file() -> fileIshne: %s" %fileIshne)
     fileRoute = fileIshne.split(".")[0]
     print("[INFO][ISHNE_DATA] - is_Ishne_file() -> fileRoute sin ext: %s" %fileRoute)
@@ -45,10 +57,22 @@ def is_Ishne_file(fileIshne):
     return False
 
 
-"""
-Function that return True if it has a ISHNE ANN format
-"""  
+
 def is_ann_Ishne_file(fileAnnIshne):
+    """
+    Comprueba si las anotaciones tienen formato ISHNE
+
+    Parameters
+    ----------
+    fileAnnIshne : str
+        Ruta del fichero de anotaciones.
+
+    Returns
+    -------
+    bool
+        True si es un fichero de anotaciones válido, False en caso contrario.
+
+    """
     print("[INFO][ISHNE_DATA] - is_ann_Ishne_file() -> fileAnnIshne: %s" %fileAnnIshne)
     fileRoute = fileAnnIshne.split(".")[0]
     print("[INFO][ISHNE_DATA] - is_ann_Ishne_file() -> fileRoute sin ext: %s" %fileAnnIshne)
@@ -67,11 +91,23 @@ def is_ann_Ishne_file(fileAnnIshne):
 
 
 
-"""
-Get name file
-"""
+
 def get_fileName(urlFile):
-        return urlFile.split("/")[-1]
+    """
+    Obtiene el nombre del fichero de la ruta
+
+    Parameters
+    ----------
+    urlFile : str
+        Ruta del fichero.
+
+    Returns
+    -------
+    str
+        Nombre del fichero.
+
+    """
+    return urlFile.split("/")[-1]
     
 
 """
@@ -79,6 +115,20 @@ Function that read whatever url file
 return memory direction from read bytes
 """
 def read_file(urlFile):
+    """
+    Devuelve el descriptor de un fichero para leer
+
+    Parameters
+    ----------
+    urlFile : str
+        Ruta del fichero.
+
+    Returns
+    -------
+    int
+        Descriptor del fichero para leer.
+
+    """
     try:
         myFile = open(urlFile, 'rb')
         return myFile
@@ -90,6 +140,57 @@ def read_file(urlFile):
     
 # Clase principal ECG_ISHNE
 class ECGIshne(ecg.ECG):
+    
+    """
+    Entidad para lectura de ficheros Physionet. Extiende de la clase abstracta ECG
+        
+    Attributes
+    ----------
+    _typeECG : str
+        Formato del ECG, en este caso ISHNE
+        
+    fileRoute : str
+        Ruta absoluta del fichero de electrocardiograma
+        
+    fileName : str
+        Nombre del fichero de electrocardiograma sin extensión
+        
+    header : Object(Header.class)
+        Datos de cabecera del electrocardiograma
+        
+    signal: array[int]
+        Array de muestras del electrocardiograma
+        
+    annt: Object(Annotation.class)
+        Objeto con los datos de las anotaciones sobre el electrocardiograma
+
+
+    Methods
+    -------
+    read_signal(self, sampleFrom, sampleTo)
+        Lee las muestras de la señal de electrocardiograma en un intervalo
+    
+    read_ishne_file(self, fileRoute)
+        Funcion que lee los datos principales de la señal ECG
+    
+    read_annotations(self, sampFrom, sampTo)
+        Obtiene los datos de las anotaciones del ECG
+    
+    printECG(self, sampleFrom, sampleTo)
+        Muestra en una gráfica el electrocardiograma leído
+        
+    printSignalData(self)
+        Imprime los datos más importantes de la señal ecg, 
+        como array de muestras y la frecuencia de muestreo
+        
+    printInfoECG(self)
+        Imprime el array de muestras de la señal ecg
+        
+    printTestECG(self)
+        Imprime un resumen de los datos de cabecera, señal y anotaciones 
+        del electrocardiograma    
+    
+    """
    
     _header = []      
     _signal = []
@@ -175,6 +276,17 @@ class ECGIshne(ecg.ECG):
     " Representa la señal ECG "
     ""
     def printECG(self, sampleFrom, sampleTo):
+        """
+        Representa la señal de ECG en una figura
+
+        Parameters
+        ----------
+        sampleFrom : int
+            Muestra inicial del ecg a mostrar.
+        sampleTo : TYPE
+            Muestra final del ecg a mostrar.
+
+        """
         ecg = self._signal
         
         fs = self.getHeader().samplingRate
@@ -207,23 +319,77 @@ class ECGIshne(ecg.ECG):
         plt.show()
     
     
-    ""
-    " Imprime la informacion de los datos de la señal "
-    ""
+    
     def printInfoECG(self):
+        """
+        Imprime en consola la informacion de los datos de la señal
+        
+        """
         display(self._signal)
     
     
     def printSignalData(self):
+        """
+        Imprime en consola los datos del array de muestras de ECG 
+        """
         print("[INFO][ISHNE] Signal - len:  %s" %str(len(self.signal)))
         print("[INFO][ISHNE] Signal - data: %s" %str(self.signal))
     
     
     def printAnntECG(self):
+        """
+        Imprime en consola la información de los datos de las anotaciones
+
+        Returns
+        -------
+        None.
+
+        """
         display(self.annt.__dict__)
         
     
     class Header():
+        """
+        Entidad de apoyo para devolver los datos de la cabecera del fichero
+        
+        
+        Attributes
+        ----------
+        
+        nLeads : int
+            Número total de derivaciones del fichero
+            
+        samplingRate : int
+            Frecuencia de muestreo
+            
+        signal_len : int
+            Número total de muestras de la señal de ECG
+        
+        comments : str
+            Comentarios escritos en la cabecera del fichero
+            
+            
+        Methods
+        -------
+        
+        _parseDateISHNE(self, date)
+            Devuelve la fecha en formato DD-MM-YYYY
+                    
+        _parseSexISHNE(self, sexo)
+            Devuelve la equivalencia del sexo        
+        
+        _nombreCompleto(self, firstName, secondName)
+            Devuelve el nombre completo del paciente de quien se tomó los datos
+        
+        readHeaderISHNE(self, fileFd)
+            Lee el fichero para obtener los datos de la cabecera
+        
+        printInfo(self)
+            Imprime en consola los datos más importantes de la cabecera
+                
+        """
+        
+        
         def __init__(self, fileFd):
             self.varLenBlockSize = ''
             self.signal_len = np.dtype(np.int32)
@@ -408,7 +574,35 @@ class ECGIshne(ecg.ECG):
 
 
 
-    class ECGSignal():    
+    class ECGSignal():
+        """
+        Entidad de apoyo para devolver las muestras del ECG
+        
+        
+        Attributes
+        ----------
+        
+        ecg: array of int
+            Array de muestras del ECG
+        
+        lenEcg : int
+            Número total de muestras del ECG
+            
+
+        Methods
+        -------
+        read_ecg(self, fdFile, nLeads, sampFrom, sampTo)
+            Devuelve las muestras de ECG de un intervalo y su longitud
+        
+        getECGArray(self)
+            Devuelve las muestras de ECG
+        
+        printInfo(self)
+            Imprime en consola los datos más importantes de la señal ECG
+                
+        """
+        
+        
         def __init__(self):
             self.crcChecksum = ""
             self.ecg = []
@@ -420,6 +614,28 @@ class ECGIshne(ecg.ECG):
             return crcChecksum
         
         def read_ecg(self, fdFile, nLeads, sampFrom, sampTo):
+            """
+            Devuelve las muestras de ECG de un intervalo y su longitud
+
+            Parameters
+            ----------
+            fdFile : int
+                Descriptor del fichero a leer.
+            nLeads : int
+                Número de derivaciones del ECG.
+            sampFrom : int
+                Muestra inicial del intervalo de ECG a leer.
+            sampTo : int
+                Muestra final del intervalo de ECG a leer.
+
+            Returns
+            -------
+            array of int
+                Array de las muestras del ECG
+            len_signal_total : int
+                Longitud total de muestras leídas.
+
+            """
             len_signal_total = 0
             ecgArrayBytes = np.fromfile(fdFile, dtype=np.int16, count=-1)
             ecgArrayBytes = np.asarray(ecgArrayBytes)            
@@ -442,15 +658,57 @@ class ECGIshne(ecg.ECG):
             return varBlock
         
         def printInfo(self):
+            """
+            Imprime en consola los datos más importantes de la señal ECG
+
+            """
             print("\n[INFO] ******* ECG_SIGNAL_Params ********") 
             print("[INFO] ecg: %s" %self.ecg)
             print("[INFO] ecg-len: %s" %len(self.ecg) )
         
         def getECGArray(self):
+            """
+            Devuelve las muestras de ECG
+
+            Returns
+            -------
+            array of int
+                Array de muestras.
+
+            """
             return self.ecg
         
     
     class Annotations:
+        """
+        Clase de apoyo para obtener los datos de las anotaciones en el ECG
+        
+        Attributes
+        ----------
+        
+        otherData: obj
+            Datos completos obtenidos de las anotaciones
+        
+        ann_len : int
+            Longitud total de las muestras de las anotaciones leídas
+            
+        sample : array of int
+            Array de muestras donde estarán ubicadas las anotaciones en el ECG
+            
+        symbol : array of str
+            Array de símbolos de las anotaciones
+        
+        
+        Methods
+        -------
+        _read_annt(self, fileRoute, posBytesData, sampfrom, sampto)
+            Obtiene los datos de las anotaciones de un intervalo del ECG
+        
+        printInfo(self)
+            Imprime en consola los datos obtenidos de las anotaciones
+        
+        """
+        
         def __init__(self, fileRoute, posBytesData, sampfrom, sampto):
             self.otherData = self._read_annt(fileRoute, posBytesData, sampfrom, sampto)
 
@@ -460,6 +718,28 @@ class ECGIshne(ecg.ECG):
             
             
         def _read_annt(self, fileRoute, posBytesData, sampfrom, sampto):
+            """
+            Obtiene los datos de las anotaciones de un intervalo del ECG
+
+            Parameters
+            ----------
+            fileRoute : str
+                Ruta del fichero.
+            posBytesData : int
+                Posición en bytes donde empieza a leer las anotaciones.
+            sampfrom : int
+                Muestra inicial del intervalo a leer.
+            sampto : int
+                Muestra final del intervalo a leer.
+
+            Returns
+            -------
+            data_ant : array of int
+                Array de anotaciones.
+
+            """
+            
+            
             data_ant = None
             sample = []
             symbol = []
@@ -531,6 +811,10 @@ class ECGIshne(ecg.ECG):
             
 
         def printInfo(self):
+            """
+            Imprime en consola los datos obtenidos de las anotaciones
+
+            """
             display('[INFO] Mostrando resumen datos anotaciones ISHNE')
             display('[INFO][ISHNE] Annt - ann_len: %s' %self.ann_len)
             display('[INFO][ISHNE] Annt - samples: %s' %self.sample)
@@ -546,6 +830,15 @@ class ECGIshne(ecg.ECG):
     https://bitbucket.org/atpage/ishneholterlib
     """           
     def read_ishne_file(self, fileName):
+        """
+        Funcion que lee los datos principales de la señal ECG
+
+        Parameters
+        ----------
+        fileName : str
+            Ruta del fichero.
+
+        """
         fileRoute = fileName + EXT_FILE_DATA        
         ecg = self.ECGSignal()
         crc = self.Crc()
@@ -569,6 +862,17 @@ class ECGIshne(ecg.ECG):
             
         
     def read_signal(self, sampleFrom, sampleTo):
+        """
+        Lee las muestras de la señal de electrocardiograma en un intervalo
+
+        Parameters
+        ----------
+        sampleFrom : int
+            Muestra inicial del intervalo a leer.
+        sampleTo : int
+            Muestra final del intervalo a leer.
+
+        """
         fileRoute = self._fileRoute + EXT_FILE_DATA
         ecg = self.ECGSignal()
         
@@ -602,6 +906,17 @@ class ECGIshne(ecg.ECG):
              
        
     def read_annotations(self, sampleFrom, sampleTo):
+        """
+        Obtiene los datos de las anotaciones del ECG
+
+        Parameters
+        ----------
+        sampleFrom : int
+            Muestra inicial del intervalo a leer.
+        sampleTo : int
+            Muestra final del intervalo a leer.
+
+        """
         if self._header == []:
             print('[ERROR][ISHNE] No se puede leer anotaciones. Cabecera errónea (vacía) para fichero "%s"' %self.fileRoute)
             return

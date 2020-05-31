@@ -140,3 +140,4 @@ dmypy.json
 .DS_Store
 datos_prueba/.DS_Store
 .DS_Store
+ecg_app/logs/ecgApp.log

@@ -15,6 +15,20 @@ server = app.server
 
 @server.route('/src/static/<path:path>')
 def static_file(path):
+    """
+    Devuelve los recursos estáticos del directorio 'static'
+
+    Parameters
+    ----------
+    path : String
+        Nombre del recurso solicitado.
+
+    Returns
+    -------
+    recurso: File
+        Devuelve el fichero del recurso solicitado.
+
+    """
     print("static_file()")
     print("Path es: " + path)
     print("os.getcwd() es: " + os.getcwd())

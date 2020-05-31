@@ -18,6 +18,20 @@ import src.apps.auth_module.signin_page as signin_page
 ###############################################################################
 
 def logged_component(nombre_user):
+    """
+    Componente que se devolverá en el navbar cuando un usuario se haya logado
+
+    Parameters
+    ----------
+    nombre_user : str
+        Nickname del usuario.
+
+    Returns
+    -------
+    logged_user : obj
+        Componente con los datos del usuario logado.
+
+    """
     
     logged_user = dbc.DropdownMenu(
                         nav=True,
@@ -32,6 +46,15 @@ def logged_component(nombre_user):
 
 
 def nologged_component():
+    """
+    Componente que se devolverá en el navbar cuando un usuario no se haya logado (por defecto)
+
+    Returns
+    -------
+    nologed_user : TYPE
+        Componente con los datos por defecto.
+
+    """
     nologed_user = [dbc.NavItem(children=dbc.Button(id="btn-login", 
                                                     children=[html.Span([html.I(className="fa fa-power-off"), " Iniciar sesión"])],  
                                                     color="link") 

@@ -18,6 +18,20 @@ PHYSIONET_TYPE = "PHYSIONET"
 
 
 def is_Physionet_file(fileRoute):
+    """
+    Comprueba si el fichero tiene formato Physionet
+
+    Parameters
+    ----------
+    fileRoute : str
+        Ruta del fichero
+
+    Returns
+    -------
+    bool
+        True si el fichero es Physionet, False en caso contrario.
+
+    """
     header = None  
     fileRoute = fileRoute.split(".")[0]
     print("[INFO][physionet] fichero a crear: " + fileRoute)
@@ -34,7 +48,58 @@ def is_Physionet_file(fileRoute):
     
 
 # Clase Principal ECGPhysionet
-class ECGPhysionet(ecg.ECG):   
+class ECGPhysionet(ecg.ECG):
+    """
+    Entidad para lectura de ficheros Physionet. Extiende de la clase abstracta ECG
+        
+    Attributes
+    ----------
+    _typeECG : str
+        Formato del ECG, en este caso Physionet
+        
+    fileRoute : str
+        Ruta absoluta del fichero de electrocardiograma
+        
+    fileName : str
+        Nombre del fichero de electrocardiograma sin extensión
+        
+    header : Object(Header.class)
+        Datos de cabecera del electrocardiograma
+        
+    signal: array[int]
+        Array de muestras del electrocardiograma
+        
+    annt: Object(Annotation.class)
+        Objeto con los datos de las anotaciones sobre el electrocardiograma
+
+
+    Methods
+    -------
+    read_signal(self, sampleFrom, sampleTo)
+        Lee las muestras de la señal de electrocardiograma en un intervalo
+    
+    read_physionet_file(self, fileRoute)
+        Funcion que lee los datos principales de la señal ECG
+    
+    read_annotations(self, sampFrom, sampTo)
+        Obtiene los datos de las anotaciones del ECG
+    
+    printECG(self, sampleFrom, sampleTo)
+        Muestra en una gráfica el electrocardiograma leído
+        
+    printSignalData(self)
+        Imprime los datos más importantes de la señal ecg, 
+        como array de muestras y la frecuencia de muestreo
+        
+    printInfoECG(self)
+        Imprime el array de muestras de la señal ecg
+        
+    printTestECG(self)
+        Imprime un resumen de los datos de cabecera, señal y anotaciones 
+        del electrocardiograma
+
+    
+    """
     _header = []      
     _signal = []
     _annt = None
@@ -103,27 +168,76 @@ class ECGPhysionet(ecg.ECG):
         self.read_physionet_file(fileRoute)
         
     
-    ""
-    " Representa la señal ECG "
-    ""
-    def printECG(self, sampleFrom, sampleTo):        
+    
+    def printECG(self, sampleFrom, sampleTo):
+        """
+        Representa la señal ECG en una gráfica
+
+        Parameters
+        ----------
+        sampleFrom : int
+            Número de la muestra inicial de la señal a pintar
+        sampleTo : int
+            Número de la muestra final de señal a pintar.
+
+
+        """
         wfdb.plot_wfdb(record=self.__allSignal, 
                        title='Record a103l from Physionet Challenge 2015',
                        time_units='seconds')
     
-    ""
-    " Imprime la informacion de los datos de la señal "
-    ""
+    
     def printInfoECG(self):
+        """
+        Imprime la informacion de los datos de la señal en consola
+        
+        """
         display(self.__allSignal.__dict__)
         
     
     def printSignalData(self):
+        """
+        Imprime en consola los datos del array 'signal'
+        
+        """
         print("[INFO][Physionet] Signal - len:  %s" %str(len(self.signal)))
         print("[INFO][Physionet] Signal - data: %s" %str(self.signal))
         
     
     class Header():
+        """
+        Entidad de apoyo para devolver los datos de la cabecera del fichero
+        
+        
+        Attributes
+        ----------
+        
+        otherData: obj
+            Todos los datos leídos de la cabecera del fichero
+        
+        nLeads : int
+            Número total de derivaciones del fichero
+            
+        samplingRate : int
+            Frecuencia de muestreo
+            
+        signal_len : int
+            Número total de muestras de la señal de ECG
+        
+        comments : str
+            Comentarios escritos en la cabecera del fichero
+            
+            
+        Methods
+        -------
+        _read_header(self, fileRoute)
+            Lee el fichero para obtener los datos de la cabecera
+        
+        printInfo(self)
+            Imprime en consola los datos más importantes de la cabecera
+        
+        """        
+        
         def __init__(self, fileRoute):           
             self.otherData = self._read_header(fileRoute) # Aqui tengo todos los datos de la cabecera
             self.nLeads = self.otherData.n_sig
@@ -132,9 +246,27 @@ class ECGPhysionet(ecg.ECG):
             self.comments = self.otherData.comments if self.otherData.comments != [] else None
             
         def _read_header(self, fileRoute):
+            """
+            Obtiene los datos de la cabecera
+
+            Parameters
+            ----------
+            fileRoute : str
+                Ruta del fichero.
+
+            Returns
+            -------
+            obj
+                Datos de la cabecera.
+
+            """
             return wfdb.rdheader(fileRoute)
         
         def printInfo(self):
+            """
+            Imprime en consola los datos obtenidos de la cabecera
+            
+            """
             display('[INFO][Physionet] Header - otherData: \n%s' %self.otherData.__dict__)
             print("[INFO][Physionet] Header - Main Data:")
             print("[INFO][Physionet] Header - nLeads: %s" %str(self.nLeads))
@@ -144,15 +276,82 @@ class ECGPhysionet(ecg.ECG):
             
             
     class ECGSignal():
+        """
+        Clase de apoyo para obtener los datos de la señal ECG
+        
+
+        Methods
+        -------
+        _read_ecg_data(self, fileRoute, sampfrom, sampto)
+            Devuelve las muestras de la señal ECG en un intervalo
+            
+        printInfo(self)
+            Imprime en consola los datos obtenidos de las muestras de la señal ECG
+        
+        """
+        
+    
         def _read_ecg_data(self, fileRoute, sampfrom, sampto):
+            """
+            Devuelve las muestras de la señal ECG en un intervalo
+
+            Parameters
+            ----------
+            fileRoute : str
+                Ruta del fichero.
+            sampfrom : int
+                Muestra inicial de la señal ECG a leer.
+            sampto : TYPE
+                Muestra final de la señal ECG a leer.
+
+            Returns
+            -------
+            list of int
+                Array de muestras de la señal ECG.
+
+            """
             return wfdb.rdrecord(fileRoute, sampfrom=sampfrom, sampto=sampto)
             
         def printInfo(self):
+            """
+            Imprime en consola los datos obtenidos de las muestras de la señal ECG
+
+            """
             print('[INFO] Mostrando signal physionet')
             print(self.signal)
     
     
     class Annotations:
+        """
+        Clase de apoyo para obtener los datos de las anotaciones en el ECG
+        
+        Attributes
+        ----------
+        
+        otherData: obj
+            Datos completos obtenidos de las anotaciones
+        
+        ann_len : int
+            Longitud total de las muestras de las anotaciones leídas
+            
+        sample : array of int
+            Array de muestras donde estarán ubicadas las anotaciones en el ECG
+            
+        symbol : array of str
+            Array de símbolos de las anotaciones
+        
+        
+        Methods
+        -------
+        _read_annt(self, fileRoute, sampfrom, sampto)
+            Obtiene los datos de las anotaciones de un intervalo del ECG
+        
+        printInfo(self)
+            Imprime en consola los datos obtenidos de las anotaciones    
+        
+        """
+        
+        
         def __init__(self, fileRoute, sampfrom, sampto):
             self.otherData = self._read_annt(fileRoute, sampfrom, sampto)
             
@@ -161,6 +360,24 @@ class ECGPhysionet(ecg.ECG):
             self.symbol = self.otherData.symbol if self.otherData is not None and self.otherData.symbol != [] else None
             
         def _read_annt(self, fileRoute, sampfrom, sampto):
+            """
+            Obtiene los datos de las anotaciones de un intervalo del ECG
+
+            Parameters
+            ----------
+            fileRoute : str
+                Ruta del fichero.
+            sampfrom : int
+                Muestra inicial de la señal ECG a obtener las anotaciones.
+            sampto : TYPE
+                Muestra final de la señal ECG a obtener las anotaciones.
+
+            Returns
+            -------
+            data_ant : obj
+                Datos de las anotaciones
+
+            """
             data_ant = None
             try:
                 data_ant = wfdb.rdann(fileRoute, 'atr', sampfrom=sampfrom, sampto=sampto)
@@ -170,6 +387,10 @@ class ECGPhysionet(ecg.ECG):
                 return data_ant
 
         def printInfo(self):
+            """
+            Imprime en consola los datos obtenidos de las anotaciones  
+
+            """
             display('[INFO][Physionet] Mostrando resumen datos ANOTACIONES')
             display('[INFO][Physionet] Annt - ann_len: %s' %self.ann_len)
             display('[INFO][Physionet] Annt - samples: %s' %self.sample)
@@ -185,6 +406,17 @@ class ECGPhysionet(ecg.ECG):
         
     
     def read_signal(self, sampFrom, sampTo):
+        """
+        Obtiene los datos de la señal ECG
+
+        Parameters
+        ----------
+        sampFrom : int
+            Muestra inicial de la señal ECG a leer.
+        sampTo : TYPE
+            Muestra final de la señal ECG a leer.
+
+        """
         if self._header == []:
             print('[ERROR][Physionet] No se puede leer datos. Cabecera errónea para fichero "%s"' %self.fileRoute)
             return
@@ -205,7 +437,18 @@ class ECGPhysionet(ecg.ECG):
             
     
     
-    def read_annotations(self, sampFrom, sampTo):        
+    def read_annotations(self, sampFrom, sampTo):
+        """
+        Obtiene los datos de las anotaciones del ECG
+
+        Parameters
+        ----------
+        sampFrom : int
+            Muestra inicial de la señal ECG para obtener anotaciones.
+        sampTo : int
+            Muestra final de la señal ECG para obtener anotaciones.
+
+        """
         if self._header == []:
             print('[ERROR][Physionet] No se puede leer anotaciones. Cabecera errónea (vacía) para fichero "%s"' %self.fileRoute)
             return

@@ -39,12 +39,20 @@ url_sesion_error= dcc.Location(id='url_sesion_error',   refresh=True)
 
 
 class SessionError:
+    """
+    Clase que contiene los métodos para los componentes de la página de SesionError
+    
+    """
     
     @app.callback(
         Output("url_sesion_error", "pathname"),
         [Input("se-btn-perfil", "n_clicks")]
     )
     def redirect_profile(btn):
+        """
+        Redirige la pantalla de perfil de usuario cuando se clica en el botón "Volver al perfil"
+
+        """
         if btn:
             return "/user/profile"
     

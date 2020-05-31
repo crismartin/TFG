@@ -414,6 +414,10 @@ def msesions_get_sesion(sesion_sel, tbl_sesiones):
      State('tbl-sesiones',          "derived_virtual_data")]
 )
 def load_sesiones_usuario(btn_new_sesion, btn_del_sesion, row_seleted, rows):
+    """
+    Carga las sesiones de usuario en la página de Perfil de Usuario
+    
+    """
     if current_user.is_authenticated:
         
         logger.info("\n@callback [ perfil_page ] - load_sesiones_usuario() -> ENTRA EN PERFIL PAGE") 
@@ -441,6 +445,10 @@ def load_sesiones_usuario(btn_new_sesion, btn_del_sesion, row_seleted, rows):
     [Input("tbl-sesiones",          "derived_virtual_selected_rows")]
 )
 def select_row_sesion(sesion_selected):
+    """
+    Activa/Desactiva los botones de acción para una sesión seleccionada
+
+    """
     logger.info("@callback [ perfil_page ] - crear_sesion() -> sesion_selected: "+ str(sesion_selected))
     disable_btns = False
     if sesion_selected is not None and sesion_selected != []:
@@ -456,6 +464,10 @@ def select_row_sesion(sesion_selected):
     [State("msesfiles-sesion",  "is_open")]
 )
 def toggle_msesfiles(btn_verfiles, btn_cancel_files, is_open):
+    """
+    Abre/Cierra la ventana modal de ficheros de una sesión
+
+    """
 
     if btn_verfiles or btn_cancel_files:
         return not is_open
@@ -519,6 +531,10 @@ def get_data_selected(rows_sel, rows):
      State('tbl-files-sesion',      "derived_virtual_data"),]
 )
 def load_files_sesion(btn_ver_files, btn_borrar_files, row_selected_ses, rows_ses, rows_files_sel, rows_files):
+    """
+    Carga los ficheros de una sesión selecionada al clicar sobre el botón "Ver ficheros"
+
+    """
     app.logger.info("@callback [ perfil_page ] INICIO 'load_files_sesion()'")    
 
     ctx = dash.callback_context
@@ -551,7 +567,11 @@ def load_files_sesion(btn_ver_files, btn_borrar_files, row_selected_ses, rows_se
      Output("msesfiles-borrar",    "disabled"),
     [Input("tbl-files-sesion",     "derived_virtual_selected_rows")]
 )
-def select_row_file_sesion(sesion_selected):    
+def select_row_file_sesion(sesion_selected):
+    """
+    Activa/Desactiva el botón de "Borrar" en la selección de ficheros de una sesión
+
+    """
     disable_btns = False
     if sesion_selected is not None and sesion_selected != []:
         return disable_btns
@@ -568,6 +588,10 @@ def select_row_file_sesion(sesion_selected):
      State('tbl-sesiones',      "derived_virtual_data")]
 )
 def go_session_selected(showed_alert, row_selected, rows):
+    """
+    Redirige a la página de análisis de ECG de una sesión
+
+    """
     if showed_alert is None:
         raise dash.exceptions.PreventUpdate()
         
@@ -588,6 +612,10 @@ def go_session_selected(showed_alert, row_selected, rows):
     [State("cnt-mborrarfiles",      "is_open")]
 )
 def mborrarfiles_toggle(btn, btn_cancel, btn_borrar, is_open):
+    """
+    Muestra o no la ventana de confirmación de borrado de los ficheros de una sesión
+
+    """
     if btn or btn_cancel or btn_borrar:
         return not is_open
     return is_open
@@ -598,6 +626,10 @@ def mborrarfiles_toggle(btn, btn_cancel, btn_borrar, is_open):
     [Input("msesfiles-borrar",      "n_clicks")],
 )
 def mborrarfiles_reset_alert(btn):
+    """
+    Reinicia el alert de borrar un fichero de la sesión
+
+    """
     if btn:
         return histf_alert_error
     
@@ -613,6 +645,10 @@ def mborrarfiles_reset_alert(btn):
     [State('mnueva-sesion',      "is_open")]
 )
 def toggle_modal_new_session(btn_ns, btn_cancel, is_open):
+    """
+    Abre/Cierra la modal de creación de una sesión
+
+    """
 
     if btn_ns or btn_cancel:
         return not is_open
@@ -627,6 +663,10 @@ def toggle_modal_new_session(btn_ns, btn_cancel, is_open):
     [Input("fnuevases-nombre",          "value")]
 )
 def mnuevases_crear_disabled(nombre_sesion):
+    """
+    Activa/Desactiva el botón de crear una nueva sesión
+
+    """
     
     if utils.is_not_empty(nombre_sesion):        
         return False, nuevases_alert_error
@@ -650,6 +690,10 @@ def mnuevases_form_reset(btn):
     [State("fnuevases-nombre", "value")]
 )
 def mnuevases_crear_sesion(btn, nombre_sesion):
+    """
+    Crea una nueva sesión de usuario
+
+    """
     if btn is None:
         raise dash.exceptions.PreventUpdate()
     
@@ -671,6 +715,10 @@ def mnuevases_crear_sesion(btn, nombre_sesion):
     [Input("nuevases-estado",       "value")],    
 )
 def show_msg_crear_sesion(stat_created):
+    """
+    Muestra o no los mensajes de success o de error al crear una sesión
+
+    """
 
     if stat_created == "0":
         return False, True
@@ -691,6 +739,11 @@ def show_msg_crear_sesion(stat_created):
     [State("mnuevases-cancelar",    "n_clicks")]
 )
 def click_cancel_btn(success, error, clicks_cancel):
+    """
+    Hace .click() en el botón de la modal de creación de sesiones cuando 
+    se muestra un mensaje de creación o error al haber creado una nueva sesión
+
+    """
     logger.info("@callback [ perfil_page ] - click_cancel_btn() -> success: " + str(success))
     if success is True:
         return clicks_cancel, ""
@@ -707,6 +760,10 @@ def click_cancel_btn(success, error, clicks_cancel):
     [State("mdelsesion",            "is_open")]
 )
 def mborrarsesion_toggle(btn, btn_cancel, btn_borrar, is_open):
+    """
+    Abre/Cierra la modal de borrar una sesión
+
+    """
     if btn or btn_cancel or btn_borrar:
         return not is_open
     return is_open

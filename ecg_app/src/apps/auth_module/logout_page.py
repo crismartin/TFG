@@ -35,6 +35,20 @@ login_url = dcc.Location(id='url_logout',   refresh=True)
     [Input("btn_gohome",  "n_clicks")]
 )
 def go_home(click_btn):
+    """
+    Redirecciona a la pantalla de incio de la aplicación
+
+    Parameters
+    ----------
+    click_btn : int
+        Click sobre el botón 'Volver al inicio'
+
+    Returns
+    -------
+    str
+        Redirección a la página de inicio.
+
+    """
     if click_btn:
         return "/"
 
