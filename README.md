@@ -60,8 +60,11 @@ Por útimo, desde un navegador iremos a la siguiente url:</br>
 <code>http://localhost:8050/</code></br>
 
 <h2>Manual de usuario</h2>
-Lo puedes encontrar en el directorio <i>documentacion</i> del repositorio como <code>manualUser.pdf</code>, en él se explica las 
+<p>
+Lo puedes encontrar en el directorio <i>documentacion</i> del repositorio como 
+<a href="/documentacion/manualUser.pdf">manualUser.pdf</a>, en él se explica las 
 principales funciones en un uso típico que se puede realizar en la aplicación.</br>
+</p>
 
 <h2>Comentarios y feedback</h2>
 Todo proyecto de software no termina. Si tienes algún comentario, sugerencia o dudas al momento de querer agregar nuevas 
@@ -70,5 +73,6 @@ funcionalidades, agradecería un <i>pull-request</i>.
 Para lo demás, escríbeme a <mail>c.martinezros@alumnos.urjc.es</mail>
 
 <h2>Licencia</h2>
-Proyecto desarrollado como Trabajo de Fin de Grado (TFG) para la Universidad Rey Juan Carlos 
-por parte de Cristian Fabián Martínez Rosero (2019-2020).
+<p>
+Este proyecto está protegido bajo la licencia GPLv3 (más detalles en el fichero <a href="/LICENSE.md">LICENSE</a>)
+</p>
