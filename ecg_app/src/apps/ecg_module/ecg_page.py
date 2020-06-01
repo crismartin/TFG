@@ -188,6 +188,10 @@ modal_component = html.Div([
 ## Modal historico de ficheros
 
 def th_tbl_hist_files():
+    """
+    Constructor de las filas de la tabla del historial de ficheros
+
+    """
     result = []
     th_nombres = ["Id", "Nombre", "Formato", "Fecha creación"]
     th_id = ["id", "nombre", "formato", "f_creacion"]
@@ -584,6 +588,10 @@ footer = html.Div([
     [Input("diff_interv", "value")]
 )
 def validar_intervalo(diff_interv):
+    """
+    Muestra o no el mensaje "Intervalo incorrecto"
+
+    """
     app.logger.info("@callback: INICIO 'validar_intervalo()'")
     if diff_interv == "" :
         style = {"visibility":"hidden"}
@@ -602,6 +610,10 @@ def validar_intervalo(diff_interv):
     [State("modal", "is_open")],
 )
 def toggle_modal(n1, n2, n3, is_open):    
+    """
+    Abre/Cierra la modal de subida de ficheros
+
+    """
     
     if (n1 or n2 or n3):
         return not is_open    
@@ -620,6 +632,10 @@ def toggle_modal(n1, n2, n3, is_open):
      State("session",           "data")],
 )
 def toggle_modal_hist(open_click, close_click, load_click, is_open, session):
+    """
+    Abre/Cierra la modal de historial de ficheros
+
+    """
     historial_files = []
     if (open_click or close_click or load_click):
         app.logger.info("@callback: INICIO 'toggle_modal_hist()' -> aqui")
@@ -635,16 +651,6 @@ def toggle_modal_hist(open_click, close_click, load_click, is_open, session):
 
 
 
-@app.callback(
-    Output("collapse", "is_open"),
-    [Input("collapse-button", "n_clicks")],
-    [State("collapse", "is_open")],
-)
-def toggle_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
-
 
 @app.callback(
     Output("collapse-edicion", "is_open"),
@@ -652,6 +658,10 @@ def toggle_collapse(n, is_open):
     [State("collapse-edicion", "is_open")],
 )
 def toggle_collapse_edicion(n, is_open):
+    """
+    Abre/Cierra el colapsable de "Edición de anotaciones"
+
+    """
     if n:
         return not is_open
     return is_open
@@ -664,6 +674,10 @@ def toggle_collapse_edicion(n, is_open):
      Input("url-dat-file","value")]
 )
 def disabled_uploader(head_file, data_file):
+    """
+    Activa/Desactiva el contenedor de subida de ficheros en la modal
+
+    """
     
     if utils.name_file_valid(head_file) or utils.name_file_valid(data_file):
         return True
@@ -678,6 +692,11 @@ def disabled_uploader(head_file, data_file):
     [Input("st-up-data", "value")]
 )
 def activar_btn_delete(st_upfile_data):
+    """
+    Activa/Desactiva el botón "Borrar fichero/s"
+
+    """
+    
     app.logger.info("@callback: INICIO 'activar_btn_delete()'")
     
     app.logger.info( "@callback: 'activar_btn_delete()' -> st_upfile_data: " + str(st_upfile_data) )
@@ -707,6 +726,12 @@ def activar_btn_delete(st_upfile_data):
     [Input("st-valid-data",     "value")],
 )
 def activar_btn_process(result_upfile):
+    """
+    Activa/Desactiva el botón "Procesar", además de mostrar el mensaje de alerta 
+    en la modal al subir un fichero
+
+    """
+    
     app.logger.info("@callback: INICIO 'activar_btn_process()'")
     
     if result_upfile is None:
@@ -740,6 +765,10 @@ def activar_btn_process(result_upfile):
      State("session",               "data")]
 )
 def delete_file(eliminar_file, name_file, data_session):
+    """
+    Elimina un fichero del sistema y reinicia la modal
+
+    """
     
     app.logger.info("@callback: INICIO 'delete_file()'")
     app.logger.info( "@callback: delete_file() -> eliminar_file: " + str(eliminar_file) )
@@ -794,6 +823,11 @@ def get_list_fname( url_head, url_ant, url_data ):
 )
 @login_required
 def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_session):
+    """
+    Controla la subida de los ficheros y devuelve el mensaje de alerta que puede 
+    ocurrir en alguno de los pasos de validación.
+
+    """
     
     app.logger.info( "@callback: INICIO 'updload_file()'" )
     app.logger.info( "@callback: 'updload_file() -> url_data: " + str(url_data) )  
@@ -843,6 +877,10 @@ def updload_file(list_contents, url_data, list_nombres, url_head, url_ant, data_
      State("tblHistFiles",      "derived_virtual_selected_rows")]
 )
 def process_file(click_process, click_load, data_session, name_file, rows, row_select):
+    """
+    Controla el procesamiento del fichero cuando se hace click sobre el botón "Procesar"
+
+    """
     app.logger.info("@callback: INICIO 'process_file()'")
     
     app.logger.info("@callback: 'process_file()' -> name_file: " + str(name_file) )
@@ -899,6 +937,10 @@ def create_components_decg(datos_ecg):
     [Input("fname_process", "value")]
 )
 def select_first_lead(fname_uploaded):
+    """
+    Selecciona la primera derivación del fichero
+
+    """
     app.logger.info("@callback: INICIO 'select_first_lead()'")
     
     if fname_uploaded is not None:
@@ -937,6 +979,10 @@ def select_first_lead(fname_uploaded):
      State("session",           "data")]
 )
 def print_ecg_lead(selected_lead, ver_intervalo, estado_edit, fname_uploaded, interv_ini, interv_fin, duracion_total, data_session):
+    """
+    Devuelve la señal del ECG en la figura.
+
+    """
     app.logger.info("\n@callback: INICIO 'print_ecg()'")
     
     app.logger.info("@callback: 'print_ecg()' -> selected_lead: " + str(selected_lead))
@@ -966,6 +1012,10 @@ def print_ecg_lead(selected_lead, ver_intervalo, estado_edit, fname_uploaded, in
      Input("interv_fin", "value")]
 )
 def change_diff_interv(ini_value, fin_value):
+    """
+    Calcula la diferencia entre el punto_inicio y punto_fin del intervalo
+
+    """
     app.logger.info("@callback: INICIO 'change_diff_interv()'")
     
     if ini_value is None or fin_value is None:
@@ -991,6 +1041,10 @@ def change_diff_interv(ini_value, fin_value):
     [State("duracion-total", "value")]
 )
 def enable_btn_next(btn_cargar, interv_fin, duracion):
+    """
+    Activa/Desactiva el botón 'Next'
+
+    """
     app.logger.info("@callback: INICIO 'enable_btn_next()'")
     if btn_cargar and (int(interv_fin) < int(duracion)):
         app.logger.info("@callback: INICIO 'enable_btn_next()' -> return True")
@@ -1006,6 +1060,10 @@ def enable_btn_next(btn_cargar, interv_fin, duracion):
      Input("interv_ini", "value")],
 )
 def enable_btn_prev(btn_cargar, interv_ini):
+    """
+    Activa/Desactiva el botón 'Prev'
+
+    """
     app.logger.info("@callback: INICIO 'enable_btn_prev()'")
         
     if btn_cargar and (int(interv_ini) > 0):
@@ -1031,6 +1089,10 @@ def enable_btn_prev(btn_cargar, interv_ini):
     
 )
 def next_interval_signal(next_btn, prev_btn, diff_interv, interv_ini, interv_fin, click_ver_interv, duracion):
+    """
+    Muestra el siguiente intervalo de la señal
+
+    """
     app.logger.info("@callback: INICIO 'next_interval_signal()'")
     if interv_ini is None and interv_fin is None:
         app.logger.info("@callback: FIN 'next_interval_signal()' by Exception: None values")
@@ -1067,6 +1129,12 @@ def next_interval_signal(next_btn, prev_btn, diff_interv, interv_ini, interv_fin
     [Input('tblHistFiles',      "derived_virtual_data"),
      Input('tblHistFiles',      "derived_virtual_selected_rows")])
 def tbl_hist_row_selected(rows, derived_virtual_selected_rows):
+    """
+    Comprueba si se ha seleccionado al menos un elemento de la tabla de historial
+    de ficheros
+
+    """
+    
     app.logger.info("@callback: INICIO 'tbl_hist_row_selected()'")
     
     app.logger.info("@callback: INICIO 'tbl_hist_row_selected()' -> rows: " + str(rows))
@@ -1098,6 +1166,10 @@ def tbl_hist_row_selected(rows, derived_virtual_selected_rows):
      State("session",       "data")]
 )
 def display_click_data(clickData, last_estado, pt_ini, rutafile, nLead, data_session):
+    """
+    Guarda y modifica un punto de anotación en la gráfica
+
+    """
     info_xi = "Xi: "
     info_yi = "Yi: "
     
@@ -1159,6 +1231,10 @@ def display_click_data(clickData, last_estado, pt_ini, rutafile, nLead, data_ses
     [State("point-fin",             "value")]
 )
 def change_msg_alert_ann(estatus_edit, pt_fin):
+    """
+    Cambia el mensaje de las interacciones al cambiar una anotación
+
+    """
     app.logger.info("@callback: INICIO 'change_msg_alert_ann()' -> estatus_edit: " + str(estatus_edit))
     app.logger.info("@callback: INICIO 'change_msg_alert_ann()' -> pt_fin: " + str(pt_fin))
     
@@ -1188,6 +1264,10 @@ def change_msg_alert_ann(estatus_edit, pt_fin):
     [State("url",                   "pathname")]
 )
 def up_fecha_edicion_sesion(val, url_sesion):
+    """
+    Actualiza la fecha de edición de una sesión
+
+    """
     app.logger.info("@callback: INICIO 'change_msg_alert_ann()' -> ENTRO PARA ACTUALIZAR LA SESION")
     id_token = url_sesion.split('/')[-1]
     
@@ -1212,6 +1292,10 @@ def up_fecha_edicion_sesion(val, url_sesion):
     [State("modal-decg",    "is_open")],
 )
 def toggle_modal_decg(btn_open, btn_close, is_open):
+    """
+    Abre/Cierra la ventana modal de los Datos de ECG
+
+    """
     if btn_open or btn_close:
         return not is_open
     return is_open
@@ -1230,7 +1314,12 @@ def toggle_modal_decg(btn_open, btn_close, is_open):
      Input("optLeads",              "value"),
      Input("ecg-fig",               "clickData")],
 )
-def check_sesion(btn1, btn2, btn3, btn4, btn5, btn6, click_data):    
+def check_sesion(btn1, btn2, btn3, btn4, btn5, btn6, click_data):
+    """
+    Comprueba si la sesión está activa, en caso contrario se redirigirá a la página de inicio
+    de la aplicación
+
+    """
     if current_user.is_authenticated:
         raise dash.exceptions.PreventUpdate()
     else:

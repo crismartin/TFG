@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Clase Servicio del modulo ECG
+
 Created on Mon Dec 30 13:29:20 2019
 
 @author: cristian
@@ -64,11 +66,19 @@ def pre_procesado_files(list_nombres, list_contents):
 
 
 def build_select_leads(nleads):
+    """
+    Construye el combo de selección de derivaciones
+
+    """
     return [ {'value': i+1, 'label': 'Derivacion '+ str(i+1)} for i in range(nleads)]
 
 
 
 def build_decg_data(header):
+    """
+    Construye un array con los datos que se mostrarán en el apartado 'Datos ECG'
+
+    """
     datos = {}
     
     datos["nLeads"] = header.nLeads
@@ -80,6 +90,11 @@ def build_decg_data(header):
 
 
 def get_nleads_and_duration(file_name):
+    """
+    Devuelve el número de derivaciones en la lectura de cabecera y también
+    la duración de la señal de ECG
+
+    """
     duration_in_min = 0
     # Factoria de ECG
     ecgFactory = ecgf.ECGFactory()    
@@ -101,6 +116,11 @@ def get_nleads_and_duration(file_name):
 
 
 def replace_ann_edit(filename, token_session, annt_file, annt_ejeY, fs, nLead):
+    """
+    Reemplaza las anotaciones leídas del fichero por las anotaciones que pueda
+    tener dicho fichero en la colección de anotaciones
+
+    """
     anotaciones = annt_file
     
     #Obtener todas las anotaciones para el fichero filename en token_sesion
@@ -134,6 +154,10 @@ def replace_ann_edit(filename, token_session, annt_file, annt_ejeY, fs, nLead):
 
 
 def build_data_annt(ecg, signal_y, sampFrom, sampTo, lead, token_session):
+    """
+    Contruye la gráfica de las anotaciones
+
+    """
     ecg.read_annotations(sampFrom, sampTo)
     ant_trace = None
     anotaciones = ecg.annt
@@ -174,6 +198,10 @@ def build_data_annt(ecg, signal_y, sampFrom, sampTo, lead, token_session):
 
 
 def get_delineator_graph(signal, fs, sampFrom):
+    """
+    Obtiene los datos de las ondas P, QRS y T
+
+    """
     ondas = []
     #Delineador de la señal
     app.logger.info("[ecg_service] - 'get_delineator_graph()' -> calculando signalDelination")
@@ -218,6 +246,11 @@ def get_delineator_graph(signal, fs, sampFrom):
 
 
 def get_simbol_P(num_sample, symbol_root):
+    """
+    Devuelve el simbolo de la onda P, dependiendo del tipo de muestra que sea
+
+    """
+    
     simbol = None
     text_pos = None
     name = None
@@ -244,6 +277,11 @@ def get_simbol_P(num_sample, symbol_root):
 
 
 def get_p_wave(pWav, symbol_root, signal, sampFrom, fs):
+    """
+    Obtiene los datos de la onda P
+
+    """
+    
     traces = []
     
     #app.logger.info("[ecg_service] - 'get_p_wave()' ->  PWave: " + str(pWav) )
@@ -276,6 +314,10 @@ def get_p_wave(pWav, symbol_root, signal, sampFrom, fs):
 
 
 def get_qrs_wave(qrs, signal, fs, sampFrom, wave):
+    """
+    Obtiene la gráfica del comlejo QRS
+
+    """
     
     app.logger.info("[ecg_service] - 'get_qrs_wave()' ->  signal: " + str(signal) )
     
@@ -331,7 +373,10 @@ def get_qrs_wave(qrs, signal, fs, sampFrom, wave):
 
 
 def build_ecg_trace(ejeX, ejeY, nLead, range_min):
-    
+    """
+    Construyela gráfica del ECG para una derivación seleccionada
+
+    """
     layout = go.Layout(title = "Representacion de la Derivación " + str(nLead),
                     hovermode = 'closest', uirevision=True, autosize=True, 
                     xaxis=go.layout.XAxis(
@@ -355,8 +400,11 @@ def build_ecg_trace(ejeX, ejeY, nLead, range_min):
     
 
 
-# Comprueba si el intervalo introducido es correcto o no
 def is_interv_valid(interv_ini, interv_fin):
+    """
+    Comprueba si el intervalo es correcto o no
+
+    """
     if (interv_ini is not None and interv_fin is not None):
         num_ini = int(interv_ini)
         num_fin = int(interv_fin)
@@ -368,6 +416,10 @@ def is_interv_valid(interv_ini, interv_fin):
 
 
 def get_interval_samples(interv_ini, interv_fin, signal_len, fs):
+    """
+    Obtener el intervalo de inicio para la primera representación de la señal
+
+    """
 
     num_ini, num_fin = is_interv_valid(interv_ini, interv_fin)
     
@@ -383,8 +435,12 @@ def get_interval_samples(interv_ini, interv_fin, signal_len, fs):
         
     
 
-# Contruye la grafica para el lead correspondiente
+
 def build_plot_by_lead(file_name, lead, interv_ini, interv_fin, token_user):
+    """
+    Contruye la grafica para el lead correspondiente
+
+    """
     app.logger.info("\n[ecg_service] - INICIO 'build_plot_by_lead()'")
     data_fig = []
     ecgFactory = ecgf.ECGFactory()    
@@ -463,8 +519,12 @@ def build_plot_by_lead(file_name, lead, interv_ini, interv_fin, token_user):
     return fig, title, ant_trace is not None
 
 
-# Borrar un fichero en el sistema y en BBDD
+ 
 def delete_file_system(token_session, name_file):
+    """
+    Borrar un fichero en el sistema y en BBDD
+
+    """
     app.logger.info( "[ecg_service] - 'delete_file_system()' -> name_file: " + str(name_file))
     ruta_fichero = token_session + "/" + name_file
     utils.borrar_fichero(ruta_fichero)
@@ -472,8 +532,12 @@ def delete_file_system(token_session, name_file):
     
 
 
-# Devuelve una lista con el nombre de los ficheros que no tengan una ext valida
+
 def check_ext_files(list_files):
+    """
+    Devuelve una lista con el nombre de los ficheros que no tengan una ext valida
+    
+    """
     result = []
     
     if list_files is not None:
@@ -488,8 +552,11 @@ def check_ext_files(list_files):
 
 
 
-# Comprueba si existe o no un fichero de datos permitido
 def check_data_file(list_files):
+    """
+    Comprueba si existe o no un fichero de datos permitido
+    
+    """
     has_file_data = False
     
     if list_files is not None:
@@ -505,8 +572,14 @@ def check_data_file(list_files):
 
 
 
-# True si los ficheros tienen el mismo nombre raiz, False si no lo tienen
 def has_rootname_files(list_files):
+    """
+    Comprueba si la lista de ficheros tienen el mismo nombre raíz
+    
+    Returns
+    -------
+    True si los ficheros tienen el mismo nombre raiz, False si no lo tienen
+    """
     result = []
     
     if list_files is not None:
@@ -524,6 +597,21 @@ def has_rootname_files(list_files):
 
     
 def comprobar_ficheros(list_files):
+    """
+    Método de validación de la lista de ficheros subida
+
+    Parameters
+    ----------
+    list_files : list of str
+        Lista de los ficheros subidos.
+
+    Returns
+    -------
+    msg : str
+        Mensaje de error o warning en caso de que los ficheros no hayan pasado 
+        alguno de los pasos.
+
+    """
     
     app.logger.info( "[ecg_service] - 'updload_file()' -> INICIO PASO 0. Comprobando fichero de datos" )
     has_file_data = check_data_file(list_files)
@@ -561,8 +649,21 @@ def comprobar_ficheros(list_files):
     
 
 
-# Guarda el fichero obtenido desde el contenedor
 def upload_file_content(nombre_file, content_file, token_user):
+    """
+    Guarda un fichero subido desde el contenedor
+
+    Parameters
+    ----------
+    nombre_file : str
+        Nombre del fichero.
+    content_file : bytes
+        Contenido del fichero.
+    token_user : str
+        Token de la sesión.
+
+    """
+    
     app.logger.info("[ecg_service] - INICIO 'upload_file_content()")
         
     if content_file is not None:        
@@ -578,8 +679,19 @@ def upload_file_content(nombre_file, content_file, token_user):
     
 
 
-# Descarga y guarda el fichero introducido por url
 def upload_file_by_url(file_url, token_user):
+    """
+    Descarga y guarda el fichero introducido por url
+
+    Parameters
+    ----------
+    file_url : str
+        Url del fichero a descargar.
+    token_user : str
+        Token de la sesión.
+
+    """
+    
     app.logger.info("[ecg_service] - INICIO 'upload_file_by_url()'")
     
     if utils.name_file_valid(file_url):
@@ -595,8 +707,27 @@ def upload_file_by_url(file_url, token_user):
     
 
 
-# Guarda los ficheros y devuelve una lista de los ficheros que no se han podido descargar
 def upload_files(num_files, list_contents, list_nombres, token_user):
+    """
+    Guarda los ficheros y devuelve una lista de los ficheros que no se han podido descargar
+
+    Parameters
+    ----------
+    num_files : int
+        Número de ficheros en la lista.
+    list_contents : list of bytes
+        Contenido de los ficheros si son subidos desde local.
+    list_nombres : list of str
+        Lista de los nombres de los ficheros (o urls).
+    token_user : str
+        Token de la sesion.
+
+    Returns
+    -------
+    files_not_saved : list of str
+        devuelve la lista de ficheros que NO se han podido guardar.
+
+    """
     nombre_file = None
     saved_file = None
     files_not_saved = []
@@ -619,8 +750,11 @@ def upload_files(num_files, list_contents, list_nombres, token_user):
 
 
 
-# Devuelve un mensaje de error si alguno de los ficheros no se ha descargado de forma correcta
 def check_save_files(list_files):
+    """
+    Devuelve un mensaje de error si alguno de los ficheros no se ha descargado de forma correcta
+    
+    """
     
     app.logger.info( "[ecg_service] - 'check_save_files()' -> INICIO PASO 3. Comprobando ficheros no descargados" )
     
@@ -638,6 +772,10 @@ def check_save_files(list_files):
 
 # guardar ficheros
 def guardar_ficheros(list_contents, list_nombres, token_session):
+    """
+    Realiza la validación de la lista de ficheros y los guarda en el sistema
+
+    """
     
     num_files = len(list_nombres)
 
@@ -691,8 +829,27 @@ def guardar_ficheros(list_contents, list_nombres, token_session):
 
 
 
-# Comprueba si el fichero es de los formatos soportados o no
 def is_file_soported(file_route):
+    """
+    Comprueba si el fichero es de los formatos soportados o no
+
+    Parameters
+    ----------
+    file_route : str
+        Ruta del fichero.
+
+    Returns
+    -------
+    bool
+        Fichero valido o no.
+    TYPE
+        Nombre del fichero.
+    TYPE
+        Tiene anotaciones o no.
+    formato : str
+        Formato del fichero.
+
+    """
     formato = ""
     ecgFactory = ecgf.ECGFactory()
     filename_aux = utils.get_name_file(file_route, False)
@@ -735,8 +892,21 @@ def is_file_soported(file_route):
 
 
 
-# Devuelve la lista de ficheros asociados a una sesion de usuario
-def get_list_files_user(token_session):    
+def get_list_files_user(token_session):
+    """
+    Devuelve la lista de ficheros asociados a una sesion de usuario
+
+    Parameters
+    ----------
+    token_session : str
+        Token de la sesión.
+
+    Returns
+    -------
+    list of obj
+        Lista de ficheros de una sesión.
+
+    """
     try:
         return db.get_list_files_user(token_session)
     except RuntimeError:
@@ -747,8 +917,23 @@ def get_list_files_user(token_session):
 
 
 
-# Devuelve el fichero de nombre "filename" asociado a una sesion de usuario 
 def get_file_user_by_name(filename, token_session):
+    """
+    Devuelve el fichero de nombre "filename" asociado a una sesion de usuario 
+
+    Parameters
+    ----------
+    filename : str
+        Nombre del fichero.
+    token_session : str
+        Token de la sesión.
+
+    Returns
+    -------
+    obj
+        Datos del fichero.
+
+    """
     try:
         return db.get_file_user_by_name(filename, token_session)
     except RuntimeError:
@@ -757,8 +942,25 @@ def get_file_user_by_name(filename, token_session):
     return None
 
 
-# Compruebo si existe o no el fichero de nombre "filename" asociado una sesion de usuario
+
 def exist_file_user_by_name(filename, token_session):
+    """
+    Compruebo si existe o no el fichero de nombre "filename" asociado una sesion de usuario
+
+    Parameters
+    ----------
+    filename : str
+        Nombre del fichero.
+    token_session : str
+        Token de la sesión.
+
+    Returns
+    -------
+    obj
+        Fichero de la sesión.
+
+    """
+    
     try:
         app.logger.info("[ecg_service] - 'exist_file_user_by_name()' -> filename: " + str(filename) )
         fichero = db.get_file_user_by_name(filename, token_session)
@@ -769,8 +971,26 @@ def exist_file_user_by_name(filename, token_session):
     return None
 
 
-# Inserto el fichero en la BBDD, siempre que el fichero no tenga un nombre repetido
+
 def insert_file_session(nombre_file, formato, token_session):
+    """
+    Inserto el fichero en la BBDD, siempre que el fichero no tenga un nombre repetido
+
+    Parameters
+    ----------
+    nombre_file : str
+        Nombre del fichero.
+    formato : str
+        Formato del fichero.
+    token_session : str
+        Token de la sesión.
+
+    Returns
+    -------
+    id_file : str
+        Id del fichero guardado.
+
+    """
     try:
         app.logger.info("[ecg_service] - 'insert_file_session()' -> filename: " + str(nombre_file) )
         app.logger.info("[ecg_service] - 'insert_file_session()' -> formato: " + str(formato) )
@@ -783,8 +1003,19 @@ def insert_file_session(nombre_file, formato, token_session):
     return None
 
 
-# Elimina el fichero de nombre "nombre_file" asociado a una sesion de usuario
+
 def delete_file_session(nombre_file, token_session):
+    """
+    Elimina el fichero de nombre "nombre_file" asociado a una sesion de usuario
+
+    Parameters
+    ----------
+    nombre_file : str
+        Nombre del fichero.
+    token_session : str
+        Token de la sesión.
+    
+    """
     try:
         app.logger.info("[ecg_service] - 'delete_file_session()' -> filename: " + str(nombre_file) )
         borrado = db.delete_file_session(nombre_file, token_session)
@@ -796,8 +1027,26 @@ def delete_file_session(nombre_file, token_session):
         app.logger.info("[ecg_service] - 'delete_file_session()' -> Token de session incorrecto")
     
 
-# Guarda una anotacion de manera temporal
+
 def save_ann_temp(pt_ini, pt_actual, rutafile, nLead, token_session):
+    """
+    Guarda una anotacion de manera temporal
+
+    Parameters
+    ----------
+    pt_ini : obj
+        Punto incial.
+    pt_actual : obj
+        Punto actual.
+    rutafile : str
+        Ruta del fichero.
+    nLead : int
+        Numero de la derivación.
+    token_session : str
+        Token de la sesión.
+
+    """
+    
     try:
         app.logger.info("[ecg_service] - 'save_ann_temp()' -> pt_ini: " + str(pt_ini) )
         app.logger.info("[ecg_service] - 'save_ann_temp()' -> pt_actual: " + str(pt_actual) )
@@ -817,6 +1066,25 @@ def save_ann_temp(pt_ini, pt_actual, rutafile, nLead, token_session):
 
 
 def get_ann_by_filen(filename, nLead, token_session):
+    """
+    Devuelve la lista de anotaciones de un fichero
+
+    Parameters
+    ----------
+    filename : str
+        Nombre del fichero.
+    nLead : int
+        Número de la derivación.
+    token_session : str
+        Token de la sesión.
+
+    Returns
+    -------
+    lista_ann : obj
+        Lista de las anotaciones del fichero.
+        
+    """
+    
     try:        
         
         filename = utils.get_name_file(filename, True)
@@ -833,7 +1101,17 @@ def get_ann_by_filen(filename, nLead, token_session):
     return None
 
 
+
 def update_sesion(token_sesion):
+    """
+    Actualiza la fecha de edición de la sesión
+
+    Parameters
+    ----------
+    token_sesion : str
+        Token de la sesión.
+
+    """
     try:
         f_edicion = utils.getCurrentStringDate(None)
         db.update_sesion(token_sesion, f_edicion)        
@@ -841,7 +1119,22 @@ def update_sesion(token_sesion):
         app.logger.info("[ecg_service] - 'update_sesion()' -> Ha ocurrido un error al actualizar la fecha de la sesion")
     
 
+
 def get_nombre_sesion(token_sesion):
+    """
+    Devuelve el nombre de la sesión
+
+    Parameters
+    ----------
+    token_sesion : str
+        Token de la sesión.
+
+    Returns
+    -------
+    nombre_sesion : str
+        Nombre de la sesión.
+
+    """
     try:    
         nombre_sesion = db.get_name_sesion_by_token(token_sesion)
         return nombre_sesion
