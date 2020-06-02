@@ -6,6 +6,7 @@ Created on Wed Dec 18 23:47:58 2019
 @author: cristian
 """
 
+import time
 import json
 import dash
 from dash.dependencies import Input, Output, State
@@ -163,7 +164,12 @@ cnt_state_fant =  html.Div([
         dbc.Input( id="st-up-ant",    type="hidden"),
 ])
 
-
+modal_footer_ufile = [html.Div( id="cnt-eliminar-file",   children=[btn_eliminar] ),
+                        html.Div( id="cnt-cerrar-modal",    children=[btn_cerrar_modal] ),
+                        html.Div( id="cnt-proces-modal",    children=[btn_procesar] ),
+                        html.Div( id="cnt-st-fdata",        children=[cnt_state_fdata] ),
+                        html.Div( id="cnt-st-fant",         children=[cnt_state_fant] )
+                    ]
 
 modal_component = html.Div([
     dbc.ModalHeader(children=["Cargar Fichero", html.Span(id="title-modal-files", children="*", className="text-info")]),
@@ -174,13 +180,7 @@ modal_component = html.Div([
     dbc.ModalBody([
         formulario        
     ]),
-    dbc.ModalFooter([
-        html.Div( id="cnt-eliminar-file",   children=[btn_eliminar] ),
-        html.Div( id="cnt-cerrar-modal",    children=[btn_cerrar_modal] ),
-        html.Div( id="cnt-proces-modal",    children=[btn_procesar] ),
-        html.Div( id="cnt-st-fdata",        children=[cnt_state_fdata] ),
-        html.Div( id="cnt-st-fant",         children=[cnt_state_fant] ),
-    ]),
+    dbc.ModalFooter(id="mupfile-footer", children=modal_footer_ufile),
 ])
 
 
@@ -249,6 +249,9 @@ modal_historial = html.Div([
 
 modal_body_decg = html.Div(id="body-decg")
 
+cnt_modal_body_ecg = html.Div(id="cnt-body-decg", children=modal_body_decg)
+
+
 btn_cerrar_modal_decg = dbc.Button(id="close-decg", n_clicks=None, className="mr-1",
                               children=[
                                 html.Span([html.I(className="fas fa-times ml-2"), " Cerrar"])
@@ -257,7 +260,7 @@ btn_cerrar_modal_decg = dbc.Button(id="close-decg", n_clicks=None, className="mr
 modal_datos_ecg = html.Div([
     dbc.ModalHeader("Datos del fichero"),
     dbc.ModalBody([
-        modal_body_decg
+        cnt_modal_body_ecg
     ]),
     dbc.ModalFooter([
         html.Div( id="cnt-close-decg",    children=[btn_cerrar_modal_decg] ),
@@ -277,7 +280,7 @@ display_ecg = dbc.FormGroup([
     html.Div([       
         dbc.Modal(
             children = modal_component,
-            id = "modal",
+            id = "modal-upfile",
             size = "lg",
             backdrop = "static"
         ),
@@ -386,6 +389,34 @@ edit_point_input = dbc.Row(
     
 )
 
+def interv_ini_init(max_num):
+    interv_ini_input = [
+        dbc.InputGroupAddon("min", addon_type="prepend"),
+        dbc.Input(
+            type="number", id="interv_ini", 
+            disabled=True, debounce=True,
+            min="0",
+            max=max_num,
+            pattern="^[0-9]\d*$"
+        ),         
+    ]
+    
+    return interv_ini_input
+
+def interv_fin_init(max_num):
+    interv_fin_input = [
+        dbc.InputGroupAddon("min", addon_type="prepend"),
+        dbc.Input(
+            type="number", id="interv_fin", 
+            disabled=True, debounce=True,
+            min="0",
+            max=max_num,
+            pattern="^[0-9]\d*$"
+        ),
+    ]
+    return interv_fin_input
+
+
 
 
 load_intervals_inputs = dbc.Row(
@@ -408,15 +439,7 @@ load_intervals_inputs = dbc.Row(
         dbc.FormGroup([
             dbc.Label("desde ", html_for="interv_ini", width=3),
             dbc.Col(
-                dbc.InputGroup([
-                    dbc.InputGroupAddon("min", addon_type="prepend"),
-                    dbc.Input(
-                        type="number", id="interv_ini", 
-                        disabled=True, debounce=True,
-                        min=0,
-                        pattern="^[0-9]\d*$"
-                    ),                  
-                ]),
+                dbc.InputGroup(id="cnt-interv-ini", children=interv_ini_init("")),
                 width=8,
             ),    
         ], row=True),
@@ -424,16 +447,7 @@ load_intervals_inputs = dbc.Row(
         dbc.FormGroup([
             dbc.Label("hasta ", html_for="interv_fin", width=3),
             dbc.Col(
-                dbc.InputGroup([
-                    dbc.InputGroupAddon("min", addon_type="prepend"),
-                    dbc.Input(
-                        type="number", id="interv_fin", 
-                        disabled=True, debounce=True,
-                        min=0,
-                        pattern="^[0-9]\d*$"
-                    ),
-                    
-                ]),
+                dbc.InputGroup(id="cnt-interv-fin", children=interv_fin_init("")),
                 width=8,
             ),
         ], row=True),
@@ -524,9 +538,11 @@ cnt_form_controls = dbc.Form(id="cnt-form-controls", children=form_controls)
 
 title_format_file = html.H2("Formato", id="formato-title", style={'textAlign': 'center'})
 
+cnt_title_file = html.Div(id="cnt-title-file", children=[title_format_file])
+
 title_name_sesion = html.H2(children=["SESIÓN: ", html.I(id="title-sesion", children=[""])], style={'textAlign': 'left'})
 
-cnt_title_page = dbc.Row([
+cnt_title_sesion = dbc.Row([
     dbc.Col([
         title_name_sesion        
     ]),    
@@ -537,7 +553,7 @@ cnt_title_page = dbc.Row([
 
 body = dbc.Container([
     html.Br(),
-    html.Div(id="cnt-title-format", children=[cnt_title_page]),    
+    html.Div(id="cnt-title-sesion", children=[cnt_title_sesion]),    
     dbc.Row([
         dbc.Col([            
             dbc.Row([
@@ -545,7 +561,7 @@ body = dbc.Container([
             ]),
         ], width=3),
         dbc.Col([
-            title_format_file,
+            cnt_title_file,
             dbc.Row(
                 display_ecg
             ),            
@@ -562,8 +578,12 @@ input_up_fecha_edicion = dbc.Input(id="up-fecha-edicion", type="hidden", value="
 
 url_check_sesion =  dcc.Location(id='url_out_user',   refresh=True)
 
+fname_process = dbc.Input(type="hidden", id="fname_process")
+
+cnt_fname_process = html.Div(id="cnt-fname-process", children=fname_process)
+
 footer = html.Div([
-            dbc.Input(type="hidden", id="fname_process"),
+            cnt_fname_process,
             input_up_fecha_edicion,
             input_up_fecha_edicion_aux,
             url_check_sesion
@@ -603,11 +623,11 @@ def validar_intervalo(diff_interv):
 
 
 @app.callback(
-    Output("modal", "is_open"),
+    Output("modal-upfile", "is_open"),
     [Input("open-upfile", "n_clicks"), 
      Input("close-upfile", "n_clicks"), 
      Input("proces-upfile", "n_clicks")],
-    [State("modal", "is_open")],
+    [State("modal-upfile", "is_open")],
 )
 def toggle_modal(n1, n2, n3, is_open):    
     """
@@ -759,7 +779,9 @@ def activar_btn_process(result_upfile):
      Output("cnt-ecg-fig",          "children"),
      Output("cnt-form-controls",    "children"),
      Output("cnt-move-controls",    "children"),     
-     Output("cnt-title-format",     "children")],
+     Output("cnt-title-file",       "children"),
+     Output("cnt-fname-process",    "children"),
+     Output("cnt-body-decg",        "children")],
     [Input("eliminar-file",         "n_clicks")],
     [State("lbl_name_file",         "children"),
      State("session",               "data")]
@@ -785,7 +807,7 @@ def delete_file(eliminar_file, name_file, data_session):
         
     app.logger.info( "@callback: FIN 'delete_file()'" )
     
-    return [form_datos_ecg, cnt_state_fdata, ecg_fig, cnt_form_controls, move_controls, title_format_file]
+    return [form_datos_ecg, cnt_state_fdata, ecg_fig, cnt_form_controls, move_controls, title_format_file, fname_process, modal_body_decg]
     
 
 
@@ -905,6 +927,17 @@ def process_file(click_process, click_load, data_session, name_file, rows, row_s
     return ruta_file
 
 
+@app.callback(
+    Output("modal-upfile",     "children"),
+    [Input("proces-upfile",     "n_clicks")]
+)
+def reiniciar_modal(btn_process_click):
+    if (btn_process_click is None or btn_process_click <= 0):
+        raise dash.exceptions.PreventUpdate()
+        
+    return modal_component
+    
+
 
 def create_components_decg(datos_ecg):
     comments = []
@@ -930,10 +963,9 @@ def create_components_decg(datos_ecg):
      Output("optLeads","options"),
      Output("optLeads","value"),
      Output("msg-duracion", "children"),    
-     Output("interv_ini", "max"),
-     Output("interv_fin", "max"),
-     Output("body-decg",  "children")
-     ],
+     Output("cnt-interv-ini", "children"),
+     Output("cnt-interv-fin", "children"),
+     Output("body-decg",  "children")],
     [Input("fname_process", "value")]
 )
 def select_first_lead(fname_uploaded):
@@ -942,6 +974,9 @@ def select_first_lead(fname_uploaded):
 
     """
     app.logger.info("@callback: INICIO 'select_first_lead()'")
+    
+    interv_ini = interv_ini_init("")
+    interv_fin = interv_fin_init("")
     
     if fname_uploaded is not None:
         app.logger.info("@callback: 'select_first_lead()' -> Configurando parametros para pintar")
@@ -954,11 +989,15 @@ def select_first_lead(fname_uploaded):
         app.logger.info("@callback: 'select_first_lead()' -> optLeads: " + str(optLeads))
         app.logger.info("@callback: FIN 'select_first_lead()'")
         text_duracion = "Duración total aprox: " + msg_duration
-        return duration_min, False, optLeads, 1, text_duracion,  duration_min, duration_min, datos_ecg
+        
+        interv_ini = interv_ini_init(duration_min)
+        interv_fin = interv_fin_init(duration_min)
+        
+        return duration_min, False, optLeads, 1, text_duracion,  interv_ini, interv_fin, datos_ecg
     
     app.logger.info("@callback: FIN 'select_first_lead()'")
 
-    return "", True, None, None, None, "", "", ""
+    return "", True, None, None, None, interv_ini, interv_fin, ""
 
 
 @app.callback(
@@ -1046,7 +1085,7 @@ def enable_btn_next(btn_cargar, interv_fin, duracion):
 
     """
     app.logger.info("@callback: INICIO 'enable_btn_next()'")
-    if btn_cargar and (int(interv_fin) < int(duracion)):
+    if btn_cargar and (interv_fin is not None and duracion is not None) and (int(interv_fin) < int(duracion)):
         app.logger.info("@callback: INICIO 'enable_btn_next()' -> return True")
         return False
 
@@ -1066,7 +1105,7 @@ def enable_btn_prev(btn_cargar, interv_ini):
     """
     app.logger.info("@callback: INICIO 'enable_btn_prev()'")
         
-    if btn_cargar and (int(interv_ini) > 0):
+    if btn_cargar and (interv_ini is not None) and (int(interv_ini) > 0):
         app.logger.info("@callback: INICIO 'enable_btn_prev()' -> return True")
         return False
 

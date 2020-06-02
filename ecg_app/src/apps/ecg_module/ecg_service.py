@@ -418,6 +418,10 @@ def is_interv_valid(interv_ini, interv_fin):
 def get_interval_samples(interv_ini, interv_fin, signal_len, fs):
     """
     Obtener el intervalo de inicio para la primera representación de la señal
+    En caso de que sea la primera vez que se va a mostrar la gráfica,
+    se pedirá un intervalo de 60 segundos.
+    
+    sampFrom[muestras] = 60 seg x fs[muestras/seg]
 
     """
 
@@ -431,7 +435,7 @@ def get_interval_samples(interv_ini, interv_fin, signal_len, fs):
             return int(sampFrom), int(sampTo)
     
     sampFrom = int(60*fs)
-    return 0, sampFrom if sampFrom <= signal_len else signal_len
+    return 0, sampFrom if sampFrom <= signal_len else signal_len-1
         
     
 
